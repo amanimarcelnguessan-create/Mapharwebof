@@ -305,55 +305,49 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .detail-link{cursor:pointer;}
 .detail-link:hover{background:#f0f7ff;}
 
-/* ===== BORDEREAU REMISE CHÈQUES — ÉCRAN ===== */
-/* En-tête document */
-#doc-bordereau .brd-entete{text-align:center;padding-bottom:10px;margin-bottom:10px;border-bottom:3px solid #1e3a5f;position:relative;}
-#doc-bordereau .brd-logo-wrap{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:6px;}
-#doc-bordereau .brd-org{text-align:center;}
-#doc-bordereau .brd-org-name{font-size:11pt;font-weight:800;color:#1e3a5f;letter-spacing:2px;text-transform:uppercase;}
-#doc-bordereau .brd-org-sub{font-size:7.5pt;color:#64748b;margin-top:1px;}
-#doc-bordereau .brd-doc-title{font-size:13pt;font-weight:700;color:#1e3a5f;text-transform:uppercase;letter-spacing:1px;margin:5px 0 2px;}
-#doc-bordereau .brd-doc-sub{font-size:8pt;color:#64748b;}
-/* Bandeau de référence */
-#doc-bordereau .brd-ref{display:flex;justify-content:center;gap:28px;flex-wrap:wrap;align-items:center;background:#f8fafd;border:1px solid #e2e8f0;border-radius:5px;padding:5px 14px;margin-bottom:10px;font-size:8.5pt;}
-#doc-bordereau .brd-ref span{white-space:nowrap;}
-#doc-bordereau .brd-ref-input{border:none;border-bottom:1px solid #94a3b8;background:transparent;font-family:inherit;font-size:8.5pt;width:100px;padding:0 2px;}
-/* Bloc souscripteur */
-#doc-bordereau .brd-souscripteur{border:1px solid #e2e8f0;border-radius:5px;overflow:hidden;margin-bottom:10px;}
-#doc-bordereau .brd-souscripteur-title{background:#1e3a5f;color:white;padding:4px 12px;font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;text-align:center;}
-#doc-bordereau .brd-souscripteur-body{display:grid;grid-template-columns:1fr 1fr;background:white;}
-#doc-bordereau .brd-field{padding:5px 12px;border-right:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;}
-#doc-bordereau .brd-field:nth-child(even){border-right:none;}
-#doc-bordereau .brd-field label{display:block;font-size:7pt;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;}
-#doc-bordereau .brd-field input{border:none;border-bottom:1px solid #cbd5e1;background:transparent;font-size:9pt;font-family:inherit;width:100%;padding:1px 2px;color:#1e3a5f;font-weight:600;}
-/* Tableau chèques */
-#doc-bordereau .brd-table-wrap{border:1px solid #e2e8f0;border-radius:5px;overflow:hidden;margin-bottom:10px;}
-#doc-bordereau .brd-table-title{background:#1e3a5f;color:white;padding:5px 12px;font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;text-align:center;}
-#doc-bordereau .brd-table{width:100%;border-collapse:collapse;table-layout:fixed;}
-#doc-bordereau .brd-table thead tr{background:#2563eb;}
-#doc-bordereau .brd-table th{color:white;padding:5px 8px;font-size:8pt;font-weight:700;text-align:center;border-right:1px solid rgba(255,255,255,0.2);}
-#doc-bordereau .brd-table th:last-child{border-right:none;}
-#doc-bordereau .brd-table td{padding:4px 6px;text-align:center;border-bottom:1px solid #f1f5f9;border-right:1px solid #f1f5f9;font-size:9pt;vertical-align:middle;}
-#doc-bordereau .brd-table td:last-child{border-right:none;}
-#doc-bordereau .brd-table tbody tr:nth-child(even) td{background:#f8fafd;}
-#doc-bordereau .brd-table tbody tr:hover td{background:#eff6ff;}
-#doc-bordereau .brd-table input{border:none;border-bottom:1px dashed #94a3b8;background:transparent;font-size:9pt;font-family:inherit;text-align:center;width:100%;padding:0 2px;color:#1a202c;}
-#doc-bordereau .brd-table input:focus{outline:none;border-bottom:1px solid #2563eb;}
-#doc-bordereau .brd-table .brd-total-row td{background:#1e3a5f!important;color:white;font-weight:700;font-size:9.5pt;}
-/* Récapitulatif */
-#doc-bordereau .brd-recap{display:flex;justify-content:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
-#doc-bordereau .brd-recap-item{display:flex;flex-direction:column;align-items:center;padding:7px 14px;border-radius:8px;min-width:90px;text-align:center;}
-#doc-bordereau .brd-recap-val{font-size:12pt;font-weight:800;line-height:1.2;}
-#doc-bordereau .brd-recap-lbl{font-size:7pt;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;margin-top:2px;opacity:0.75;}
-#doc-bordereau .brd-recap-navy {background:#e0e7ff;} #doc-bordereau .brd-recap-navy  .brd-recap-val{color:#1e3a5f;}
-#doc-bordereau .brd-recap-green{background:#d1fae5;} #doc-bordereau .brd-recap-green .brd-recap-val{color:#065f46;}
-#doc-bordereau .brd-recap-blue {background:#dbeafe;} #doc-bordereau .brd-recap-blue  .brd-recap-val{color:#1e40af;}
-/* Signatures */
-#doc-bordereau .brd-sig-wrap{display:flex;justify-content:space-between;gap:30px;margin-top:14px;page-break-inside:avoid;}
-#doc-bordereau .brd-sig-bloc{flex:1;text-align:center;}
-#doc-bordereau .brd-sig-titre{font-size:9.5pt;font-weight:700;color:#1e3a5f;margin-bottom:2px;}
-#doc-bordereau .brd-sig-hint{font-size:7.5pt;color:#64748b;font-style:italic;margin-bottom:8px;}
-#doc-bordereau .brd-sig-box{border:1px solid #cbd5e1;border-radius:4px;height:36px;background:#fafafa;margin-top:4px;}
+/* ===== BORDEREAU INDIVIDUEL — AFFICHAGE ÉCRAN ===== */
+#doc-bordereau .brd-table {
+  width:100%;border-collapse:collapse;table-layout:fixed;font-size:9pt;
+}
+#doc-bordereau .brd-table th {
+  background:#2563eb;color:white;padding:4px 6px;font-size:8.5pt;
+  text-align:left;border:1px solid #1d4ed8;
+  white-space:normal;line-height:1.3;word-break:break-word;
+}
+#doc-bordereau .brd-table td {
+  padding:4px 6px;border:1px solid #ccc;font-size:9pt;
+  vertical-align:middle;overflow:hidden;word-break:break-word;
+}
+#doc-bordereau .brd-table input {
+  width:100%;border:none;background:transparent;padding:0;
+  font-size:9pt;font-family:inherit;min-width:0;vertical-align:middle;
+}
+#doc-bordereau .brd-table tr.brd-total td {
+  background:#2563eb !important;color:white;font-weight:700;border-color:#1d4ed8;
+}
+/* Portrait : 12 mois — largeurs colonnes */
+#doc-bordereau.brd-12 .brd-table th:nth-child(1),
+#doc-bordereau.brd-12 .brd-table td:nth-child(1){width:5%;text-align:center;}
+#doc-bordereau.brd-12 .brd-table th:nth-child(2),
+#doc-bordereau.brd-12 .brd-table td:nth-child(2){width:20%;}
+#doc-bordereau.brd-12 .brd-table th:nth-child(3),
+#doc-bordereau.brd-12 .brd-table td:nth-child(3){width:27%;}
+#doc-bordereau.brd-12 .brd-table th:nth-child(4),
+#doc-bordereau.brd-12 .brd-table td:nth-child(4){width:22%;}
+#doc-bordereau.brd-12 .brd-table th:nth-child(5),
+#doc-bordereau.brd-12 .brd-table td:nth-child(5){width:26%;text-align:right;}
+/* Paysage : 24 mois — largeurs colonnes */
+#doc-bordereau.brd-24 .brd-table{font-size:9.5pt;}
+#doc-bordereau.brd-24 .brd-table th:nth-child(1),
+#doc-bordereau.brd-24 .brd-table td:nth-child(1){width:4%;text-align:center;}
+#doc-bordereau.brd-24 .brd-table th:nth-child(2),
+#doc-bordereau.brd-24 .brd-table td:nth-child(2){width:18%;}
+#doc-bordereau.brd-24 .brd-table th:nth-child(3),
+#doc-bordereau.brd-24 .brd-table td:nth-child(3){width:26%;}
+#doc-bordereau.brd-24 .brd-table th:nth-child(4),
+#doc-bordereau.brd-24 .brd-table td:nth-child(4){width:25%;}
+#doc-bordereau.brd-24 .brd-table th:nth-child(5),
+#doc-bordereau.brd-24 .brd-table td:nth-child(5){width:27%;text-align:right;}
 
 /* ===== IMPRESSION GLOBALE ===== */
 @media print {
@@ -565,90 +559,94 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 }
 
 /* ======================================================
-   BORDEREAU REMISE CHÈQUES — IMPRESSION
-   Portrait  : body.print-brd-portrait  (12 mois)
-   Paysage   : body.print-brd-landscape (24 mois)
+   BORDEREAU INDIVIDUEL — IMPRESSION
+   Portrait  : body.print-brd-portrait  (12 mois, A4 196mm utiles)
+   Paysage   : body.print-brd-landscape (24 mois, A4 283mm utiles)
+   CSS statique — aucune injection dynamique
    ====================================================== */
 @media print {
-  /* Conteneur */
+  /* Conteneur : marges @page suffisent */
   body.print-brd-portrait  #doc-bordereau.doc-a4,
   body.print-brd-landscape #doc-bordereau.doc-a4 {
-    padding:0!important;width:100%!important;max-width:100%!important;overflow:visible!important;
+    padding:0!important;font-size:9pt!important;
+    width:100%!important;max-width:100%!important;overflow:visible!important;
   }
+
+  /* Inputs épurés */
+  body.print-brd-portrait  #doc-bordereau input,
+  body.print-brd-landscape #doc-bordereau input {
+    min-width:0!important;width:100%!important;
+    border:none!important;border-bottom:1px solid #888!important;
+    background:transparent!important;padding:0!important;
+    font-family:inherit!important;display:inline!important;
+  }
+
   /* Logo */
   body.print-brd-portrait  #doc-bordereau img,
   body.print-brd-landscape #doc-bordereau img {
-    width:46px!important;height:46px!important;object-fit:contain!important;
+    width:44px!important;height:44px!important;
+    object-fit:contain!important;flex-shrink:0!important;
   }
-  /* Ref bar */
-  body.print-brd-portrait  #doc-bordereau .brd-ref,
-  body.print-brd-landscape #doc-bordereau .brd-ref {
-    padding:3px 10px!important;margin-bottom:6px!important;
-  }
-  body.print-brd-portrait  #doc-bordereau .brd-ref-input,
-  body.print-brd-landscape #doc-bordereau .brd-ref-input {
-    border:none!important;border-bottom:1px solid #888!important;background:transparent!important;
-  }
-  /* Souscripteur */
-  body.print-brd-portrait  #doc-bordereau .brd-field,
-  body.print-brd-landscape #doc-bordereau .brd-field { padding:3px 8px!important; }
-  body.print-brd-portrait  #doc-bordereau .brd-field input,
-  body.print-brd-landscape #doc-bordereau .brd-field input {
-    border:none!important;border-bottom:1px solid #aaa!important;background:transparent!important;
-  }
-  /* Table */
+
+  /* Table commune */
   body.print-brd-portrait  #doc-bordereau .brd-table,
   body.print-brd-landscape #doc-bordereau .brd-table {
-    table-layout:fixed!important;border-collapse:collapse!important;
+    width:100%!important;border-collapse:collapse!important;
+    table-layout:fixed!important;margin-bottom:4px!important;
   }
-  body.print-brd-portrait  #doc-bordereau .brd-table td,
-  body.print-brd-portrait  #doc-bordereau .brd-table th {
-    padding:3px 5px!important;font-size:8pt!important;overflow:visible!important;word-break:break-word!important;
+
+  /* ── PORTRAIT : 12 mois ──────────────────────────────── */
+  body.print-brd-portrait #doc-bordereau .brd-table { font-size:8pt!important; }
+  body.print-brd-portrait #doc-bordereau .brd-table th {
+    padding:3px 5px!important;font-size:7.5pt!important;line-height:1.2!important;
   }
-  body.print-brd-landscape #doc-bordereau .brd-table td,
+  body.print-brd-portrait #doc-bordereau .brd-table td {
+    padding:3px 5px!important;font-size:8pt!important;
+    overflow:visible!important;word-break:break-word!important;line-height:1.3!important;
+  }
+  body.print-brd-portrait #doc-bordereau .brd-table th:nth-child(1),
+  body.print-brd-portrait #doc-bordereau .brd-table td:nth-child(1){width:5%!important;text-align:center!important;}
+  body.print-brd-portrait #doc-bordereau .brd-table th:nth-child(2),
+  body.print-brd-portrait #doc-bordereau .brd-table td:nth-child(2){width:20%!important;}
+  body.print-brd-portrait #doc-bordereau .brd-table th:nth-child(3),
+  body.print-brd-portrait #doc-bordereau .brd-table td:nth-child(3){width:27%!important;}
+  body.print-brd-portrait #doc-bordereau .brd-table th:nth-child(4),
+  body.print-brd-portrait #doc-bordereau .brd-table td:nth-child(4){width:22%!important;}
+  body.print-brd-portrait #doc-bordereau .brd-table th:nth-child(5),
+  body.print-brd-portrait #doc-bordereau .brd-table td:nth-child(5){width:26%!important;text-align:right!important;}
+
+  /* ── PAYSAGE : 24 mois ───────────────────────────────── */
+  body.print-brd-landscape #doc-bordereau .brd-table { font-size:9pt!important; }
   body.print-brd-landscape #doc-bordereau .brd-table th {
-    padding:3px 5px!important;font-size:8pt!important;overflow:visible!important;word-break:break-word!important;
+    padding:3px 6px!important;font-size:8.5pt!important;line-height:1.2!important;
   }
-  body.print-brd-portrait  #doc-bordereau .brd-table input,
-  body.print-brd-landscape #doc-bordereau .brd-table input {
-    border:none!important;border-bottom:1px solid #999!important;background:transparent!important;font-size:8pt!important;
+  body.print-brd-landscape #doc-bordereau .brd-table td {
+    padding:3px 6px!important;font-size:9pt!important;
+    overflow:visible!important;word-break:break-word!important;line-height:1.3!important;
   }
+  body.print-brd-landscape #doc-bordereau .brd-table th:nth-child(1),
+  body.print-brd-landscape #doc-bordereau .brd-table td:nth-child(1){width:4%!important;text-align:center!important;}
+  body.print-brd-landscape #doc-bordereau .brd-table th:nth-child(2),
+  body.print-brd-landscape #doc-bordereau .brd-table td:nth-child(2){width:18%!important;}
+  body.print-brd-landscape #doc-bordereau .brd-table th:nth-child(3),
+  body.print-brd-landscape #doc-bordereau .brd-table td:nth-child(3){width:26%!important;}
+  body.print-brd-landscape #doc-bordereau .brd-table th:nth-child(4),
+  body.print-brd-landscape #doc-bordereau .brd-table td:nth-child(4){width:25%!important;}
+  body.print-brd-landscape #doc-bordereau .brd-table th:nth-child(5),
+  body.print-brd-landscape #doc-bordereau .brd-table td:nth-child(5){width:27%!important;text-align:right!important;}
+
+  /* Signature */
+  body.print-brd-portrait  #doc-bordereau .brd-sig,
+  body.print-brd-landscape #doc-bordereau .brd-sig {
+    display:flex!important;justify-content:space-between!important;
+    margin-top:8px!important;gap:20px!important;page-break-inside:avoid!important;
+  }
+  body.print-brd-portrait  #doc-bordereau .brd-sig > div,
+  body.print-brd-landscape #doc-bordereau .brd-sig > div { flex:1!important; }
+
+  /* Anti-coupure lignes tableau */
   body.print-brd-portrait  #doc-bordereau .brd-table tr,
   body.print-brd-landscape #doc-bordereau .brd-table tr { page-break-inside:avoid!important; }
-  /* Largeurs — Portrait 12 mois  : N°(6%) | Date(22%) | Banque(26%) | N°Chq(24%) | Montant(22%) */
-  body.print-brd-portrait #doc-bordereau .brd-table th:nth-child(1),
-  body.print-brd-portrait #doc-bordereau .brd-table td:nth-child(1){width:6%!important;}
-  body.print-brd-portrait #doc-bordereau .brd-table th:nth-child(2),
-  body.print-brd-portrait #doc-bordereau .brd-table td:nth-child(2){width:22%!important;}
-  body.print-brd-portrait #doc-bordereau .brd-table th:nth-child(3),
-  body.print-brd-portrait #doc-bordereau .brd-table td:nth-child(3){width:26%!important;}
-  body.print-brd-portrait #doc-bordereau .brd-table th:nth-child(4),
-  body.print-brd-portrait #doc-bordereau .brd-table td:nth-child(4){width:24%!important;}
-  body.print-brd-portrait #doc-bordereau .brd-table th:nth-child(5),
-  body.print-brd-portrait #doc-bordereau .brd-table td:nth-child(5){width:22%!important;text-align:right!important;}
-  /* Largeurs — Paysage 24 mois  : N°(5%) | Date(20%) | Banque(28%) | N°Chq(24%) | Montant(23%) */
-  body.print-brd-landscape #doc-bordereau .brd-table th:nth-child(1),
-  body.print-brd-landscape #doc-bordereau .brd-table td:nth-child(1){width:5%!important;}
-  body.print-brd-landscape #doc-bordereau .brd-table th:nth-child(2),
-  body.print-brd-landscape #doc-bordereau .brd-table td:nth-child(2){width:20%!important;}
-  body.print-brd-landscape #doc-bordereau .brd-table th:nth-child(3),
-  body.print-brd-landscape #doc-bordereau .brd-table td:nth-child(3){width:28%!important;}
-  body.print-brd-landscape #doc-bordereau .brd-table th:nth-child(4),
-  body.print-brd-landscape #doc-bordereau .brd-table td:nth-child(4){width:24%!important;}
-  body.print-brd-landscape #doc-bordereau .brd-table th:nth-child(5),
-  body.print-brd-landscape #doc-bordereau .brd-table td:nth-child(5){width:23%!important;text-align:right!important;}
-  /* Récap */
-  body.print-brd-portrait  #doc-bordereau .brd-recap-item,
-  body.print-brd-landscape #doc-bordereau .brd-recap-item { padding:5px 10px!important; }
-  body.print-brd-portrait  #doc-bordereau .brd-recap-val,
-  body.print-brd-landscape #doc-bordereau .brd-recap-val { font-size:10pt!important; }
-  /* Signatures */
-  body.print-brd-portrait  #doc-bordereau .brd-sig-wrap,
-  body.print-brd-landscape #doc-bordereau .brd-sig-wrap { page-break-inside:avoid!important;margin-top:10px!important; }
-  body.print-brd-portrait  #doc-bordereau .brd-sig-box,
-  body.print-brd-landscape #doc-bordereau .brd-sig-box {
-    border:none!important;border-bottom:1px solid #333!important;border-radius:0!important;background:white!important;height:32px!important;
-  }
 }
 
 
@@ -1211,6 +1209,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   <button class="nav-btn" onclick="showPage('doc-caution')">
     <span class="icon">📝</span> Reçu de caution
   </button>
+  <button class="nav-btn" onclick="showPage('doc-frais-recu')">
+    <span class="icon">🧾</span> Reçu frais de dossier
+  </button>
   <button class="nav-btn" onclick="showPage('doc-bordereau')">
     <span class="icon">📋</span> Bordereau individuel
   </button>
@@ -1458,10 +1459,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
       <div class="form-group"><label>Adresse</label><input id="f-adresse" placeholder="Cocody, Abidjan"></div>
       <div class="form-group"><label>Téléphone</label><input id="f-tel" placeholder="07 00 00 00 00"></div>
       <div class="form-group"><label>Véhicule</label><input id="f-vehicule" placeholder="Toyota Corolla 2024"></div>
-      <div class="form-group"><label>Montant total véhicule (FCFA) *</label><input id="f-montant" type="number" placeholder="6000000"></div>
-      <div class="form-group"><label>Formule *</label><select id="f-formule"><option value="12">12 mois</option><option value="24">24 mois</option></select></div>
+      <div class="form-group"><label>Montant total véhicule (FCFA) *</label><input id="f-montant" type="number" placeholder="6000000" oninput="majMontantsCaution()"></div>
+      <div class="form-group"><label>Formule *</label><select id="f-formule" onchange="toggleSectionCaution()"><option value="12">12 mois</option><option value="24">24 mois</option></select></div>
       <div class="form-group"><label>Date de début *</label><input id="f-date" type="date"></div>
     </div>
+    <!-- ── Section chèques caution + frais de dossier ── -->
+    <div id="f-section-caution" style="margin-top:14px;display:none;">
+      <div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <p style="font-weight:700;color:#1e3a5f;margin:0 0 10px;font-size:13px;">💳 Chèque de caution — <span id="f-label-caution" style="color:#1d4ed8;">20% du montant</span></p>
+        <div class="form-grid">
+          <div class="form-group"><label>N° Chèque caution *</label><input id="f-caution-cheque" placeholder="Ex: 0012345"></div>
+          <div class="form-group"><label>Montant caution (FCFA)</label><input id="f-caution-montant" type="number" placeholder="Calculé automatiquement" style="background:#f0f9ff;"></div>
+          <div class="form-group"><label>Banque émettrice *</label><input id="f-caution-banque" placeholder="Ex: SGCI, BICICI, BNI..."></div>
+        </div>
+      </div>
+      <div id="f-section-frais" style="display:none;background:#fef9c3;border:1px solid #fde047;border-radius:8px;padding:12px 14px;">
+        <p style="font-weight:700;color:#92400e;margin:0 0 10px;font-size:13px;">🧾 Chèque de frais de dossier — <span style="color:#b45309;">5% du montant</span></p>
+        <div class="form-grid">
+          <div class="form-group"><label>N° Chèque frais *</label><input id="f-frais-cheque" placeholder="Ex: 0067890"></div>
+          <div class="form-group"><label>Montant frais (FCFA)</label><input id="f-frais-montant" type="number" placeholder="Calculé automatiquement" style="background:#fefce8;"></div>
+          <div class="form-group"><label>Banque émettrice *</label><input id="f-frais-banque" placeholder="Ex: SGCI, BICICI, BNI..."></div>
+        </div>
+      </div>
+    </div>
+
     <div id="f-modif-info" style="display:none;background:#fef3c7;padding:8px;border-radius:6px;margin-top:10px;font-size:12px;color:#92400e;">
       ⚠️ <strong>Mode modification :</strong> Seuls les informations du souscripteur et du véhicule sont modifiables. Les échéances existantes sont conservées.
     </div>
@@ -1531,17 +1552,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   <div class="doc-wrapper"><div id="doc-caution" class="doc-a4"></div></div>
 </div>
 
+<!-- ====== REÇU DE FRAIS DE DOSSIER ====== -->
+<div id="page-doc-frais-recu" class="page">
+  <button onclick="showPage('gestion')" style="background:#92400e;color:white;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;min-height:40px;" class="no-print">&#8592; Retour</button>
+  <div class="selecteur-contrat no-print" style="background:linear-gradient(135deg,#92400e,#f59e0b);">
+    <h3>🧾 Reçu de Frais de Dossier — Contrats 24 mois</h3>
+    <select id="sel-frais-recu" onchange="afficherFraisRecu()">
+      <option value="">-- Choisir un contrat 24 mois --</option>
+    </select>
+    <div style="display:inline-flex;gap:5px;align-items:center;flex-wrap:wrap;">
+      <button class="btn-orientation" data-orientation="portrait" onclick="setPrintOrientation('portrait')" style="background:rgba(0,0,0,0.28);color:white;border:1px solid rgba(255,255,255,0.35);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;opacity:1;">📄 Portrait</button>
+      <button class="btn-orientation" data-orientation="landscape" onclick="setPrintOrientation('landscape')" style="background:rgba(0,0,0,0.28);color:white;border:1px solid rgba(255,255,255,0.35);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;opacity:0.45;">🔄 Paysage</button>
+      <button class="btn-print" onclick="imprimerDoc('doc-frais-recu')">🖨️ Imprimer</button>
+    </div>
+  </div>
+  <div class="doc-wrapper"><div id="doc-frais-recu" class="doc-a4"></div></div>
+</div>
+
 <!-- ====== BORDEREAU ====== -->
 <div id="page-doc-bordereau" class="page">
   <button onclick="showPage('gestion')" style="background:#1e3a5f;color:white;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;min-height:40px;" class="no-print">&#8592; Retour</button>
-  <div class="selecteur-contrat no-print" style="background:linear-gradient(135deg,#1e3a5f,#2563eb);">
+  <div class="selecteur-contrat no-print" style="background:linear-gradient(135deg,#065f46,#10b981);">
     <h3>📋 Bordereau de remise — Sélectionnez un contrat</h3>
     <select id="sel-bordereau" onchange="afficherBordereau()">
       <option value="">-- Choisir un contrat --</option>
     </select>
-    <div style="margin-top:10px;">
-      <button class="btn-print" onclick="imprimerBordereauIndividuel()" style="padding:7px 22px;">🖨️ Imprimer</button>
-    </div>
+    <div style="display:inline-flex;gap:5px;align-items:center;flex-wrap:wrap;"><button class="btn-orientation" data-orientation="portrait" onclick="setPrintOrientation('portrait')" style="background:rgba(0,0,0,0.28);color:white;border:1px solid rgba(255,255,255,0.35);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;opacity:1;">📄 Portrait</button><button class="btn-orientation" data-orientation="landscape" onclick="setPrintOrientation('landscape')" style="background:rgba(0,0,0,0.28);color:white;border:1px solid rgba(255,255,255,0.35);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;opacity:0.45;">🔄 Paysage</button><button class="btn-print" onclick="imprimerBordereauIndividuel()">🖨️ Imprimer</button></div>
   </div>
   <div class="doc-wrapper"><div id="doc-bordereau" class="doc-a4"></div></div>
 </div>
@@ -2001,6 +2037,7 @@ function showPage(id) {
   }
 
   if(id==='doc-caution')             { resetDocPage('sel-caution','doc-caution'); majSelecteurs(); }
+  if(id==='doc-frais-recu')          { resetDocPage('sel-frais-recu','doc-frais-recu'); majSelecteurs(); }
   if(id==='doc-bordereau')           { resetDocPage('sel-bordereau','doc-bordereau'); majSelecteurs(); }
   if(id==='doc-bordereau-mensuel-12'){ majSelecteurBM(12); }
   if(id==='doc-bordereau-mensuel-24'){ majSelecteurBM(24); }
@@ -2325,6 +2362,34 @@ function importerDonnees(e) {
 // ============================================================
 // CONTRATS
 // ============================================================
+
+function syncRecuMontant(v) {
+  var t = document.getElementById('recu-montant-texte');
+  if (t) t.value = v;
+}
+
+// ── Affichage dynamique section caution/frais dans le formulaire ──
+function toggleSectionCaution() {
+  var formule = parseInt((document.getElementById('f-formule')||{}).value||12);
+  var montant = parseFloat((document.getElementById('f-montant')||{}).value||0);
+  var sec = document.getElementById('f-section-caution');
+  var secFrais = document.getElementById('f-section-frais');
+  var label = document.getElementById('f-label-caution');
+  if(!sec) return;
+  sec.style.display = 'block';
+  if(label) label.textContent = formule===12 ? '20% du montant' : '30% du montant';
+  if(secFrais) secFrais.style.display = formule===24 ? 'block' : 'none';
+  majMontantsCaution();
+}
+function majMontantsCaution() {
+  var montant = parseFloat((document.getElementById('f-montant')||{}).value||0);
+  var formule = parseInt((document.getElementById('f-formule')||{}).value||12);
+  var elCM = document.getElementById('f-caution-montant');
+  var elFM = document.getElementById('f-frais-montant');
+  if(elCM && !elCM.dataset.manuel) elCM.value = montant>0 ? Math.round(montant*(formule===12?0.20:0.30)) : '';
+  if(elFM && !elFM.dataset.manuel && formule===24) elFM.value = montant>0 ? Math.round(montant*0.05) : '';
+}
+
 function ouvrirFormCreation() {
   if(!peutModifier()) { showRefus(); return; }
   document.getElementById('f-mode').value = 'creation';
@@ -2335,7 +2400,8 @@ function ouvrirFormCreation() {
   document.getElementById('f-montant').disabled = false;
   document.getElementById('f-formule').disabled = false;
   document.getElementById('f-date').disabled = false;
-  ['f-nom','f-officine','f-adresse','f-tel','f-vehicule','f-montant','f-date'].forEach(function(id){document.getElementById(id).value='';});
+  ['f-nom','f-officine','f-adresse','f-tel','f-vehicule','f-montant','f-date','f-caution-cheque','f-caution-montant','f-caution-banque','f-frais-cheque','f-frais-montant','f-frais-banque'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  toggleSectionCaution();
   document.getElementById('form-contrat').style.display='block';
   document.getElementById('form-contrat').scrollIntoView({behavior:'smooth'});
 }
@@ -2356,6 +2422,14 @@ function modifierContrat(idx) {
   document.getElementById('f-montant').value = c.montant || '';
   document.getElementById('f-formule').value = c.formule || 12;
   document.getElementById('f-date').value = c.dateDebut || '';
+  // Remplir les champs caution si disponibles (lecture seule en modif)
+  var elCC = document.getElementById('f-caution-cheque'); if(elCC) elCC.value = c.cautionNumeroCheque || '';
+  var elCM = document.getElementById('f-caution-montant'); if(elCM) elCM.value = c.cautionMontant || '';
+  var elCB = document.getElementById('f-caution-banque'); if(elCB) elCB.value = c.cautionBanque || '';
+  var elFC = document.getElementById('f-frais-cheque'); if(elFC) elFC.value = c.fraisNumeroCheque || '';
+  var elFM = document.getElementById('f-frais-montant'); if(elFM) elFM.value = c.fraisMontant || '';
+  var elFB = document.getElementById('f-frais-banque'); if(elFB) elFB.value = c.fraisBanque || '';
+  toggleSectionCaution();
   // Désactiver les champs financiers (ne pas recalculer les échéances)
   document.getElementById('f-montant').disabled = true;
   document.getElementById('f-formule').disabled = true;
@@ -2369,6 +2443,8 @@ function fermerFormContrat() {
   document.getElementById('f-montant').disabled = false;
   document.getElementById('f-formule').disabled = false;
   document.getElementById('f-date').disabled = false;
+  var sec = document.getElementById('f-section-caution');
+  if(sec) sec.style.display = 'none';
 }
 
 function enregistrerContrat() {
@@ -2439,7 +2515,13 @@ function enregistrerContrat() {
     frais:frais,
     mensualite:mensualite,
     dateDebut:dateD,
-    echeances:echeances
+    echeances:echeances,
+    cautionNumeroCheque:(document.getElementById('f-caution-cheque')||{}).value||'',
+    cautionMontant:parseFloat((document.getElementById('f-caution-montant')||{}).value)||caution,
+    cautionBanque:(document.getElementById('f-caution-banque')||{}).value||'',
+    fraisNumeroCheque:formule===24?((document.getElementById('f-frais-cheque')||{}).value||''):'',
+    fraisMontant:formule===24?(parseFloat((document.getElementById('f-frais-montant')||{}).value)||frais):0,
+    fraisBanque:formule===24?((document.getElementById('f-frais-banque')||{}).value||''):''
   });
 
   sauvegarder(false);
@@ -2934,11 +3016,22 @@ function majSelecteurs() {
     if (el) {
       el.innerHTML = '<option value="">-- Choisir un contrat --</option>';
       CONTRATS.forEach(function(c, i) {
-        if (c.archive) return; // exclure les archivés des sélecteurs
+        if (c.archive) return;
         el.innerHTML += '<option value="' + i + '">' + c.numero + ' — ' + esc(c.nom) + '</option>';
       });
     }
   });
+
+  // Sélecteur frais de dossier : uniquement les contrats 24 mois
+  var selFrais = document.getElementById('sel-frais-recu');
+  if (selFrais) {
+    selFrais.innerHTML = '<option value="">-- Choisir un contrat 24 mois --</option>';
+    CONTRATS.forEach(function(c, i) {
+      if (c.archive) return;
+      if (parseInt(c.formule) !== 24) return;
+      selFrais.innerHTML += '<option value="' + i + '">' + c.numero + ' — ' + esc(c.nom) + '</option>';
+    });
+  }
 }
 
 function filtrerDashboard(filtre) {
@@ -3053,7 +3146,7 @@ function afficherAlertesDashboard() {
 
 function preselectionnerContrat(idx, docType) {
   var selMap = {caution:'sel-caution',bordereau:'sel-bordereau',solde:'sel-solde',releve:'sel-releve',impaye:'sel-impaye',tableau:'sel-tableau'};
-  var pageMap = {caution:'doc-caution',bordereau:'doc-bordereau',solde:'doc-solde',releve:'doc-releve',impaye:'doc-impaye',tableau:'doc-tableau'};
+  var pageMap = {caution:'doc-caution','frais-recu':'doc-frais-recu',bordereau:'doc-bordereau',solde:'doc-solde',releve:'doc-releve',impaye:'doc-impaye',tableau:'doc-tableau'};
   var fnMap = {caution:afficherCaution,bordereau:afficherBordereau,solde:afficherSolde,releve:afficherReleve,impaye:afficherImpaye,tableau:afficherTableau};
   showPage(pageMap[docType]);
   setTimeout(function(){
@@ -3110,72 +3203,122 @@ function logoHtml() {
 // ============================================================
 function afficherCaution() {
   var idx = document.getElementById('sel-caution').value;
-  var el = document.getElementById('doc-caution');
+  var el  = document.getElementById('doc-caution');
   if(idx===''){el.innerHTML='<p style="color:#94a3b8;font-style:italic;padding:40px;text-align:center;">Sélectionnez un contrat pour générer le document</p>';return;}
-  var c = CONTRATS[idx];
-  var num = c.numero.replace('2026-','2026-CAU-');
-  var iF = c.formule===12;
-  var html = '<div style="background:#eff6ff;padding:8px 12px;border-radius:6px;margin-bottom:10px;font-size:10px;color:#1e40af;border:1px solid #bfdbfe;" class="no-print">✏️ <strong>Tous les champs sont modifiables</strong> — Cliquez sur un champ pour le modifier avant impression</div>' +
-    '<div style="display:flex;align-items:center;margin-bottom:10px;border-bottom:3px double #1e3a5f;padding-bottom:8px;">' +
-    '<img src="'+MAPHAR_LOGO+'" style="width:70px;height:70px;object-fit:contain;margin-right:14px;flex-shrink:0;" />' +
-    '<div style="flex:1;text-align:center;">' +
-    '<h2 style="margin:0 0 2px;font-size:12pt;">MUTUELLE POUR L\'ASSURANCE DES PHARMACIENS</h2>' +
-    '<p style="font-size:9pt;"><input class="doc-input doc-input-xl" value="Adresse MAPHAR, Abidjan" /> | Tél : <input class="doc-input doc-input-md" value="" placeholder="00 00 00 00" /></p>' +
-    '</div></div>' +
-    '<div class="separateur"><h3 style="margin:0;font-size:12pt;">REÇU DE CAUTION</h3>' +
-    '<p style="margin:2px 0 0 0;">N° <strong><input class="doc-input doc-input-md" value="'+num+'" /></strong></p></div>' +
-    '<p style="margin-bottom:8px;">Date : <input class="doc-input doc-input-md" value="'+auj()+'" /> &nbsp;&nbsp; Lieu : <input class="doc-input doc-input-sm" value="Abidjan" /></p>' +
-    '<div class="bloc">' +
-    '<p class="bloc-titre">IDENTIFICATION DU SOUSCRIPTEUR</p>' +
-    '<p><strong>NOM ET PRÉNOMS :</strong> <input class="doc-input doc-input-xl" value="'+ esc(c.nom) +'" /></p>' +
-    '<p><strong>OFFICINE / FONCTION :</strong> <input class="doc-input doc-input-xl" value="'+ esc(c.officine||'') +'" placeholder="Pharmacie / Fonction" /></p>' +
-    '<p><strong>ADRESSE :</strong> <input class="doc-input doc-input-xl" value="'+ esc(c.adresse||'') +'" /></p>' +
-    '<div class="info-row"><p><strong>TÉLÉPHONE :</strong> <input class="doc-input doc-input-md" value="'+ esc(c.tel||'') +'" /></p>' +
-    '<p><strong>N° CONTRAT :</strong> <input class="doc-input doc-input-md" value="'+ esc(c.numero) +'" /></p></div>' +
+  var c   = CONTRATS[idx];
+  var num = c.numero.replace(/^\d{4}-/, (new Date().getFullYear())+'-CAU-');
+  var is12 = parseInt(c.formule)===12;
+  var couleur    = is12 ? '#1e3a5f' : '#6d28d9';
+  var couleurBg  = is12 ? '#dbeafe' : '#ede9fe';
+  var pctLabel   = is12 ? '20%' : '30%';
+  var totalVerse = is12 ? c.caution : (c.caution + (c.frais||0));
+  var totalLabel = is12 ? 'MONTANT DE LA CAUTION' : 'TOTAL VERSÉ AU DÉPART (30% + 5%)';
+
+  var html =
+    // ── Bandeau édition (no-print) ──
+    '<div style="background:#eff6ff;padding:6px 12px;border-radius:6px;margin-bottom:8px;font-size:9.5px;color:#1e40af;border:1px solid #bfdbfe;" class="no-print">'+
+    '✏️ <strong>Tous les champs sont modifiables</strong> avant impression</div>'+
+
+    // ── EN-TÊTE MAPHAR ──
+    '<div style="display:flex;align-items:center;margin-bottom:8px;border-bottom:3px double #1e3a5f;padding-bottom:6px;">'+
+    '<img src="'+MAPHAR_LOGO+'" style="width:60px;height:60px;object-fit:contain;margin-right:12px;flex-shrink:0;" />'+
+    '<div style="flex:1;text-align:center;">'+
+    '<h2 style="margin:0 0 1px;font-size:11pt;color:#1e3a5f;">MUTUELLE POUR L\'ASSURANCE DES PHARMACIENS</h2>'+
+    '<p style="font-size:8pt;margin:0;color:#64748b;"><input class="doc-input doc-input-xl" value="Abidjan, Côte d\'Ivoire" /> | Tél : <input class="doc-input doc-input-md" value="" placeholder="00 00 00 00" /></p>'+
+    '</div></div>'+
+
+    // ── TITRE ──
+    '<div style="background:'+couleur+';color:white;text-align:center;padding:7px 10px;border-radius:6px;margin-bottom:8px;">'+
+    '<h3 style="margin:0;font-size:12pt;letter-spacing:1px;">REÇU DE CAUTION — FORMULE '+c.formule+' MOIS</h3>'+
+    '<p style="margin:2px 0 0;font-size:8pt;opacity:0.85;">N° <strong><input class="doc-input doc-input-md" value="'+num+'" style="color:white;background:rgba(255,255,255,0.15);" /></strong>'+
+    '&nbsp;|&nbsp; Date : <input class="doc-input doc-input-md" value="'+auj()+'" style="color:white;background:rgba(255,255,255,0.15);" />'+
+    '&nbsp;|&nbsp; Lieu : <input class="doc-input doc-input-sm" value="Abidjan" style="color:white;background:rgba(255,255,255,0.15);" /></p>'+
+    '</div>'+
+
+    // ── MONTANT EN VEDETTE ──
+    '<div style="background:linear-gradient(135deg,'+couleurBg+',white);border:3px solid '+couleur+';border-radius:10px;padding:14px;text-align:center;margin-bottom:10px;">'+
+    '<p style="font-size:8.5pt;color:#64748b;margin:0 0 4px;text-transform:uppercase;letter-spacing:1px;">'+totalLabel+'</p>'+
+    '<p style="font-size:22pt;font-weight:900;color:'+couleur+';margin:0;line-height:1.1;">'+
+    '<input class="doc-input doc-input-num" type="text" value="'+fmt(totalVerse)+'" style="font-size:22pt;font-weight:900;color:'+couleur+';text-align:center;width:260px;" /> FCFA</p>'+
+    (is12
+      ? '<p style="font-size:8pt;color:#475569;margin:4px 0 0;">(Caution 20% restituable en fin de contrat)</p>'
+      : '<p style="font-size:8pt;color:#475569;margin:4px 0 0;">dont <strong>'+fmt(c.caution)+'</strong> FCFA de caution (30%) restituable + <strong>'+fmt(c.frais||0)+'</strong> FCFA de frais (5%) non restituables</p>'
+    )+
+    '</div>'+
+
+    // ── IDENTIFICATION (police réduite) ──
+    '<div style="border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:8.5pt;">'+
+    '<p style="font-weight:700;color:'+couleur+';margin:0 0 5px;font-size:9pt;border-bottom:1px solid #e2e8f0;padding-bottom:3px;">👤 SOUSCRIPTEUR</p>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;">'+
+    '<p style="margin:1px 0;"><span style="color:#64748b;">Nom :</span> <strong><input class="doc-input" style="font-size:8.5pt;" value="'+esc(c.nom)+'" /></strong></p>'+
+    '<p style="margin:1px 0;"><span style="color:#64748b;">N° Contrat :</span> <strong>'+esc(c.numero)+'</strong></p>'+
+    '<p style="margin:1px 0;"><span style="color:#64748b;">Officine :</span> <input class="doc-input" style="font-size:8.5pt;" value="'+esc(c.officine||'')+'" placeholder="—" /></p>'+
+    '<p style="margin:1px 0;"><span style="color:#64748b;">Tél :</span> <input class="doc-input" style="font-size:8.5pt;" value="'+esc(c.tel||'')+'" placeholder="—" /></p>'+
+    '<p style="margin:1px 0;grid-column:1/-1;"><span style="color:#64748b;">Adresse :</span> <input class="doc-input doc-input-xl" style="font-size:8.5pt;" value="'+esc(c.adresse||'')+'" placeholder="—" /></p>'+
+    '</div></div>'+
+
+    // ── DÉTAIL CHÈQUE(S) + RÉSUMÉ CONTRAT ──
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">'+
+
+    // Bloc chèque(s)
+    '<div style="border:1px solid '+couleur+';border-radius:6px;padding:8px 10px;font-size:8.5pt;">'+
+    '<p style="font-weight:700;color:'+couleur+';margin:0 0 5px;font-size:9pt;">🏦 RÈGLEMENT PAR CHÈQUE</p>'+
+    '<table style="width:100%;font-size:8pt;border-collapse:collapse;">'+
+    '<tr><td style="color:#64748b;padding:2px 0;width:40%;">Véhicule :</td>'+
+    '<td style="font-weight:600;padding:2px 0;"><input class="doc-input" style="font-size:8pt;" value="'+esc(c.vehicule||'')+'" /></td></tr>'+
+    '<tr><td style="color:#64748b;padding:2px 0;">N° Chèque caution :</td>'+
+    '<td style="font-weight:700;padding:2px 0;color:'+couleur+';"><input class="doc-input doc-input-md" style="font-size:8.5pt;" value="'+(c.cautionNumeroCheque||'')+'" placeholder="—" /></td></tr>'+
+    '<tr><td style="color:#64748b;padding:2px 0;">Banque émettrice :</td>'+
+    '<td style="font-weight:600;padding:2px 0;"><input class="doc-input doc-input-md" style="font-size:8.5pt;" value="'+(c.cautionBanque||'')+'" placeholder="—" /></td></tr>'+
+    (is12 ? '' :
+      '<tr><td colspan="2" style="border-top:1px dashed #e2e8f0;padding-top:4px;margin-top:4px;"></td></tr>'+
+      '<tr><td style="color:#b45309;padding:2px 0;">N° Chèque frais :</td>'+
+      '<td style="font-weight:700;padding:2px 0;color:#b45309;"><input class="doc-input doc-input-md" style="font-size:8.5pt;" value="'+(c.fraisNumeroCheque||'')+'" placeholder="—" /></td></tr>'+
+      '<tr><td style="color:#b45309;padding:2px 0;">Banque frais :</td>'+
+      '<td style="font-weight:600;padding:2px 0;"><input class="doc-input doc-input-md" style="font-size:8.5pt;" value="'+(c.fraisBanque||'')+'" placeholder="—" /></td></tr>'
+    )+
+    '</table></div>'+
+
+    // Bloc résumé contrat
+    '<div style="border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;background:#f8fafc;font-size:8.5pt;">'+
+    '<p style="font-weight:700;color:#475569;margin:0 0 5px;font-size:9pt;">📋 RAPPEL CONTRAT</p>'+
+    '<table style="width:100%;font-size:8pt;border-collapse:collapse;">'+
+    '<tr><td style="color:#64748b;padding:2px 0;width:55%;">Montant total véhicule :</td>'+
+    '<td style="font-weight:700;padding:2px 0;text-align:right;"><input class="doc-input doc-input-num" style="font-size:8pt;text-align:right;" value="'+fmt(c.montant)+'" /> FCFA</td></tr>'+
+    '<tr><td style="color:#64748b;padding:2px 0;">Caution ('+pctLabel+') :</td>'+
+    '<td style="font-weight:600;padding:2px 0;text-align:right;color:'+couleur+';">'+fmt(c.caution)+' FCFA</td></tr>'+
+    (is12 ? '' :
+      '<tr><td style="color:#64748b;padding:2px 0;">Frais dossier (5%) :</td>'+
+      '<td style="font-weight:600;padding:2px 0;text-align:right;color:#b45309;">'+fmt(c.frais||0)+' FCFA</td></tr>'
+    )+
+    '<tr><td style="color:#64748b;padding:2px 0;">Mensualité :</td>'+
+    '<td style="font-weight:700;padding:2px 0;text-align:right;"><input class="doc-input doc-input-num" style="font-size:8pt;text-align:right;" value="'+fmt(Math.round(c.mensualite||c.montant/c.formule))+'" /> FCFA</td></tr>'+
+    '<tr><td style="color:#64748b;padding:2px 0;">Durée :</td>'+
+    '<td style="padding:2px 0;text-align:right;font-weight:600;">'+c.formule+' mensualités</td></tr>'+
+    '<tr><td style="color:#64748b;padding:2px 0;">Début contrat :</td>'+
+    '<td style="padding:2px 0;text-align:right;">'+dateFR(c.dateDebut)+'</td></tr>'+
+    '</table></div>'+
+    '</div>'+  // fin grid
+
+    // ── CONDITIONS (police réduite, compact) ──
+    '<div style="border:1px solid #fde047;background:#fefce8;border-radius:6px;padding:7px 10px;margin-bottom:10px;font-size:7.8pt;color:#713f12;">'+
+    '<p style="font-weight:700;margin:0 0 3px;font-size:8.5pt;color:#92400e;">⚠️ CONDITIONS DE LA CAUTION</p>'+
+    '<p style="margin:1px 0;">• La caution est restituable en fin de contrat, sous réserve du règlement intégral de toutes les mensualités.</p>'+
+    '<p style="margin:1px 0;">• Les mensualités sont calculées sur le montant total du véhicule toutes taxes comprises.</p>'+
+    '<p style="margin:1px 0;">• Le véhicule demeure la propriété exclusive de MAPHAR jusqu\'au paiement intégral des échéances.</p>'+
+    (is12 ? '' : '<p style="margin:1px 0;color:#b45309;">• Les frais de dossier (5%) sont définitivement acquis à MAPHAR et ne sont en aucun cas restituables.</p>')+
+    '</div>'+
+
+    // ── SIGNATURES ──
+    '<div class="sig-grid">'+
+    '<div><p style="font-size:9pt;font-weight:700;">Le Souscripteur</p>'+
+    '<p style="font-size:7.5pt;font-style:italic;color:#64748b;">(Signature précédée de "Lu et approuvé")</p>'+
+    '<div class="sig-box"></div></div>'+
+    '<div><p style="font-size:9pt;font-weight:700;">Président MAPHAR</p>'+
+    '<p style="font-size:7.5pt;font-style:italic;color:#64748b;">(Cachet et signature)</p>'+
+    '<div class="sig-box"></div></div>'+
     '</div>';
 
-  if(iF){
-    html += '<div class="bloc">' +
-      '<p class="bloc-titre" style="color:#1e40af;">FORMULE 12 MOIS</p>' +
-      '<p><strong>VÉHICULE :</strong> <input class="doc-input doc-input-xl" value="'+ esc(c.vehicule||'') +'" /></p>' +
-      '<p><strong>MONTANT TOTAL VÉHICULE (100%) :</strong> <input class="doc-input doc-input-num" type="text" value="'+fmt(c.montant)+'" /> FCFA</p>' +
-      '<div style="background:#dbeafe;padding:8px;border-radius:4px;margin-top:6px;">' +
-      '<table style="width:100%;border-collapse:collapse;">' +
-      '<tr><td style="padding:2px 4px;width:45%;"><strong>Caution (20%) :</strong></td>' +
-      '<td style="padding:2px 4px;text-align:right;"><input class="doc-input doc-input-num" type="text" value="'+fmt(c.caution)+'" /> FCFA</td>' +
-      '<td style="padding:2px 4px;color:green;white-space:nowrap;font-size:9pt;">✓ Restituable en fin de contrat</td></tr>' +
-      '<tr><td colspan="3" style="padding:4px 4px 2px;font-size:11pt;font-weight:700;color:#1e40af;">💰 Mensualité : <input class="doc-input doc-input-num" type="text" value="'+fmt(c.mensualite)+'" /> FCFA <span style="font-size:9pt;font-weight:400;color:#1e3a5f;">(× 12 mois)</span></td></tr>' +
-      '</table></div></div>';
-  } else {
-    html += '<div class="bloc">' +
-      '<p class="bloc-titre" style="color:#6d28d9;">FORMULE 24 MOIS</p>' +
-      '<p><strong>VÉHICULE :</strong> <input class="doc-input doc-input-xl" value="'+ esc(c.vehicule||'') +'" /></p>' +
-      '<p><strong>MONTANT TOTAL VÉHICULE (100%) :</strong> <input class="doc-input doc-input-num" type="text" value="'+fmt(c.montant)+'" /> FCFA</p>' +
-      '<div style="background:#ede9fe;padding:8px;border-radius:4px;margin-top:6px;">' +
-      '<table style="width:100%;border-collapse:collapse;">' +
-      '<tr><td style="padding:2px 4px;width:45%;"><strong>Caution (30%) :</strong></td>' +
-      '<td style="padding:2px 4px;text-align:right;"><input class="doc-input doc-input-num" type="text" value="'+fmt(c.caution)+'" /> FCFA</td>' +
-      '<td style="padding:2px 4px;color:green;white-space:nowrap;font-size:9pt;">✓ Restituable</td></tr>' +
-      '<tr><td style="padding:2px 4px;"><strong>Frais de dossier (5%) :</strong></td>' +
-      '<td style="padding:2px 4px;text-align:right;"><input class="doc-input doc-input-num" type="text" value="'+fmt(c.frais)+'" /> FCFA</td>' +
-      '<td style="padding:2px 4px;color:#dc2626;white-space:nowrap;font-size:9pt;">✗ Non restituable</td></tr>' +
-      '<tr style="background:#fef3c7;"><td style="padding:3px 4px;"><strong>Total à verser au départ (35%) :</strong></td>' +
-      '<td style="padding:3px 4px;text-align:right;font-weight:700;"><input class="doc-input doc-input-num" type="text" value="'+fmt(c.caution+c.frais)+'" /> FCFA</td>' +
-      '<td></td></tr>' +
-      '<tr><td colspan="3" style="padding:4px 4px 2px;font-size:11pt;font-weight:700;color:#6d28d9;">💰 Mensualité : <input class="doc-input doc-input-num" type="text" value="'+fmt(c.mensualite)+'" /> FCFA <span style="font-size:9pt;font-weight:400;color:#4c1d95;">(× 24 mois)</span></td></tr>' +
-      '</table></div></div>';
-  }
-
-  html += '<div class="badge-jaune">' +
-    '<p><strong>⚠️ CONDITIONS IMPORTANTES :</strong></p>' +
-    '<p>• La caution sera restituée en fin de contrat si toutes les mensualités sont payées</p>' +
-    '<p>• Les mensualités sont calculées sur le montant total du véhicule</p>' +
-    '<p>• Le véhicule reste la propriété de MAPHAR jusqu\'au paiement intégral des échéances</p>' +
-    '</div>' +
-    '<div class="sig-grid">' +
-    '<div><p><strong>Le Souscripteur</strong></p><p style="font-size:9pt;font-style:italic;">(Signature précédée de "Lu et approuvé")</p><div class="sig-box"></div></div>' +
-    '<div><p><strong>Président MAPHAR</strong></p><p style="font-size:9pt;font-style:italic;">(Cachet et signature)</p><div class="sig-box"></div></div>' +
-    '</div>';
   el.innerHTML = html;
   majFooterImpression('Reçu de Caution — ' + c.numero);
 }
@@ -3204,23 +3347,34 @@ function setPrintOrientation(orientation) {
 // ============================================================
 function imprimerBordereauIndividuel() {
   var selEl = document.getElementById('sel-bordereau');
-  var idx = selEl ? selEl.value : '';
+  var idx   = selEl ? selEl.value : '';
   if (idx === '') { showToast('Sélectionnez d\'abord un contrat.', 'error'); return; }
+
   var docEl = document.getElementById('doc-bordereau');
   if (!docEl || !docEl.innerHTML.trim()) {
-    showToast('Générez d\'abord le bordereau.', 'error'); return;
+    showToast('Générez d\'abord le bordereau en sélectionnant un contrat.', 'error'); return;
   }
-  var c = CONTRATS[idx];
-  var paysage = parseInt(c.formule) >= 24;
-  document.body.classList.remove('print-brd-portrait','print-brd-landscape');
+
+  var c       = CONTRATS[idx];
+  var formule = parseInt(c.formule) || 12;
+  var paysage = formule >= 24;
+
+  // ── Même approche que imprimerBordereauMensuel qui fonctionne ──
+  // 1. Classes body → active le bon bloc @media print statique
+  document.body.classList.remove('print-brd-portrait', 'print-brd-landscape');
   document.body.classList.add(paysage ? 'print-brd-landscape' : 'print-brd-portrait');
+
+  // 2. Orientation page
   setPrintOrientation(paysage ? 'landscape' : 'portrait');
+
+  // 3. Impression directe — aucune injection CSS asynchrone
   window.print();
+
+  // 4. Nettoyage après impression
   setTimeout(function() {
-    document.body.classList.remove('print-brd-portrait','print-brd-landscape');
+    document.body.classList.remove('print-brd-portrait', 'print-brd-landscape');
   }, 2000);
 }
-
 function imprimerDoc(docId) {
   var doc = document.getElementById(docId);
   if (!doc) { window.print(); return; }
@@ -3428,6 +3582,7 @@ function afficherBordereauMensuel(formule) {
     '<th rowspan="2" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);">N°</th>'+
     '<th rowspan="2" style="padding:5px 4px;border:1px solid rgba(255,255,255,0.2);">Souscripteur</th>'+
     '<th rowspan="2" style="padding:5px 4px;border:1px solid rgba(255,255,255,0.2);">Véhicule</th>'+
+    '<th rowspan="2" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);">Date<br>Échéance</th>'+
     '<th colspan="3" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.12);">MENSUALITÉ</th>'+
     (inclureCaution ? '<th colspan="3" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:#065f46;">CAUTION '+(formule===12?'20%':'30%')+'</th>' : '')+
     (inclureFrais   ? '<th colspan="3" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:#9a3412;">FRAIS DOSSIER 5%</th>' : '')+
@@ -3467,7 +3622,7 @@ function afficherBordereauMensuel(formule) {
     '<div style="font-size:8.5pt;"><strong>Banque :</strong> <input class="doc-input doc-input-md" placeholder="Nom de la banque" /></div>'+
     '</div>'+
     '<div style="background:#f8fafc;padding:4px 8px;margin-bottom:6px;border-left:3px solid '+couleur+';">'+
-    '<p style="margin:0;font-size:8.5pt;"><strong>REMIS PAR :</strong> <input class="doc-input doc-input-xl" value="MAPHAR MOBILITY" /></p>'+
+    '<p style="margin:0;font-size:8.5pt;"><strong>REMIS PAR :</strong> <input class="doc-input doc-input-xl" value="MAPHAR — Mutuelle pour l\'Assurance des Pharmaciens" /></p>'+
     '<p style="margin:1px 0 0;font-size:8.5pt;"><strong>Nombre de chèques :</strong> <strong>'+lignes.length+'</strong>'+
     ' &nbsp;|&nbsp; <strong>Mensualités :</strong> <strong style="color:'+couleurText+';" id="bm'+formule+'-total-hdr">'+fmt(total)+'</strong> FCFA'+
     resumeExtras+
@@ -3510,6 +3665,9 @@ function afficherBordereauMensuel(formule) {
       '<td style="padding:4px;border:1px solid #e2e8f0;">'+
         '<input class="doc-input" style="min-width:90px;" value="'+ esc(c.vehicule||'') +'" placeholder="Véhicule" />'+
         '<br><small style="color:'+couleurText+';font-size:7.5pt;font-weight:600;">'+fmt(c.montant||0)+' F</small>'+
+      '</td>'+
+      '<td style="padding:4px;border:1px solid #e2e8f0;text-align:center;white-space:nowrap;font-size:8pt;">'+
+        (e.dateEch ? dateFR(e.dateEch) : '<span style="color:#94a3b8;">—</span>')+
       '</td>'+
       '<td style="padding:4px;border:1px solid #e2e8f0;text-align:center;">'+
         '<input class="doc-input" style="min-width:75px;text-align:center;" value="'+(e.numeroCheque||'')+'" placeholder="N° chèque"'+
@@ -3562,7 +3720,7 @@ function afficherBordereauMensuel(formule) {
     '<div style="text-align:right;"><p><strong>Président MAPHAR</strong></p><p style="font-size:8.5pt;font-style:italic;">(Cachet et signature)</p><div class="sig-box"></div></div>'+
     '</div>'+
     '<div style="margin-top:14px;border-top:1px solid #ccc;padding-top:6px;text-align:center;font-size:8pt;color:#94a3b8;">'+
-    'MAPHAR MOBILITY — Bordereau M'+moisSel+' / Formule '+formule+' mois — Généré le '+auj()+' — Document officiel de remise bancaire'+
+    'MAPHAR — Mutuelle pour l\'Assurance des Pharmaciens — Bordereau M'+moisSel+' / Formule '+formule+' mois — Généré le '+auj()+' — Document officiel de remise bancaire'+
     '</div>';
 
   el.innerHTML = html;
@@ -3592,10 +3750,18 @@ function recalcBM(formule) {
   });
   var cell = document.getElementById('bm'+formule+'-total-cell'); if(cell) cell.textContent = fmt(total)+' FCFA';
   var hdr  = document.getElementById('bm'+formule+'-total-hdr');  if(hdr)  hdr.textContent  = fmt(total);
+  var inclCaution = document.getElementById('chk-bm'+formule+'-caution') && document.getElementById('chk-bm'+formule+'-caution').checked;
+  var inclFrais   = formule===24 && document.getElementById('chk-bm24-frais') && document.getElementById('chk-bm24-frais').checked;
+  var totalGen = total + (inclCaution?totalCaution:0) + (inclFrais?totalFrais:0);
+  var cellGen = document.getElementById('bm'+formule+'-total-gen'); if(cellGen) cellGen.textContent = fmt(totalGen)+' FCFA';
   var res  = document.getElementById('bm'+formule+'-resume');
   if(res){
     var n = res.textContent.match(/\d+ souscripteur/);
-    if(n) res.innerHTML='📊 <strong>'+n[0]+'s — Mensualités : '+fmt(total)+' FCFA</strong>';
+    var parts = 'Mensualités : '+fmt(total)+' FCFA';
+    if(inclCaution) parts += ' | Cautions : '+fmt(totalCaution)+' FCFA';
+    if(inclFrais)   parts += ' | Frais : '+fmt(totalFrais)+' FCFA';
+    parts += ' | <strong>Total général : '+fmt(totalGen)+' FCFA</strong>';
+    if(n) res.innerHTML='📊 <strong>'+n[0]+'s</strong> — '+parts;
   }
 }
 
@@ -3606,128 +3772,105 @@ function recalcBM(formule) {
 // ============================================================
 function afficherBordereau() {
   var idx = document.getElementById('sel-bordereau').value;
-  var el  = document.getElementById('doc-bordereau');
-  if (idx === '') {
+  var el = document.getElementById('doc-bordereau');
+  if(idx===''){
     el.className = 'doc-a4';
     document.body.classList.remove('print-brd-portrait','print-brd-landscape');
-    el.innerHTML = '<p style="color:#94a3b8;font-style:italic;padding:40px;text-align:center;">Sélectionnez un contrat pour générer le bordereau</p>';
+    el.innerHTML='<p style="color:#94a3b8;font-style:italic;padding:40px;text-align:center;">Sélectionnez un contrat pour générer le document</p>';
     return;
   }
   var c = CONTRATS[idx];
-  var paysage  = parseInt(c.formule) >= 24;
-  var numBRD   = 'BRD-' + c.numero.replace(/^2026-/,'') + '-' + auj().replace(/\//g,'');
-  var total    = 0;
-  (c.echeances||[]).forEach(function(e){ total += (e.montantDu||0); });
+  var num = c.numero.replace(/^\d{4}-/, (new Date().getFullYear())+'-BRD-');
+  var paysage = parseInt(c.formule) >= 24;
 
-  el.className = 'doc-a4';
+  // Classe orientation sur le conteneur (écran + impression)
+  el.className = 'doc-a4 ' + (paysage ? 'brd-24' : 'brd-12');
   document.body.classList.remove('print-brd-portrait','print-brd-landscape');
   document.body.classList.add(paysage ? 'print-brd-landscape' : 'print-brd-portrait');
-  setPrintOrientation(paysage ? 'landscape' : 'portrait');
-
-  /* ── Colonne widths inline (écran, CSS print override au print) ── */
-  var wN = '6%', wDate = '22%', wBq = '26%', wChq = '24%', wMnt = '22%';
-  if (paysage) { wN='5%'; wDate='20%'; wBq='28%'; wChq='24%'; wMnt='23%'; }
 
   var html =
-    /* Hint */
-    '<div class="no-print" style="background:#eff6ff;padding:3px 10px;border-radius:4px;margin-bottom:8px;font-size:9px;color:#1e40af;">\u270f\ufe0f Champs N\u00b0 Ch\u00e8que et Banque modifiables directement dans le tableau</div>' +
-
-    /* ═══ EN-TÊTE CENTRÉ ═══ */
-    '<div class="brd-entete">' +
-      '<div class="brd-logo-wrap">' +
-        '<img src="'+MAPHAR_LOGO+'" style="width:56px;height:56px;object-fit:contain;" />' +
-        '<div class="brd-org">' +
-          '<div class="brd-org-name">MAPHAR</div>' +
-          '<div class="brd-org-sub">Mutuelle Pour l\'Assurance des Pharmaciens</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="brd-doc-title">Bordereau de Remise de Ch\u00e8ques</div>' +
-      '<div class="brd-doc-sub">Convention de financement v\u00e9hicule &mdash; Formule '+(c.formule||'?')+' mois</div>' +
+    '<div style="background:#eff6ff;padding:3px 10px;border-radius:4px;margin-bottom:6px;font-size:9px;color:#1e40af;" class="no-print">✏️ Champs modifiables avant impression</div>' +
+    // En-tête logo + titre
+    '<div style="display:flex;align-items:center;margin-bottom:6px;border-bottom:2px solid #1e3a5f;padding-bottom:5px;">' +
+    '<img src="'+MAPHAR_LOGO+'" style="width:48px;height:48px;object-fit:contain;margin-right:10px;flex-shrink:0;" />' +
+    '<div style="flex:1;text-align:center;">' +
+    '<h2 style="margin:0 0 2px;font-size:11pt;font-weight:700;letter-spacing:0.5px;">BORDEREAU DE REMISE DE CHÈQUES</h2>' +
+    '<p style="font-size:8pt;margin:0;color:#475569;">MAPHAR — Mutuelle Pour l\'Assurance des Pharmaciens</p>' +
+    '</div></div>' +
+    // Bande méta
+    '<div style="background:#f0f4f8;padding:4px 8px;margin-bottom:5px;display:flex;flex-wrap:wrap;gap:18px;align-items:center;border-radius:4px;">' +
+    '<span style="font-size:8.5pt;white-space:nowrap;">Date\u00a0: <input style="border:none;border-bottom:1px solid #888;background:transparent;font-size:8.5pt;font-family:inherit;width:82px;" value="'+auj()+'" /></span>' +
+    '<span style="font-size:8.5pt;white-space:nowrap;">N°\u00a0Bordereau\u00a0: <input style="border:none;border-bottom:1px solid #888;background:transparent;font-size:8.5pt;font-family:inherit;width:115px;" value="'+num+'" /></span>' +
+    '<span style="font-size:8.5pt;white-space:nowrap;">Nb\u00a0chèques\u00a0: <strong>'+c.formule+'</strong></span>' +
     '</div>' +
-
-    /* ═══ BANDEAU RÉFÉRENCE ═══ */
-    '<div class="brd-ref">' +
-      '<span>N\u00b0 Bordereau&nbsp;: <input class="brd-ref-input" style="width:120px;" value="'+numBRD+'" /></span>' +
-      '<span>Date&nbsp;: <input class="brd-ref-input" style="width:90px;" value="'+auj()+'" /></span>' +
-      '<span>Nb&nbsp;ch\u00e8ques&nbsp;: <strong>'+(c.formule||'?')+'</strong></span>' +
+    // Bloc souscripteur
+    '<div style="border:1px solid #aaa;padding:4px 8px;margin-bottom:6px;background:#fafafa;border-radius:3px;">' +
+    '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">' +
+    '<strong style="white-space:nowrap;font-size:8.5pt;color:#1e3a5f;">REMIS PAR :</strong>' +
+    '<input style="flex:1;min-width:0;border:none;border-bottom:1px solid #aaa;background:transparent;padding:0;font-size:8.5pt;font-family:inherit;" value="'+ esc(c.nom) +'" />' +
     '</div>' +
-
-    /* ═══ SOUSCRIPTEUR ═══ */
-    '<div class="brd-souscripteur">' +
-      '<div class="brd-souscripteur-title">&#x1F464; Identification du remettant</div>' +
-      '<div class="brd-souscripteur-body">' +
-        '<div class="brd-field"><label>Nom et Pr\u00e9noms</label><input value="'+esc(c.nom)+'" /></div>' +
-        '<div class="brd-field"><label>Officine / Fonction</label><input value="'+esc(c.officine||'')+'" placeholder="\u2014" /></div>' +
-        '<div class="brd-field"><label>N\u00b0 Contrat</label><input value="'+esc(c.numero)+'" /></div>' +
-        '<div class="brd-field"><label>V\u00e9hicule</label><input value="'+esc(c.vehicule||'')+'" placeholder="\u2014" /></div>' +
-      '</div>' +
+    '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">' +
+    '<strong style="white-space:nowrap;font-size:8.5pt;color:#1e3a5f;">OFFICINE / FONCTION :</strong>' +
+    '<input style="flex:1;min-width:0;border:none;border-bottom:1px solid #aaa;background:transparent;padding:0;font-size:8.5pt;font-family:inherit;" value="'+ esc(c.officine||'') +'" />' +
     '</div>' +
+    '<div style="display:flex;align-items:baseline;gap:6px;">' +
+    '<strong style="white-space:nowrap;font-size:8.5pt;color:#1e3a5f;">N° CONTRAT :</strong>' +
+    '<input style="flex:1;min-width:0;border:none;border-bottom:1px solid #aaa;background:transparent;padding:0;font-size:8.5pt;font-family:inherit;" value="'+ esc(c.numero) +'" />' +
+    '</div>' +
+    '</div>' +
+    // Tableau — class brd-table, AUCUN width inline sur th
+    '<table class="brd-table">' +
+    '<thead><tr>' +
+    '<th style="text-align:center;">N°</th>' +
+    '<th>Date dépôt prévue</th>' +
+    '<th>N° Chèque</th>' +
+    '<th>Banque</th>' +
+    '<th style="text-align:right;">Montant (FCFA)</th>' +
+    '</tr></thead>' +
+    '<tbody>';
 
-    /* ═══ TABLEAU ═══ */
-    '<div class="brd-table-wrap">' +
-      '<div class="brd-table-title">&#x1F4CB; D\u00e9tail des Ch\u00e8ques &mdash; '+(c.formule||'?')+' mensualit\u00e9s</div>' +
-      '<table class="brd-table">' +
-        '<colgroup>' +
-          '<col style="width:'+wN+'">' +
-          '<col style="width:'+wDate+'">' +
-          '<col style="width:'+wBq+'">' +
-          '<col style="width:'+wChq+'">' +
-          '<col style="width:'+wMnt+'">' +
-        '</colgroup>' +
-        '<thead><tr>' +
-          '<th>N\u00b0</th>' +
-          '<th>Date d\u2019\u00e9ch\u00e9ance</th>' +
-          '<th>Banque</th>' +
-          '<th>N\u00b0 Ch\u00e8que</th>' +
-          '<th style="text-align:right;">Montant (FCFA)</th>' +
-        '</tr></thead>' +
-        '<tbody>';
-
+  var total = 0;
   (c.echeances||[]).forEach(function(e, i) {
-    html +=
-      '<tr>' +
-      '<td>'+e.num+'</td>' +
-      '<td>'+dateFR(e.dateEch)+'</td>' +
+    var rowBg = i%2===0 ? '' : 'background:#f0f4ff;';
+    html += '<tr style="'+rowBg+'">' +
+      '<td style="text-align:center;">'+e.num+'</td>' +
+      '<td><input value="'+dateFR(e.dateEch)+'" /></td>' +
+      '<td><input value="'+(e.numeroCheque||'')+'" placeholder="N° chèque" onchange="CONTRATS['+idx+'].echeances['+i+'].numeroCheque=this.value;sauvegarder()" /></td>' +
       '<td><input value="'+esc(e.banque||'')+'" placeholder="Banque" onchange="CONTRATS['+idx+'].echeances['+i+'].banque=this.value;sauvegarder()" /></td>' +
-      '<td><input value="'+(e.numeroCheque||'')+'" placeholder="N\u00b0 ch\u00e8que" onchange="CONTRATS['+idx+'].echeances['+i+'].numeroCheque=this.value;sauvegarder()" /></td>' +
-      '<td style="text-align:right;font-weight:600;">'+fmt(e.montantDu)+'</td>' +
+      '<td style="text-align:right;"><input style="text-align:right;" value="'+fmt(e.montantDu)+'" onchange="CONTRATS['+idx+'].echeances['+i+'].montantDu=parseInt(this.value.replace(/\\s/g,\'\'))||0;sauvegarder()" /></td>' +
       '</tr>';
+    total += e.montantDu;
   });
 
-  html +=
-        '<tr class="brd-total-row">' +
-          '<td colspan="4" style="text-align:right;letter-spacing:0.5px;">MONTANT TOTAL&nbsp;:</td>' +
-          '<td style="text-align:right;">'+fmt(total)+' FCFA</td>' +
-        '</tr>' +
-      '</tbody>' +
-      '</table>' +
+  html += '</tbody>' +
+    '<tfoot>' +
+    '<tr class="brd-total">' +
+    '<td colspan="4" style="text-align:right;padding:3px 8px;">TOTAL :</td>' +
+    '<td style="text-align:right;padding:3px 8px;">'+fmt(total)+' FCFA</td>' +
+    '</tr>' +
+    '</tfoot>' +
+    '</table>' +
+    // Signatures
+    '<div class="brd-sig" style="display:flex;justify-content:space-between;margin-top:14px;">' +
+    '<div style="flex:1;text-align:left;">' +
+    '<p style="margin:0 0 2px;font-size:9pt;font-weight:700;">Le Remettant</p>' +
+    '<p style="font-size:8pt;font-style:italic;margin:0 0 4px;">(Nom &amp; Signature)</p>' +
+    '<div style="border-bottom:1px solid #333;height:28px;margin-top:4px;"></div>' +
     '</div>' +
-
-    /* ═══ RÉCAPITULATIF ═══ */
-    '<div class="brd-recap">' +
-      '<div class="brd-recap-item brd-recap-navy"><div class="brd-recap-val">'+(c.formule||'?')+'</div><div class="brd-recap-lbl">Ch\u00e8ques remis</div></div>' +
-      '<div class="brd-recap-item brd-recap-green"><div class="brd-recap-val">'+fmt(c.mensualite||0)+'</div><div class="brd-recap-lbl">FCFA / mensualit\u00e9</div></div>' +
-      '<div class="brd-recap-item brd-recap-blue"><div class="brd-recap-val">'+fmt(total)+'</div><div class="brd-recap-lbl">FCFA total remis</div></div>' +
+    '<div style="width:40px;"></div>' +
+    '<div style="flex:1;text-align:right;">' +
+    '<p style="margin:0 0 2px;font-size:9pt;font-weight:700;">Président MAPHAR</p>' +
+    '<p style="font-size:8pt;font-style:italic;margin:0 0 4px;">(Cachet et Signature)</p>' +
+    '<div style="border-bottom:1px solid #333;height:28px;margin-top:4px;"></div>' +
     '</div>' +
-
-    /* ═══ SIGNATURES ═══ */
-    '<div class="brd-sig-wrap">' +
-      '<div class="brd-sig-bloc">' +
-        '<div class="brd-sig-titre">Le Remettant</div>' +
-        '<div class="brd-sig-hint">(Nom, date et signature)</div>' +
-        '<div class="brd-sig-box"></div>' +
-      '</div>' +
-      '<div class="brd-sig-bloc">' +
-        '<div class="brd-sig-titre">Pour MAPHAR</div>' +
-        '<div class="brd-sig-hint">(Cachet et signature)</div>' +
-        '<div class="brd-sig-box"></div>' +
-      '</div>' +
     '</div>';
 
   el.innerHTML = html;
-  majFooterImpression('Bordereau de Remise \u2014 ' + c.numero);
-}
+  majFooterImpression('Bordereau de Remise Bancaire');
 
+  // Orientation @page cohérente avec le document affiché
+  setPrintOrientation(paysage ? 'landscape' : 'portrait');
+}
 // ============================================================
 function chargerMensualites() {
   var idx = document.getElementById('sel-recu-contrat').value;
@@ -3781,7 +3924,7 @@ function buildDocRecu(c, e, num, minimal) {
     '</div>' +
     '<div>' +
     '<p style="background:#065f46;color:white;padding:6px 8px;border-radius:4px;font-size:11pt;font-weight:700;text-align:center;">MONTANT :</p>' +
-    '<p style="font-size:14pt;font-weight:700;color:#065f46;text-align:center;border:2px solid #065f46;border-radius:4px;padding:6px;"><input class="doc-input doc-input-num" type="text" id="recu-montant" value="'+fmt(e.montantDu)+'" style="text-align:center;font-size:14pt;font-weight:700;" /></p>' +
+    '<p style="font-size:14pt;font-weight:700;color:#065f46;text-align:center;border:2px solid #065f46;border-radius:4px;padding:6px;"><input class="doc-input doc-input-num" type="text" id="recu-montant" value="'+fmt(e.montantDu)+'" style="text-align:center;font-size:14pt;font-weight:700;" oninput="syncRecuMontant(this.value)" /></p>' +
     '<p style="text-align:center;font-weight:700;color:#065f46;">FCFA</p>' +
     '</div>' +
     '</div></div>' +
@@ -3814,7 +3957,7 @@ function afficherSolde() {
   if(idx===''){el.innerHTML='<p style="color:#94a3b8;font-style:italic;padding:40px;text-align:center;">Sélectionnez un contrat pour générer le document</p>';return;}
   var c = CONTRATS[idx];
   var s = getStats(c);
-  var num = c.numero.replace('2026-','2026-ATC-');
+  var num = c.numero.replace(/^\d{4}-/, (new Date().getFullYear())+'-ATC-');
   var html = '<div style="background:#eff6ff;padding:6px 12px;border-radius:6px;margin-bottom:10px;font-size:10px;color:#1e40af;" class="no-print">✏️ Tous les champs sont modifiables directement dans le document</div>' +
     '<div style="display:flex;align-items:center;margin-bottom:10px;border-bottom:3px double #1e3a5f;padding-bottom:8px;">' +
     '<img src="'+MAPHAR_LOGO+'" style="width:70px;height:70px;object-fit:contain;margin-right:14px;flex-shrink:0;" />' +
@@ -3851,8 +3994,11 @@ function afficherSolde() {
     '<tr><td style="padding:4px;border:none;"><strong>Total mensualités réglées :</strong></td>' +
     '<td style="padding:4px;border:none;text-align:right;"><input class="doc-input doc-input-num" type="text" value="'+fmt(s.paye)+'" /> FCFA</td>' +
     '<td style="padding:4px;border:none;"></td></tr>' +
-    '<tr style="background:#065f46;color:white;"><td style="padding:6px;"><strong>TOTAL RÉGLÉ :</strong></td>' +
-    '<td style="padding:6px;text-align:right;font-size:12pt;" colspan="2"><strong>'+fmt(s.paye+c.caution)+' FCFA</strong></td></tr>' +
+    '<tr><td style="padding:4px;border:none;"><strong>Frais de dossier :</strong></td>' +
+    '<td style="padding:4px;border:none;text-align:right;"><input class="doc-input doc-input-num" type="text" value="'+fmt(c.frais||0)+'" /> FCFA</td>' +
+    '<td style="padding:4px;border:none;color:#dc2626;font-size:8.5pt;">✗ Non restituable</td></tr>' +
+    '<tr style="background:#065f46;color:white;"><td style="padding:6px;"><strong>TOTAL VERSÉ À MAPHAR :</strong></td>' +
+    '<td style="padding:6px;text-align:right;font-size:12pt;" colspan="2"><strong>'+fmt(s.paye+c.caution+(c.frais||0))+' FCFA</strong></td></tr>' +
     '</table></div>' +
     '<div class="badge-bleu"><p style="text-align:justify;font-size:9.5pt;">En foi de quoi, la présente attestation est délivrée pour servir et valoir ce que de droit. Le véhicule est désormais pleinement acquis au souscripteur, libre de toute obligation envers MAPHAR.</p></div>' +
     '<div class="sig-grid">' +
@@ -3953,7 +4099,7 @@ function afficherSelectionMensuImpaye() {
       '<strong style="color:#dc2626;">Mensualité '+e.num+' / '+c.formule+'</strong>' +
       '<div style="font-size:13px;color:#64748b;margin-top:4px;">' +
       'Montant: <strong>'+fmt(Math.round(e.montantDu))+' F</strong> | ' +
-      'Échéance: '+e.dateEcheance+' | ' +
+      'Échéance: '+dateFR(e.dateEch)+' | ' +
       'Chèque: '+(e.numeroCheque||'N/A')+' | ' +
       'Banque: '+(e.banque||'N/A')+'</div></div></label>';
   });
@@ -3990,7 +4136,7 @@ function genererPVImpaye() {
     return;
   }
   
-  var num = c.numero.replace('2026-','2026-IMP-');
+  var num = c.numero.replace(/^\d{4}-/, (new Date().getFullYear())+'-IMP-');
   var totalImpaye = 0;
   selected.forEach(function(e){ totalImpaye += Math.round(e.montantDu); });
   
@@ -4029,7 +4175,7 @@ function genererPVImpaye() {
       '<td style="border:1px solid #fecaca;padding:6px;font-size:9pt;"><input class="doc-input doc-input-md" value="'+(e.numeroCheque||'')+'" placeholder="N° chèque" /></td>' +
       '<td style="border:1px solid #fecaca;padding:6px;font-size:9pt;"><input class="doc-input doc-input-md" value="'+(e.banque||'')+'" placeholder="Banque" /></td>' +
       '<td style="border:1px solid #fecaca;padding:6px;font-size:9pt;text-align:right;"><input class="doc-input doc-input-num" type="text" value="'+fmt(Math.round(e.montantDu))+'" style="text-align:right;" /> F</td>' +
-      '<td style="border:1px solid #fecaca;padding:6px;font-size:9pt;text-align:center;"><input class="doc-input doc-input-md" value="'+e.dateEcheance+'" /></td>' +
+      '<td style="border:1px solid #fecaca;padding:6px;font-size:9pt;text-align:center;"><input class="doc-input doc-input-md" value="'+dateFR(e.dateEch)+'" /></td>' +
       '</tr>';
   });
   
@@ -4335,7 +4481,7 @@ function afficherFraisDossier() {
         totalFrais += frais;
         
         // Déterminer le statut (les frais sont généralement payés au début avec la caution)
-        var statut = '<span style="color:#2563eb;font-weight:600;">💳 Versés</span>';
+        var statut = '<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;font-size:11px;">À confirmer</span>';
         
         html += '<tr>' +
           '<td><strong>' + esc(c.numero) + '</strong></td>' +
@@ -4439,6 +4585,113 @@ function afficherCautionsRestituees() {
 // ============================================================
 // REÇU DE RESTITUTION DE CAUTION
 // ============================================================
+function afficherFraisRecu() {
+  var idx = document.getElementById('sel-frais-recu').value;
+  var el  = document.getElementById('doc-frais-recu');
+  if (idx === '') {
+    el.innerHTML = '<p style="color:#94a3b8;font-style:italic;padding:40px;text-align:center;">Sélectionnez un contrat 24 mois pour générer le reçu de frais de dossier</p>';
+    return;
+  }
+  var c   = CONTRATS[idx];
+  var num = c.numero.replace(/^\d{4}-/, (new Date().getFullYear()) + '-FDO-');
+  var montantFrais = c.fraisMontant || c.frais || Math.round(c.montant * 0.05);
+
+  var html =
+    // ── Bandeau édition no-print ──
+    '<div style="background:#fffbeb;padding:6px 12px;border-radius:6px;margin-bottom:8px;font-size:9.5px;color:#92400e;border:1px solid #fde68a;" class="no-print">' +
+    '✏️ <strong>Tous les champs sont modifiables</strong> avant impression</div>' +
+
+    // ── EN-TÊTE MAPHAR ──
+    '<div style="display:flex;align-items:center;margin-bottom:8px;border-bottom:3px double #92400e;padding-bottom:6px;">' +
+    '<img src="' + MAPHAR_LOGO + '" style="width:60px;height:60px;object-fit:contain;margin-right:12px;flex-shrink:0;" />' +
+    '<div style="flex:1;text-align:center;">' +
+    '<h2 style="margin:0 0 1px;font-size:11pt;color:#92400e;">MUTUELLE POUR L\'ASSURANCE DES PHARMACIENS</h2>' +
+    '<p style="font-size:8pt;margin:0;color:#64748b;"><input class="doc-input doc-input-xl" value="Abidjan, Côte d\'Ivoire" /> | Tél : <input class="doc-input doc-input-md" value="" placeholder="00 00 00 00" /></p>' +
+    '</div></div>' +
+
+    // ── TITRE ──
+    '<div style="background:linear-gradient(135deg,#92400e,#d97706);color:white;text-align:center;padding:7px 10px;border-radius:6px;margin-bottom:8px;">' +
+    '<h3 style="margin:0;font-size:12pt;letter-spacing:1px;">REÇU DE FRAIS DE DOSSIER</h3>' +
+    '<p style="margin:2px 0 0;font-size:8pt;opacity:0.85;">N° <strong><input class="doc-input doc-input-md" value="' + num + '" style="color:white;background:rgba(255,255,255,0.15);" /></strong>' +
+    ' &nbsp;|&nbsp; Date : <input class="doc-input doc-input-md" value="' + auj() + '" style="color:white;background:rgba(255,255,255,0.15);" />' +
+    ' &nbsp;|&nbsp; Lieu : <input class="doc-input doc-input-sm" value="Abidjan" style="color:white;background:rgba(255,255,255,0.15);" /></p>' +
+    '</div>' +
+
+    // ── MONTANT EN VEDETTE ──
+    '<div style="background:linear-gradient(135deg,#fef3c7,white);border:3px solid #d97706;border-radius:10px;padding:14px;text-align:center;margin-bottom:10px;">' +
+    '<p style="font-size:8.5pt;color:#64748b;margin:0 0 4px;text-transform:uppercase;letter-spacing:1px;">MONTANT DES FRAIS DE DOSSIER</p>' +
+    '<p style="font-size:22pt;font-weight:900;color:#92400e;margin:0;line-height:1.1;">' +
+    '<input class="doc-input doc-input-num" type="text" value="' + fmt(montantFrais) + '" style="font-size:22pt;font-weight:900;color:#92400e;text-align:center;width:220px;" /> FCFA</p>' +
+    '<p style="font-size:8pt;color:#78350f;margin:4px 0 0;">(5% du montant total du véhicule — Non restituable)</p>' +
+    '</div>' +
+
+    // ── IDENTIFICATION (police réduite) ──
+    '<div style="border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:8.5pt;">' +
+    '<p style="font-weight:700;color:#92400e;margin:0 0 5px;font-size:9pt;border-bottom:1px solid #e2e8f0;padding-bottom:3px;">👤 SOUSCRIPTEUR</p>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;">' +
+    '<p style="margin:1px 0;"><span style="color:#64748b;">Nom :</span> <strong><input class="doc-input" style="font-size:8.5pt;" value="' + esc(c.nom) + '" /></strong></p>' +
+    '<p style="margin:1px 0;"><span style="color:#64748b;">N° Contrat :</span> <strong>' + esc(c.numero) + '</strong></p>' +
+    '<p style="margin:1px 0;"><span style="color:#64748b;">Officine :</span> <input class="doc-input" style="font-size:8.5pt;" value="' + esc(c.officine || '') + '" placeholder="—" /></p>' +
+    '<p style="margin:1px 0;"><span style="color:#64748b;">Tél :</span> <input class="doc-input" style="font-size:8.5pt;" value="' + esc(c.tel || '') + '" placeholder="—" /></p>' +
+    '<p style="margin:1px 0;grid-column:1/-1;"><span style="color:#64748b;">Adresse :</span> <input class="doc-input doc-input-xl" style="font-size:8.5pt;" value="' + esc(c.adresse || '') + '" placeholder="—" /></p>' +
+    '</div></div>' +
+
+    // ── DÉTAIL CHÈQUE + RAPPEL CONTRAT ──
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">' +
+
+    // Bloc chèque frais
+    '<div style="border:1px solid #d97706;border-radius:6px;padding:8px 10px;font-size:8.5pt;">' +
+    '<p style="font-weight:700;color:#92400e;margin:0 0 5px;font-size:9pt;">🏦 RÈGLEMENT PAR CHÈQUE</p>' +
+    '<table style="width:100%;font-size:8pt;border-collapse:collapse;">' +
+    '<tr><td style="color:#64748b;padding:3px 0;width:40%;">N° Chèque :</td>' +
+    '<td style="font-weight:700;padding:3px 0;color:#92400e;"><input class="doc-input doc-input-md" style="font-size:8.5pt;" value="' + (c.fraisNumeroCheque || '') + '" placeholder="—" /></td></tr>' +
+    '<tr><td style="color:#64748b;padding:3px 0;">Banque émettrice :</td>' +
+    '<td style="font-weight:600;padding:3px 0;"><input class="doc-input doc-input-md" style="font-size:8.5pt;" value="' + (c.fraisBanque || '') + '" placeholder="—" /></td></tr>' +
+    '<tr><td style="color:#64748b;padding:3px 0;">Véhicule :</td>' +
+    '<td style="font-weight:600;padding:3px 0;"><input class="doc-input" style="font-size:8pt;" value="' + esc(c.vehicule || '') + '" /></td></tr>' +
+    '</table></div>' +
+
+    // Bloc rappel contrat
+    '<div style="border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;background:#f8fafc;font-size:8.5pt;">' +
+    '<p style="font-weight:700;color:#475569;margin:0 0 5px;font-size:9pt;">📋 RAPPEL CONTRAT</p>' +
+    '<table style="width:100%;font-size:8pt;border-collapse:collapse;">' +
+    '<tr><td style="color:#64748b;padding:2px 0;width:55%;">Montant total véhicule :</td>' +
+    '<td style="font-weight:700;padding:2px 0;text-align:right;"><input class="doc-input doc-input-num" style="font-size:8pt;text-align:right;" value="' + fmt(c.montant) + '" /> FCFA</td></tr>' +
+    '<tr><td style="color:#64748b;padding:2px 0;">Frais de dossier (5%) :</td>' +
+    '<td style="font-weight:700;padding:2px 0;text-align:right;color:#92400e;">' + fmt(montantFrais) + ' FCFA</td></tr>' +
+    '<tr><td style="color:#64748b;padding:2px 0;">Caution (30%) :</td>' +
+    '<td style="font-weight:600;padding:2px 0;text-align:right;color:#6d28d9;">' + fmt(c.caution) + ' FCFA</td></tr>' +
+    '<tr><td style="color:#64748b;padding:2px 0;">Total versé au départ :</td>' +
+    '<td style="font-weight:700;padding:2px 0;text-align:right;">' + fmt(c.caution + montantFrais) + ' FCFA</td></tr>' +
+    '<tr><td style="color:#64748b;padding:2px 0;">Mensualité :</td>' +
+    '<td style="font-weight:700;padding:2px 0;text-align:right;">' + fmt(Math.round(c.mensualite || c.montant / 24)) + ' FCFA</td></tr>' +
+    '<tr><td style="color:#64748b;padding:2px 0;">Durée :</td>' +
+    '<td style="padding:2px 0;text-align:right;font-weight:600;">24 mensualités</td></tr>' +
+    '</table></div>' +
+    '</div>' +
+
+    // ── MENTION LÉGALE ──
+    '<div style="border:1px solid #fde68a;background:#fefce8;border-radius:6px;padding:7px 10px;margin-bottom:10px;font-size:7.8pt;color:#713f12;">' +
+    '<p style="font-weight:700;margin:0 0 3px;font-size:8.5pt;color:#92400e;">⚠️ NATURE DES FRAIS DE DOSSIER</p>' +
+    '<p style="margin:1px 0;">• Les frais de dossier correspondent à 5% du montant total du véhicule et couvrent les frais administratifs liés à la constitution du dossier de financement.</p>' +
+    '<p style="margin:1px 0;">• Ces frais sont définitivement acquis à MAPHAR dès la signature du contrat et ne sont en aucun cas restituables, quelle que soit l\'issue du contrat.</p>' +
+    '<p style="margin:1px 0;">• Ce reçu est établi en double exemplaire : un pour le souscripteur, un conservé par MAPHAR.</p>' +
+    '</div>' +
+
+    // ── SIGNATURES ──
+    '<div class="sig-grid">' +
+    '<div><p style="font-size:9pt;font-weight:700;">Le Souscripteur</p>' +
+    '<p style="font-size:7.5pt;font-style:italic;color:#64748b;">(Signature précédée de "Lu et approuvé")</p>' +
+    '<div class="sig-box"></div></div>' +
+    '<div><p style="font-size:9pt;font-weight:700;">Président MAPHAR</p>' +
+    '<p style="font-size:7.5pt;font-style:italic;color:#64748b;">(Cachet et signature)</p>' +
+    '<div class="sig-box"></div></div>' +
+    '</div>';
+
+  el.innerHTML = html;
+  majFooterImpression('Reçu Frais de Dossier — ' + c.numero);
+}
+
 function afficherRestitution() {
   var idx = document.getElementById('sel-restitution').value;
   var el = document.getElementById('doc-restitution');
@@ -4506,7 +4759,7 @@ function afficherRestitution() {
     '<p class="bloc-titre" style="color:#065f46;">🚗 DÉTAILS DU CONTRAT</p>' +
     '<p><strong>VÉHICULE :</strong> <input class="doc-input doc-input-xl" value="'+ esc(c.vehicule||'') +'" /></p>' +
     '<p><strong>MONTANT DU VÉHICULE :</strong> <input class="doc-input doc-input-num" type="text" value="'+fmt(c.montant)+'" /> FCFA</p>' +
-    '<p><strong>FORMULE :</strong> '+c.formule+' mois | <strong>Mensualités réglées :</strong> '+s.nbPaye+'/'+c.formule+'</p>' +
+    '<p><strong>FORMULE :</strong> '+c.formule+' mois</p>' +
     '<p><strong>DATE DE FIN DE CONTRAT :</strong> <input class="doc-input doc-input-md" value="'+dateRest+'" /></p>' +
     '</div>' +
 
@@ -4531,12 +4784,17 @@ function afficherRestitution() {
     '<p style="font-size:8.5pt;color:#1e3a5f;margin-top:6px;font-style:italic;">Toutes les mensualités ayant été intégralement honorées. Le présent reçu d\'avoir vaut décharge définitive.</p>' +
     '</div>' +
 
-    '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:10px;font-size:9pt;margin:10px 0;">' +
-    '<p style="margin:2px 0;">✅ Toutes les mensualités du contrat ont été réglées</p>' +
-    '<p style="margin:2px 0;">✅ Le véhicule est pleinement la propriété du souscripteur</p>' +
-    '<p style="margin:2px 0;">✅ La caution est restituée sans réserve</p>' +
-    '</div>' +
 
+
+    '<div class="badge-jaune"><p style="font-weight:700;margin-bottom:6px;">📋 MODE DE RESTITUTION</p>' +
+    '<table style="width:100%;font-size:9pt;border-collapse:collapse;"><tr>' +
+    '<td style="padding:3px 6px;width:40%;">Mode :</td>' +
+    '<td style="padding:3px 6px;"><input class="doc-input doc-input-md" value="'+(c.modeRestitution||'')+' " placeholder="Chèque / Virement / Espèces" /></td></tr>' +
+    '<tr><td style="padding:3px 6px;">N° Chèque / Réf. virement :</td>' +
+    '<td style="padding:3px 6px;"><input class="doc-input doc-input-md" value="'+(c.restitutionRef||'')+'" placeholder="Référence" /></td></tr>' +
+    '<tr><td style="padding:3px 6px;">Banque :</td>' +
+    '<td style="padding:3px 6px;"><input class="doc-input doc-input-md" value="'+(c.restitutionBanque||'')+'" placeholder="Banque" /></td></tr>' +
+    '</table></div>' +
     '<div class="sig-grid">' +
     '<div><p><strong>Le Bénéficiaire</strong></p>' +
     '<p style="font-size:8.5pt;font-style:italic;">(Reçu la somme de <strong>'+fmt(caution)+' FCFA</strong>)</p>' +
@@ -5441,7 +5699,7 @@ function iaRafraichirActions() {
 // Construit le contexte du contrat sélectionné pour la page active
 function iaGetContexte() {
   var selMap = {
-    'doc-caution':'sel-caution','doc-bordereau':'sel-bordereau',
+    'doc-caution':'sel-caution','doc-frais-recu':'sel-frais-recu','doc-bordereau':'sel-bordereau',
     'doc-recu':'sel-recu-contrat','doc-solde':'sel-solde',
     'doc-releve':'sel-releve','doc-impaye':'sel-impaye',
     'doc-tableau':'sel-tableau','doc-suivi':'sel-suivi',
