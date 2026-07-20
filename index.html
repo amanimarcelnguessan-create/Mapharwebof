@@ -1405,6 +1405,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
       <button class="btn btn-blue btn-sm" onclick="showPage('cohortes')">Voir toutes les cohortes →</button>
     </div>
     <div id="d-cohortes-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;"></div>
+    <div id="d-cohortes-total"></div>
   </div>
 
   <div class="stats-row" style="grid-template-columns:repeat(3,1fr);">
@@ -1557,6 +1558,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
     <button class="btn btn-blue" onclick="ouvrirFormCohorteCreation()">➕ Nouvelle cohorte</button>
   </div>
 
+  <div id="cohortes-page-total"></div>
   <div id="liste-cohortes"></div>
 </div>
 
@@ -2072,6 +2074,26 @@ function getCohorteStats(cohorteId) {
   return stats;
 }
 
+// Cumul de toutes les cohortes, avec le détail de chacune (pour affichage progressif)
+function getTotalCohortesStats() {
+  var total = {nb:0, nb12:0, nb24:0, totalMontant:0, totalCaution:0, totalFrais:0, totalEncaisse:0, totalReste:0};
+  var detail = [];
+  var triees = COHORTES.slice().sort(function(a,b){
+    return (a.dateLancement||'').localeCompare(b.dateLancement||'');
+  });
+  triees.forEach(function(co){
+    var s = getCohorteStats(co.id);
+    detail.push({cohorte:co, stats:s});
+    total.nb += s.nb; total.nb12 += s.nb12; total.nb24 += s.nb24;
+    total.totalMontant += s.totalMontant;
+    total.totalCaution += s.totalCaution;
+    total.totalFrais += s.totalFrais;
+    total.totalEncaisse += s.totalEncaisse;
+    total.totalReste += s.totalReste;
+  });
+  return {total:total, detail:detail};
+}
+
 function ouvrirFormCohorteCreation() {
   if(!peutModifier()) { showRefus(); return; }
   document.getElementById('fc-mode').value = 'creation';
@@ -2157,10 +2179,28 @@ var STATUT_COHORTE_COULEUR = {
 
 function afficherCohortes() {
   var el = document.getElementById('liste-cohortes');
+  var elTotal = document.getElementById('cohortes-page-total');
   if(!el) return;
   if(!COHORTES.length) {
     el.innerHTML = '<p style="color:#94a3b8;font-style:italic;text-align:center;padding:30px;">Aucune cohorte. Cliquez sur "Nouvelle cohorte" pour commencer.</p>';
+    if(elTotal) elTotal.innerHTML = '';
     return;
+  }
+  if(elTotal) {
+    var r = getTotalCohortesStats();
+    var formuleAdditive = r.detail.map(function(d){ return esc(d.cohorte.nom)+' ('+fmt(d.stats.totalMontant)+' F)'; }).join(' + ');
+    elTotal.innerHTML =
+      '<div class="card" style="background:#f8fafc;border:1px solid #e2e8f0;margin-bottom:16px;">' +
+        '<div style="font-weight:700;color:#1e3a5f;margin-bottom:6px;">📊 Cumul toutes cohortes</div>' +
+        '<div style="font-size:12px;color:#475569;margin-bottom:8px;">'+formuleAdditive+' = <strong>'+fmt(r.total.totalMontant)+' F</strong></div>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;font-size:12px;">' +
+          '<div>📁 Dossiers : <strong>'+r.total.nb+'</strong> <span style="color:#94a3b8;">('+r.total.nb12+' × 12m, '+r.total.nb24+' × 24m)</span></div>' +
+          '<div>💳 Garanties totales : <strong>'+fmt(r.total.totalCaution)+' F</strong></div>' +
+          '<div>🧾 Frais de dossier totaux : <strong>'+fmt(r.total.totalFrais)+' F</strong></div>' +
+          '<div>✅ Loyers encaissés : <strong style="color:#10b981;">'+fmt(r.total.totalEncaisse)+' F</strong></div>' +
+          '<div>⏳ Reste dû : <strong style="color:#dc2626;">'+fmt(r.total.totalReste)+' F</strong></div>' +
+        '</div>' +
+      '</div>';
   }
   var triees = COHORTES.slice().sort(function(a,b){
     return (b.dateLancement||'').localeCompare(a.dateLancement||'');
@@ -2207,9 +2247,11 @@ function fmtDate(iso) {
 
 function afficherCohortesDashboard() {
   var el = document.getElementById('d-cohortes-cards');
+  var elTotal = document.getElementById('d-cohortes-total');
   if(!el) return;
   if(!COHORTES.length) {
     el.innerHTML = '<p style="color:#94a3b8;font-style:italic;font-size:12px;">Aucune cohorte créée pour le moment.</p>';
+    if(elTotal) elTotal.innerHTML = '';
     return;
   }
   var triees = COHORTES.slice().sort(function(a,b){
@@ -2227,12 +2269,30 @@ function afficherCohortesDashboard() {
         '<span style="background:'+couleur+';font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">'+esc(co.statut)+'</span>' +
       '</div>' +
       '<div style="font-size:11px;opacity:0.85;margin-top:4px;">Lancée le '+fmtDate(co.dateLancement)+'</div>' +
-      '<div style="font-size:20px;font-weight:700;margin-top:6px;">'+s.nb+' dossier'+(s.nb>1?'s':'')+'</div>' +
-      '<div style="font-size:11px;opacity:0.9;">'+s.nb12+' × 12m · '+s.nb24+' × 24m</div>' +
-      '<div style="font-size:11px;margin-top:6px;opacity:0.9;">💳 '+fmt(s.totalCaution)+' F · 🧾 '+fmt(s.totalFrais)+' F</div>' +
+      '<div style="font-size:20px;font-weight:700;margin-top:6px;">'+fmt(s.totalMontant)+' F</div>' +
+      '<div style="font-size:11px;opacity:0.9;">véhicules · '+s.nb+' dossier'+(s.nb>1?'s':'')+' ('+s.nb12+' × 12m · '+s.nb24+' × 24m)</div>' +
+      '<div style="font-size:11px;margin-top:6px;opacity:0.9;">💳 '+fmt(s.totalCaution)+' F garanties · 🧾 '+fmt(s.totalFrais)+' F frais</div>' +
     '</div>';
   });
   el.innerHTML = html;
+
+  // Cumul progressif : Cohorte 1 + Cohorte 2 + ... = Total
+  if(elTotal) {
+    var r = getTotalCohortesStats();
+    var formuleAdditive = r.detail.map(function(d){ return fmt(d.stats.totalMontant); }).join(' + ');
+    elTotal.innerHTML =
+      '<div class="card" style="background:#f8fafc;border:1px solid #e2e8f0;margin-top:10px;">' +
+        '<div style="font-weight:700;color:#1e3a5f;margin-bottom:6px;">📊 Cumul toutes cohortes</div>' +
+        '<div style="font-size:12px;color:#475569;margin-bottom:8px;">'+formuleAdditive+' = <strong>'+fmt(r.total.totalMontant)+' F</strong> (véhicules)</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;font-size:12px;">' +
+          '<div>📁 Dossiers : <strong>'+r.total.nb+'</strong> <span style="color:#94a3b8;">('+r.total.nb12+' × 12m, '+r.total.nb24+' × 24m)</span></div>' +
+          '<div>💳 Garanties totales : <strong>'+fmt(r.total.totalCaution)+' F</strong></div>' +
+          '<div>🧾 Frais de dossier totaux : <strong>'+fmt(r.total.totalFrais)+' F</strong></div>' +
+          '<div>✅ Loyers encaissés : <strong style="color:#10b981;">'+fmt(r.total.totalEncaisse)+' F</strong></div>' +
+          '<div>⏳ Reste dû : <strong style="color:#dc2626;">'+fmt(r.total.totalReste)+' F</strong></div>' +
+        '</div>' +
+      '</div>';
+  }
 }
 
 // ============================================================
