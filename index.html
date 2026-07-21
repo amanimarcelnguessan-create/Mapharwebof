@@ -58,26 +58,35 @@ function _chargerXLSX(callback) {
 <!-- Manifest PWA -->
 <link rel="manifest" href="#" id="manifest-placeholder">
 <style>
+:root{
+  --sauge:#6B8F71; --sauge-dark:#4F6B54; --sauge-light:#EAF0E7;
+  --gold:#B8934B; --gold-light:#F5EDDD;
+  --charcoal:#2B2E2C; --ink:#3F463F; --ink-muted:#71786F;
+  --bg:#F6F7F3; --surface:#FFFFFF; --border:#E4E7DE;
+  --success:#3F8F5C; --warning:#B8934B; --danger:#B14A3C;
+  --radius:12px; --shadow:0 1px 3px rgba(43,46,44,0.06),0 6px 20px rgba(43,46,44,0.05);
+}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#f0f4f8;color:#1a202c;font-size:14px;}
-.sidebar{position:fixed;left:0;top:0;width:220px;height:100vh;background:#1e3a5f;color:white;overflow-y:auto;z-index:100;padding:0;}
-.sidebar-header{padding:16px;background:rgba(0,0,0,0.2);text-align:center;border-bottom:1px solid rgba(255,255,255,0.1);}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--charcoal);font-size:14px;}
+.sidebar{position:fixed;left:0;top:0;width:220px;height:100vh;background:linear-gradient(180deg,#2E3B30,#232C24);color:white;overflow-y:auto;z-index:100;padding:0;}
+.sidebar-header{padding:16px;background:rgba(0,0,0,0.18);text-align:center;border-bottom:1px solid rgba(255,255,255,0.08);}
 .sidebar-header h1{font-size:18px;font-weight:700;color:white;}
-.sidebar-header p{font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px;}
-.sidebar-section{padding:8px 12px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-top:8px;}
-.nav-btn{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;background:none;border:none;color:rgba(255,255,255,0.85);cursor:pointer;font-size:12px;text-align:left;transition:all 0.15s;border-left:3px solid transparent;}
-.nav-btn:hover{background:rgba(255,255,255,0.1);color:white;}
-.nav-btn.active{background:rgba(255,255,255,0.15);color:white;border-left-color:#60a5fa;}
+.sidebar-header p{font-size:10px;color:rgba(255,255,255,0.55);margin-top:2px;}
+.sidebar-section{padding:10px 14px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1.2px;margin-top:6px;}
+.nav-btn{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;background:none;border:none;color:rgba(255,255,255,0.78);cursor:pointer;font-size:12px;text-align:left;transition:all 0.15s;border-left:3px solid transparent;}
+.nav-btn:hover{background:rgba(255,255,255,0.06);color:white;}
+.nav-btn.active{background:rgba(184,147,75,0.16);color:white;border-left-color:var(--gold);}
 .nav-btn .icon{font-size:16px;width:20px;text-align:center;}
-.main{margin-left:220px;padding:20px;min-height:100vh;}
+.main{margin-left:220px;padding:24px;min-height:100vh;}
 .page{display:none;}
 .page.active{display:block;}
+h2{letter-spacing:-0.2px;}
 /* Barre de sélection contrat */
-.selecteur-contrat{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;padding:16px;border-radius:10px;margin-bottom:16px;}
+.selecteur-contrat{background:linear-gradient(135deg,var(--sauge-dark),var(--sauge));color:white;padding:16px;border-radius:var(--radius);margin-bottom:16px;}
 .selecteur-contrat h3{margin:0 0 10px 0;font-size:14px;}
-.selecteur-contrat select{width:100%;padding:8px 12px;border-radius:6px;border:none;font-size:13px;background:white;color:#1a202c;cursor:pointer;}
-.selecteur-contrat .btn-print{margin-top:10px;background:#10b981;color:white;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;}
-.selecteur-contrat .btn-print:hover{background:#059669;}
+.selecteur-contrat select{width:100%;padding:8px 12px;border-radius:6px;border:none;font-size:13px;background:white;color:var(--charcoal);cursor:pointer;}
+.selecteur-contrat .btn-print{margin-top:10px;background:var(--gold);color:white;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;}
+.selecteur-contrat .btn-print:hover{background:#a17f3f;}
 /* Document A4 */
 .doc-wrapper{background:white;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.12);overflow:hidden;}
 .doc-a4{padding:18mm 16mm;font-size:10pt;line-height:1.5;color:#000;background:white;}
@@ -103,21 +112,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .doc-a4 .badge-bleu{background:#dbeafe;border:1px solid #3b82f6;padding:6px;margin-bottom:8px;border-radius:4px;}
 .doc-a4 .separateur{border-top:2px solid #1e3a5f;border-bottom:2px solid #1e3a5f;padding:6px;text-align:center;margin-bottom:10px;}
 /* Dashboard */
-.card{background:white;border-radius:10px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.08);}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
-.stat-card{background:white;border-radius:10px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);}
-.stat-card .val{font-size:22px;font-weight:700;margin-bottom:4px;}
-.stat-card .lbl{font-size:11px;color:#64748b;}
-.stat-blue .val{color:#2563eb;}
-.stat-green .val{color:#10b981;}
-.stat-orange .val{color:#f59e0b;}
-.stat-red .val{color:#ef4444;}
+.card{background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border:1px solid var(--border);}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:16px 18px;text-align:left;box-shadow:var(--shadow);border:1px solid var(--border);border-left:3px solid var(--sauge);}
+.stat-card .val{font-size:24px;font-weight:700;margin-bottom:4px;color:var(--charcoal);letter-spacing:-0.3px;}
+.stat-card .lbl{font-size:11.5px;color:var(--ink-muted);font-weight:600;}
+.stat-blue{border-left-color:var(--sauge);} .stat-blue .val{color:var(--sauge-dark);}
+.stat-green{border-left-color:var(--success);} .stat-green .val{color:var(--success);}
+.stat-orange{border-left-color:var(--gold);} .stat-orange .val{color:var(--gold);}
+.stat-red{border-left-color:var(--danger);} .stat-red .val{color:var(--danger);}
 /* Gestion contrats */
-.table-contrats{width:100%;border-collapse:collapse;background:white;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);}
-.table-contrats th{background:#2563eb;color:white;padding:10px 12px;text-align:left;font-size:12px;}
+.table-contrats{width:100%;border-collapse:collapse;background:white;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border);}
+.table-contrats th{background:var(--sauge-dark);color:white;padding:11px 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:0.2px;}
 
-.table-contrats td{padding:9px 12px;border-bottom:1px solid #f1f5f9;font-size:12px;vertical-align:middle;}
-.table-contrats tr:hover td{background:#f8fafc;}
+.table-contrats td{padding:10px 12px;border-bottom:1px solid var(--bg);font-size:12px;vertical-align:middle;}
+.table-contrats tr:hover td{background:var(--sauge-light);}
 .progress-bar{background:#e2e8f0;border-radius:10px;height:8px;overflow:hidden;}
 .progress-fill{height:100%;border-radius:10px;transition:width 0.3s;}
 /* Paiements */
@@ -150,17 +159,41 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .tr-paye td{background:#d1fae5!important;}
 .tr-retard td{background:#fee2e2!important;}
 /* Boutons */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.15s;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.15s;}
 .btn:hover{opacity:0.88;transform:translateY(-1px);}
-.btn-blue{background:#2563eb;color:white;}
-.btn-green{background:#10b981;color:white;}
-.btn-red{background:#ef4444;color:white;}
-.btn-orange{background:#f59e0b;color:white;}
+.btn-blue{background:var(--sauge-dark);color:white;}
+.btn-green{background:var(--success);color:white;}
+.btn-red{background:var(--danger);color:white;}
+.btn-orange{background:var(--gold);color:white;}
 .btn-purple{background:#7c3aed;color:white;}
 .btn-gray{background:#6b7280;color:white;}
 .btn-pink{background:#ec4899;color:white;}
 .btn-sm{padding:5px 10px;font-size:11px;}
 .btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center;}
+/* Bandeau signature — Cumul cohortes */
+.banner-cumul{position:relative;overflow:hidden;border-radius:16px;padding:22px 26px;color:white;
+  background:linear-gradient(120deg,var(--sauge-dark) 0%,var(--sauge) 55%,var(--gold) 130%);
+  box-shadow:0 8px 24px rgba(79,107,84,0.25);margin-bottom:18px;}
+.banner-cumul::after{content:'';position:absolute;right:-40px;top:-60px;width:220px;height:220px;
+  border-radius:50%;background:rgba(255,255,255,0.07);}
+.banner-cumul .eyebrow{font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;opacity:0.85;font-weight:700;}
+.banner-cumul .grand-total{font-size:34px;font-weight:800;letter-spacing:-0.5px;margin:4px 0 14px;}
+.banner-cumul .segbar{display:flex;height:10px;border-radius:6px;overflow:hidden;background:rgba(255,255,255,0.18);margin-bottom:10px;}
+.banner-cumul .segbar-seg{height:100%;transition:width .4s;}
+.banner-cumul .seg-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;opacity:0.95;margin-bottom:14px;}
+.banner-cumul .seg-legend .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;}
+.banner-cumul .chips{display:flex;flex-wrap:wrap;gap:10px;position:relative;z-index:1;}
+.banner-cumul .chip{background:rgba(255,255,255,0.14);border-radius:10px;padding:8px 12px;font-size:11.5px;backdrop-filter:blur(2px);}
+.banner-cumul .chip b{display:block;font-size:14px;font-weight:700;margin-top:1px;}
+/* Cartes cohorte */
+.cohort-card{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--sauge);
+  border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);cursor:pointer;transition:transform .12s;}
+.cohort-card:hover{transform:translateY(-2px);}
+.cohort-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;color:white;letter-spacing:.2px;}
+/* Chips de synthèse (Cautions/Frais dashboard) */
+.kpi-chip{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:transform .12s;box-shadow:var(--shadow);}
+.kpi-chip:hover{transform:translateY(-2px);}
+.kpi-chip .icon-badge{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:8px;}
 /* Formulaire — style clair */
 .form-card{
   background:#ffffff;
@@ -182,7 +215,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 }
 .form-card h3{
   margin-bottom:18px;
-  color:#1e3a5f;
+  color:var(--charcoal);
   font-size:14px;
   font-weight:700;
   letter-spacing:0.06em;
@@ -1090,7 +1123,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 <div id="lock-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#1d4ed8,#2563eb);z-index:99999;align-items:center;justify-content:center;">
   <div style="background:white;border-radius:16px;padding:36px 40px;width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.5);text-align:center;">
     <img id="lock-logo" src="" alt="MAPHAR" style="width:75px;height:75px;object-fit:contain;margin-bottom:10px;" />
-    <h2 style="color:#1e3a5f;margin:0 0 4px;font-size:20px;">MAPHAR Mobility V12</h2>
+    <h2 style="color:var(--charcoal);margin:0 0 4px;font-size:20px;">MAPHAR Mobility V12</h2>
     <p style="color:#64748b;font-size:13px;margin:0 0 18px;" id="lock-msg">Connectez-vous pour accéder à l'application</p>
 
     <!-- Zone connexion normale -->
@@ -1111,7 +1144,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 
     <!-- Zone première configuration (aucun utilisateur) -->
     <div id="setup-zone" style="display:none;text-align:left;">
-      <p style="font-size:13px;color:#1e3a5f;font-weight:700;margin:0 0 14px;text-align:center;">👤 Créez votre compte administrateur</p>
+      <p style="font-size:13px;color:var(--charcoal);font-weight:700;margin:0 0 14px;text-align:center;">👤 Créez votre compte administrateur</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
         <input type="text" id="setup-prenom" placeholder="Prénom *"
           style="padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;"
@@ -1138,7 +1171,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 
     <!-- Zone changement de mot de passe -->
     <div id="changemdp-zone" style="display:none;text-align:left;">
-      <p style="font-size:13px;color:#1e3a5f;font-weight:700;margin:0 0 12px;text-align:center;">🔑 Changer mon mot de passe</p>
+      <p style="font-size:13px;color:var(--charcoal);font-weight:700;margin:0 0 12px;text-align:center;">🔑 Changer mon mot de passe</p>
       <input type="password" id="chg-old" placeholder="Mot de passe actuel"
         style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
         onfocus="this.style.borderColor='#1e3a5f'" onblur="this.style.borderColor='#e2e8f0'" />
@@ -1289,7 +1322,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   <div style="padding:24px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
       <div>
-        <h2 style="color:#1e3a5f;margin:0;font-size:22px;">👥 Gestion des Utilisateurs</h2>
+        <h2 style="color:var(--charcoal);margin:0;font-size:22px;">👥 Gestion des Utilisateurs</h2>
         <p style="color:#64748b;margin:4px 0 0;font-size:13px;">Administrez les accès à MAPHAR Mobility V12</p>
       </div>
       <button onclick="ouvrirFormulaireAjoutUser()" style="padding:10px 20px;background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;">
@@ -1299,7 +1332,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 
     <!-- Formulaire ajout/édition utilisateur -->
     <div id="user-form-zone" style="display:none;background:#f8faff;border:2px solid #2563eb;border-radius:12px;padding:20px;margin-bottom:20px;">
-      <h3 style="color:#1e3a5f;margin:0 0 16px;font-size:16px;" id="user-form-title">➕ Nouvel Utilisateur</h3>
+      <h3 style="color:var(--charcoal);margin:0 0 16px;font-size:16px;" id="user-form-title">➕ Nouvel Utilisateur</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
         <div>
           <label style="font-size:12px;color:#64748b;font-weight:600;">Prénom *</label>
@@ -1390,10 +1423,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 
 <!-- ====== DASHBOARD ====== -->
 <div id="page-dashboard" class="page active">
-  <h2 style="margin-bottom:16px;color:#1e3a5f;">📊 Tableau de bord MAPHAR Mobility</h2>
+  <h2 style="margin-bottom:16px;color:var(--charcoal);">📊 Tableau de bord MAPHAR Mobility</h2>
   <div class="stats-row">
     <div class="stat-card stat-blue stat-card-link" onclick="showPage('gestion')" title="Voir tous les contrats"><div class="val" id="d-nb">0</div><div class="lbl">Contrats actifs</div><div style="font-size:10px;color:#94a3b8;margin-top:4px;">👆 Voir les contrats</div></div>
-    <div class="stat-card stat-card-link" style="background:linear-gradient(135deg,#64748b,#475569);cursor:pointer;" onclick="showPage('archives')" title="Voir les archives"><div class="val" id="d-nb-archives" style="color:white;">0</div><div class="lbl" style="color:rgba(255,255,255,0.85);">🗄️ Archivés (soldés)</div><div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:4px;">👆 Voir les archives</div></div>
+    <div class="stat-card stat-card-link" style="border-left-color:var(--ink-muted);cursor:pointer;" onclick="showPage('archives')" title="Voir les archives"><div class="val" id="d-nb-archives">0</div><div class="lbl">🗄️ Archivés (soldés)</div><div style="font-size:10px;color:var(--ink-muted);margin-top:4px;">👆 Voir les archives</div></div>
     <div class="stat-card stat-orange stat-card-link" onclick="filtrerDashboard('tous')" title="Voir le détail financier"><div class="val" id="d-total">0</div><div class="lbl">Montant total (F)</div><div style="font-size:10px;color:#94a3b8;margin-top:4px;">👆 Voir détail</div></div>
     <div class="stat-card stat-green stat-card-link" onclick="filtrerDashboard('payes')" title="Voir les contrats à jour"><div class="val" id="d-encaisse">0</div><div class="lbl">Encaissé (F)</div><div style="font-size:10px;color:#94a3b8;margin-top:4px;">👆 Contrats à jour</div></div>
     <div class="stat-card stat-red stat-card-link" onclick="filtrerDashboard('retards')" title="Voir les retards"><div class="val" id="d-reste">0</div><div class="lbl">Reste à solder (F)</div><div style="font-size:10px;color:#94a3b8;margin-top:4px;">👆 Voir les retards</div></div>
@@ -1401,11 +1434,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 
   <div class="card" style="margin-bottom:16px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-      <h3 style="margin:0;color:#1e3a5f;">📦 Cohortes</h3>
+      <h3 style="margin:0;color:var(--charcoal);">📦 Cohortes</h3>
       <button class="btn btn-blue btn-sm" onclick="showPage('cohortes')">Voir toutes les cohortes →</button>
     </div>
-    <div id="d-cohortes-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;"></div>
     <div id="d-cohortes-total"></div>
+    <div id="d-cohortes-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;"></div>
   </div>
 
   <div class="stats-row" style="grid-template-columns:repeat(3,1fr);">
@@ -1419,7 +1452,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   </div>
   <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;">
     <div class="card">
-      <h3 style="margin-bottom:12px;color:#1e3a5f;" id="d-detail-titre">📋 Détail par contrat</h3>
+      <h3 style="margin-bottom:12px;color:var(--charcoal);" id="d-detail-titre">📋 Détail par contrat</h3>
       
   <!-- ALERTES DÉPÔT CHÈQUES (5 JOURS) -->
   <div id="alerte-cheques" style="display:none;margin-top:10px;">
@@ -1432,20 +1465,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   
   <!-- STATISTIQUES DÉTAILLÉES CAUTIONS & FRAIS -->
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
-    <div class="stat-card" style="background:linear-gradient(135deg,#3b82f6,#2563eb);cursor:pointer;" onclick="showPage('cautions-payees')">
-      <div class="stat-label">💳 Cautions 12 mois (20%)</div>
-      <div class="stat-value" id="d-caut-12" style="font-size:20px;">0 F</div>
-      <small id="d-nb-12" style="opacity:0.8;">0 contrats</small>
+    <div class="kpi-chip" onclick="showPage('cautions-payees')">
+      <div class="icon-badge" style="background:var(--sauge-light);color:var(--sauge-dark);">💳</div>
+      <div style="font-size:11.5px;color:var(--ink-muted);font-weight:600;">Cautions 12 mois (20%)</div>
+      <div id="d-caut-12" style="font-size:20px;font-weight:700;color:var(--charcoal);margin-top:2px;">0 F</div>
+      <small id="d-nb-12" style="color:var(--ink-muted);">0 contrats</small>
     </div>
-    <div class="stat-card" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);cursor:pointer;" onclick="showPage('cautions-payees')">
-      <div class="stat-label">💳 Cautions 24 mois (30%)</div>
-      <div class="stat-value" id="d-caut-24" style="font-size:20px;">0 F</div>
-      <small id="d-nb-24" style="opacity:0.8;">0 contrats</small>
+    <div class="kpi-chip" onclick="showPage('cautions-payees')">
+      <div class="icon-badge" style="background:#EFE9F7;color:#7c3aed;">💳</div>
+      <div style="font-size:11.5px;color:var(--ink-muted);font-weight:600;">Cautions 24 mois (30%)</div>
+      <div id="d-caut-24" style="font-size:20px;font-weight:700;color:var(--charcoal);margin-top:2px;">0 F</div>
+      <small id="d-nb-24" style="color:var(--ink-muted);">0 contrats</small>
     </div>
-    <div class="stat-card" style="background:linear-gradient(135deg,#f59e0b,#d97706);cursor:pointer;" onclick="showPage('frais-dossier')">
-      <div class="stat-label">🧾 Frais dossier (5%)</div>
-      <div class="stat-value" id="d-frais-total" style="font-size:20px;">0 F</div>
-      <small id="d-nb-frais" style="opacity:0.8;">0 contrats 24m</small>
+    <div class="kpi-chip" onclick="showPage('frais-dossier')">
+      <div class="icon-badge" style="background:var(--gold-light);color:var(--gold);">🧾</div>
+      <div style="font-size:11.5px;color:var(--ink-muted);font-weight:600;">Frais dossier (5%)</div>
+      <div id="d-frais-total" style="font-size:20px;font-weight:700;color:var(--charcoal);margin-top:2px;">0 F</div>
+      <small id="d-nb-frais" style="color:var(--ink-muted);">0 contrats 24m</small>
     </div>
   </div>
 
@@ -1463,7 +1499,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 
 <!-- ====== GESTION CONTRATS ====== -->
 <div id="page-gestion" class="page">
-  <h2 style="margin-bottom:16px;color:#1e3a5f;">📁 Gestion des Contrats</h2>
+  <h2 style="margin-bottom:16px;color:var(--charcoal);">📁 Gestion des Contrats</h2>
   <div id="form-contrat" style="display:none;" class="form-card">
     <h3 id="form-titre">➕ Nouveau contrat</h3>
     <input type="hidden" id="f-mode" value="creation">
@@ -1482,7 +1518,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
     <!-- ── Section chèques caution + frais de dossier ── -->
     <div id="f-section-caution" style="margin-top:14px;display:none;">
       <div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
-        <p style="font-weight:700;color:#1e3a5f;margin:0 0 10px;font-size:13px;">💳 Chèque de caution — <span id="f-label-caution" style="color:#1d4ed8;">20% du montant</span></p>
+        <p style="font-weight:700;color:var(--charcoal);margin:0 0 10px;font-size:13px;">💳 Chèque de caution — <span id="f-label-caution" style="color:#1d4ed8;">20% du montant</span></p>
         <div class="form-grid">
           <div class="form-group"><label>N° Chèque caution *</label><input id="f-caution-cheque" placeholder="Ex: 0012345"></div>
           <div class="form-group"><label>Montant caution (FCFA)</label><input id="f-caution-montant" type="number" placeholder="Calculé automatiquement" style="background:#f0f9ff;"></div>
@@ -1527,7 +1563,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 
 <!-- ====== PAGE COHORTES ====== -->
 <div id="page-cohortes" class="page">
-  <h2 style="margin-bottom:6px;color:#1e3a5f;">📦 Gestion par Cohortes</h2>
+  <h2 style="margin-bottom:6px;color:var(--charcoal);">📦 Gestion par Cohortes</h2>
   <p style="color:#64748b;margin-bottom:16px;font-size:13px;">Une cohorte regroupe les dossiers soumis ensemble à Bridge Bank (chèque de garantie + loyers mensuels), par formule 12 ou 24 mois. Suivez ici le statut et les totaux de chaque cohorte.</p>
 
   <div id="form-cohorte" style="display:none;" class="form-card">
@@ -1564,7 +1600,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 
 <!-- ====== PAGE ARCHIVES ====== -->
 <div id="page-archives" class="page">
-  <h2 style="margin-bottom:16px;color:#1e3a5f;">🗄️ Archives — Contrats Terminés</h2>
+  <h2 style="margin-bottom:16px;color:var(--charcoal);">🗄️ Archives — Contrats Terminés</h2>
   <p style="color:#64748b;margin-bottom:16px;font-size:13px;">Les contrats archivés sont des contrats soldés retirés de la liste principale et du tableau de bord.</p>
   <div class="search-contrats">
     <span>🔍</span>
@@ -2171,37 +2207,49 @@ function supprimerCohorte(idx) {
 }
 
 var STATUT_COHORTE_COULEUR = {
-  'En constitution':'#64748b',
-  'Soumise à Bridge Bank':'#2563eb',
-  'Livrée':'#10b981',
+  'En constitution':'#B8934B',
+  'Soumise à Bridge Bank':'#6B8F71',
+  'Livrée':'#3F8F5C',
   'Clôturée':'#7c3aed'
 };
+
+// Bandeau signature : cumul de toutes les cohortes, avec barre segmentée proportionnelle
+function renderBanniereCumul() {
+  if(!COHORTES.length) return '';
+  var r = getTotalCohortesStats();
+  var segColors = ['rgba(255,255,255,0.95)','rgba(43,46,44,0.32)','rgba(255,255,255,0.55)','rgba(43,46,44,0.55)','rgba(255,255,255,0.3)'];
+  var segHtml = '', legendHtml = '';
+  r.detail.forEach(function(d,i){
+    var pct = r.total.totalMontant>0 ? (d.stats.totalMontant/r.total.totalMontant*100) : 0;
+    var c = segColors[i%segColors.length];
+    segHtml += '<div class="segbar-seg" style="width:'+pct.toFixed(1)+'%;background:'+c+';"></div>';
+    legendHtml += '<span><span class="dot" style="background:'+c+';"></span>'+esc(d.cohorte.nom)+' — '+fmt(d.stats.totalMontant)+' F ('+pct.toFixed(0)+'%)</span>';
+  });
+  return '<div class="banner-cumul">' +
+    '<div class="eyebrow">📊 Cumul toutes cohortes</div>' +
+    '<div class="grand-total">'+fmt(r.total.totalMontant)+' F <span style="font-size:14px;font-weight:500;opacity:.85;">véhicules</span></div>' +
+    '<div class="segbar">'+segHtml+'</div>' +
+    '<div class="seg-legend">'+legendHtml+'</div>' +
+    '<div class="chips">' +
+      '<div class="chip">📁 Dossiers<b>'+r.total.nb+' <span style="font-weight:500;font-size:11px;">('+r.total.nb12+'×12m, '+r.total.nb24+'×24m)</span></b></div>' +
+      '<div class="chip">💳 Garanties<b>'+fmt(r.total.totalCaution)+' F</b></div>' +
+      '<div class="chip">🧾 Frais dossier<b>'+fmt(r.total.totalFrais)+' F</b></div>' +
+      '<div class="chip">✅ Encaissé<b>'+fmt(r.total.totalEncaisse)+' F</b></div>' +
+      '<div class="chip">⏳ Reste dû<b>'+fmt(r.total.totalReste)+' F</b></div>' +
+    '</div>' +
+  '</div>';
+}
 
 function afficherCohortes() {
   var el = document.getElementById('liste-cohortes');
   var elTotal = document.getElementById('cohortes-page-total');
   if(!el) return;
   if(!COHORTES.length) {
-    el.innerHTML = '<p style="color:#94a3b8;font-style:italic;text-align:center;padding:30px;">Aucune cohorte. Cliquez sur "Nouvelle cohorte" pour commencer.</p>';
+    el.innerHTML = '<p style="color:var(--ink-muted);font-style:italic;text-align:center;padding:30px;">Aucune cohorte. Cliquez sur "Nouvelle cohorte" pour commencer.</p>';
     if(elTotal) elTotal.innerHTML = '';
     return;
   }
-  if(elTotal) {
-    var r = getTotalCohortesStats();
-    var formuleAdditive = r.detail.map(function(d){ return esc(d.cohorte.nom)+' ('+fmt(d.stats.totalMontant)+' F)'; }).join(' + ');
-    elTotal.innerHTML =
-      '<div class="card" style="background:#f8fafc;border:1px solid #e2e8f0;margin-bottom:16px;">' +
-        '<div style="font-weight:700;color:#1e3a5f;margin-bottom:6px;">📊 Cumul toutes cohortes</div>' +
-        '<div style="font-size:12px;color:#475569;margin-bottom:8px;">'+formuleAdditive+' = <strong>'+fmt(r.total.totalMontant)+' F</strong></div>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;font-size:12px;">' +
-          '<div>📁 Dossiers : <strong>'+r.total.nb+'</strong> <span style="color:#94a3b8;">('+r.total.nb12+' × 12m, '+r.total.nb24+' × 24m)</span></div>' +
-          '<div>💳 Garanties totales : <strong>'+fmt(r.total.totalCaution)+' F</strong></div>' +
-          '<div>🧾 Frais de dossier totaux : <strong>'+fmt(r.total.totalFrais)+' F</strong></div>' +
-          '<div>✅ Loyers encaissés : <strong style="color:#10b981;">'+fmt(r.total.totalEncaisse)+' F</strong></div>' +
-          '<div>⏳ Reste dû : <strong style="color:#dc2626;">'+fmt(r.total.totalReste)+' F</strong></div>' +
-        '</div>' +
-      '</div>';
-  }
+  if(elTotal) elTotal.innerHTML = renderBanniereCumul();
   var triees = COHORTES.slice().sort(function(a,b){
     return (b.dateLancement||'').localeCompare(a.dateLancement||'');
   });
@@ -2209,24 +2257,24 @@ function afficherCohortes() {
   triees.forEach(function(co){
     var idxReel = COHORTES.indexOf(co);
     var s = getCohorteStats(co.id);
-    var couleur = STATUT_COHORTE_COULEUR[co.statut] || '#64748b';
-    html += '<div class="form-card" style="margin:0;border-left:5px solid '+couleur+';">' +
+    var couleur = STATUT_COHORTE_COULEUR[co.statut] || '#71786F';
+    html += '<div class="cohort-card" style="border-left-color:'+couleur+';cursor:default;" onmouseover="" >' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">' +
-        '<h3 style="margin:0;color:#1e3a5f;">📦 '+esc(co.nom)+'</h3>' +
-        '<span style="background:'+couleur+';color:white;font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px;white-space:nowrap;">'+esc(co.statut)+'</span>' +
+        '<h3 style="margin:0;color:var(--charcoal);font-size:15px;">📦 '+esc(co.nom)+'</h3>' +
+        '<span class="cohort-pill" style="background:'+couleur+';">'+esc(co.statut)+'</span>' +
       '</div>' +
-      '<p style="font-size:12px;color:#64748b;margin:6px 0 10px;">' +
+      '<p style="font-size:12px;color:var(--ink-muted);margin:6px 0 10px;">' +
         '🚀 Lancée le '+(co.dateLancement?fmtDate(co.dateLancement):'-') +
         (co.dateLivraison ? ' &nbsp;•&nbsp; 🚚 Livraison : '+fmtDate(co.dateLivraison) : '') +
       '</p>' +
-      (co.note ? '<p style="font-size:12px;color:#475569;font-style:italic;margin:0 0 10px;">'+esc(co.note)+'</p>' : '') +
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;background:#f8fafc;border-radius:8px;padding:10px;">' +
-        '<div><strong>'+s.nb+'</strong> dossier'+(s.nb>1?'s':'')+' <span style="color:#94a3b8;">('+s.nb12+' × 12m, '+s.nb24+' × 24m)</span></div>' +
+      (co.note ? '<p style="font-size:12px;color:var(--ink);font-style:italic;margin:0 0 10px;">'+esc(co.note)+'</p>' : '') +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;background:var(--bg);border-radius:8px;padding:10px;">' +
+        '<div><strong>'+s.nb+'</strong> dossier'+(s.nb>1?'s':'')+' <span style="color:var(--ink-muted);">('+s.nb12+' × 12m, '+s.nb24+' × 24m)</span></div>' +
         '<div>Montant total : <strong>'+fmt(s.totalMontant)+' F</strong></div>' +
         '<div>💳 Garanties : <strong>'+fmt(s.totalCaution)+' F</strong></div>' +
         '<div>🧾 Frais dossier : <strong>'+fmt(s.totalFrais)+' F</strong></div>' +
-        '<div>✅ Loyers encaissés : <strong style="color:#10b981;">'+fmt(s.totalEncaisse)+' F</strong></div>' +
-        '<div>⏳ Reste dû : <strong style="color:#dc2626;">'+fmt(s.totalReste)+' F</strong></div>' +
+        '<div>✅ Loyers encaissés : <strong style="color:var(--success);">'+fmt(s.totalEncaisse)+' F</strong></div>' +
+        '<div>⏳ Reste dû : <strong style="color:var(--danger);">'+fmt(s.totalReste)+' F</strong></div>' +
       '</div>' +
       '<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">' +
         '<button class="btn btn-blue btn-sm" onclick="filtrerGestionParCohorte(\''+co.id+'\');showPage(\'gestion\');">📁 Voir les dossiers</button>' +
@@ -2250,49 +2298,30 @@ function afficherCohortesDashboard() {
   var elTotal = document.getElementById('d-cohortes-total');
   if(!el) return;
   if(!COHORTES.length) {
-    el.innerHTML = '<p style="color:#94a3b8;font-style:italic;font-size:12px;">Aucune cohorte créée pour le moment.</p>';
+    el.innerHTML = '<p style="color:var(--ink-muted);font-style:italic;font-size:12px;">Aucune cohorte créée pour le moment.</p>';
     if(elTotal) elTotal.innerHTML = '';
     return;
   }
+  if(elTotal) elTotal.innerHTML = renderBanniereCumul();
   var triees = COHORTES.slice().sort(function(a,b){
     return (b.dateLancement||'').localeCompare(a.dateLancement||'');
   });
-  var couleurCard = ['#1e3a5f','#7c2d12','#065f46','#4c1d95','#9f1239'];
   var html = '';
-  triees.forEach(function(co, i){
+  triees.forEach(function(co){
     var s = getCohorteStats(co.id);
-    var couleur = STATUT_COHORTE_COULEUR[co.statut] || '#64748b';
-    html += '<div class="stat-card-link" onclick="filtrerGestionParCohorte(\''+co.id+'\');showPage(\'gestion\');" ' +
-      'style="background:'+ (couleurCard[i%couleurCard.length]) +';border-radius:10px;padding:12px;color:white;cursor:pointer;">' +
+    var couleur = STATUT_COHORTE_COULEUR[co.statut] || '#71786F';
+    html += '<div class="cohort-card" onclick="filtrerGestionParCohorte(\''+co.id+'\');showPage(\'gestion\');" style="border-left-color:'+couleur+';">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-        '<strong style="font-size:13px;">'+esc(co.nom)+'</strong>' +
-        '<span style="background:'+couleur+';font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">'+esc(co.statut)+'</span>' +
+        '<strong style="font-size:13px;color:var(--charcoal);">'+esc(co.nom)+'</strong>' +
+        '<span class="cohort-pill" style="background:'+couleur+';">'+esc(co.statut)+'</span>' +
       '</div>' +
-      '<div style="font-size:11px;opacity:0.85;margin-top:4px;">Lancée le '+fmtDate(co.dateLancement)+'</div>' +
-      '<div style="font-size:20px;font-weight:700;margin-top:6px;">'+fmt(s.totalMontant)+' F</div>' +
-      '<div style="font-size:11px;opacity:0.9;">véhicules · '+s.nb+' dossier'+(s.nb>1?'s':'')+' ('+s.nb12+' × 12m · '+s.nb24+' × 24m)</div>' +
-      '<div style="font-size:11px;margin-top:6px;opacity:0.9;">💳 '+fmt(s.totalCaution)+' F garanties · 🧾 '+fmt(s.totalFrais)+' F frais</div>' +
+      '<div style="font-size:11px;color:var(--ink-muted);margin-top:4px;">Lancée le '+fmtDate(co.dateLancement)+'</div>' +
+      '<div style="font-size:20px;font-weight:700;margin-top:8px;color:var(--charcoal);">'+fmt(s.totalMontant)+' F</div>' +
+      '<div style="font-size:11px;color:var(--ink-muted);">véhicules · '+s.nb+' dossier'+(s.nb>1?'s':'')+' ('+s.nb12+' × 12m · '+s.nb24+' × 24m)</div>' +
+      '<div style="font-size:11px;margin-top:6px;color:var(--sauge-dark);font-weight:600;">💳 '+fmt(s.totalCaution)+' F · 🧾 '+fmt(s.totalFrais)+' F</div>' +
     '</div>';
   });
   el.innerHTML = html;
-
-  // Cumul progressif : Cohorte 1 + Cohorte 2 + ... = Total
-  if(elTotal) {
-    var r = getTotalCohortesStats();
-    var formuleAdditive = r.detail.map(function(d){ return fmt(d.stats.totalMontant); }).join(' + ');
-    elTotal.innerHTML =
-      '<div class="card" style="background:#f8fafc;border:1px solid #e2e8f0;margin-top:10px;">' +
-        '<div style="font-weight:700;color:#1e3a5f;margin-bottom:6px;">📊 Cumul toutes cohortes</div>' +
-        '<div style="font-size:12px;color:#475569;margin-bottom:8px;">'+formuleAdditive+' = <strong>'+fmt(r.total.totalMontant)+' F</strong> (véhicules)</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;font-size:12px;">' +
-          '<div>📁 Dossiers : <strong>'+r.total.nb+'</strong> <span style="color:#94a3b8;">('+r.total.nb12+' × 12m, '+r.total.nb24+' × 24m)</span></div>' +
-          '<div>💳 Garanties totales : <strong>'+fmt(r.total.totalCaution)+' F</strong></div>' +
-          '<div>🧾 Frais de dossier totaux : <strong>'+fmt(r.total.totalFrais)+' F</strong></div>' +
-          '<div>✅ Loyers encaissés : <strong style="color:#10b981;">'+fmt(r.total.totalEncaisse)+' F</strong></div>' +
-          '<div>⏳ Reste dû : <strong style="color:#dc2626;">'+fmt(r.total.totalReste)+' F</strong></div>' +
-        '</div>' +
-      '</div>';
-  }
 }
 
 // ============================================================
@@ -3624,7 +3653,7 @@ function afficherCaution() {
     '<div style="display:flex;align-items:center;margin-bottom:8px;border-bottom:3px double #1e3a5f;padding-bottom:6px;">'+
     '<img src="'+MAPHAR_LOGO+'" style="width:60px;height:60px;object-fit:contain;margin-right:12px;flex-shrink:0;" />'+
     '<div style="flex:1;text-align:center;">'+
-    '<h2 style="margin:0 0 1px;font-size:11pt;color:#1e3a5f;">MUTUELLE POUR L\'ASSURANCE DES PHARMACIENS</h2>'+
+    '<h2 style="margin:0 0 1px;font-size:11pt;color:var(--charcoal);">MUTUELLE POUR L\'ASSURANCE DES PHARMACIENS</h2>'+
     '<p style="font-size:8pt;margin:0;color:#64748b;"><input class="doc-input doc-input-xl" value="Abidjan, Côte d\'Ivoire" /> | Tél : <input class="doc-input doc-input-md" value="" placeholder="00 00 00 00" /></p>'+
     '</div></div>'+
 
@@ -4227,15 +4256,15 @@ function afficherBordereau() {
     // Bloc souscripteur
     '<div style="border:1px solid #aaa;padding:4px 8px;margin-bottom:6px;background:#fafafa;border-radius:3px;">' +
     '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">' +
-    '<strong style="white-space:nowrap;font-size:8.5pt;color:#1e3a5f;">REMIS PAR :</strong>' +
+    '<strong style="white-space:nowrap;font-size:8.5pt;color:var(--charcoal);">REMIS PAR :</strong>' +
     '<input style="flex:1;min-width:0;border:none;border-bottom:1px solid #aaa;background:transparent;padding:0;font-size:8.5pt;font-family:inherit;" value="'+ esc(c.nom) +'" />' +
     '</div>' +
     '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">' +
-    '<strong style="white-space:nowrap;font-size:8.5pt;color:#1e3a5f;">OFFICINE / FONCTION :</strong>' +
+    '<strong style="white-space:nowrap;font-size:8.5pt;color:var(--charcoal);">OFFICINE / FONCTION :</strong>' +
     '<input style="flex:1;min-width:0;border:none;border-bottom:1px solid #aaa;background:transparent;padding:0;font-size:8.5pt;font-family:inherit;" value="'+ esc(c.officine||'') +'" />' +
     '</div>' +
     '<div style="display:flex;align-items:baseline;gap:6px;">' +
-    '<strong style="white-space:nowrap;font-size:8.5pt;color:#1e3a5f;">N° CONTRAT :</strong>' +
+    '<strong style="white-space:nowrap;font-size:8.5pt;color:var(--charcoal);">N° CONTRAT :</strong>' +
     '<input style="flex:1;min-width:0;border:none;border-bottom:1px solid #aaa;background:transparent;padding:0;font-size:8.5pt;font-family:inherit;" value="'+ esc(c.numero) +'" />' +
     '</div>' +
     '</div>' +
@@ -4352,11 +4381,11 @@ function buildDocRecu(c, e, num, minimal) {
     '<div class="badge-bleu">' +
     '<p style="font-weight:700;font-size:9.5pt;margin-bottom:6px;">📄 ATTESTATION DE PAIEMENT</p>' +
     '<table style="width:100%;border-collapse:collapse;font-size:9pt;">' +
-    '<tr><td style="padding:2px 4px;width:42%;color:#1e3a5f;">La Mutuelle MAPHAR reconnaît avoir reçu de :</td>' +
+    '<tr><td style="padding:2px 4px;width:42%;color:var(--charcoal);">La Mutuelle MAPHAR reconnaît avoir reçu de :</td>' +
     '<td style="padding:2px 4px;font-weight:600;"><input class="doc-input doc-input-xl" value="'+ esc(c.nom) +'" /></td></tr>' +
-    '<tr><td style="padding:2px 4px;color:#1e3a5f;">Au titre de la mensualité N° :</td>' +
+    '<tr><td style="padding:2px 4px;color:var(--charcoal);">Au titre de la mensualité N° :</td>' +
     '<td style="padding:2px 4px;font-weight:600;">M'+e.num+' / '+c.formule+' — Contrat '+c.numero+'</td></tr>' +
-    '<tr><td style="padding:2px 4px;color:#1e3a5f;">Relatif au véhicule :</td>' +
+    '<tr><td style="padding:2px 4px;color:var(--charcoal);">Relatif au véhicule :</td>' +
     '<td style="padding:2px 4px;"><input class="doc-input doc-input-lg" value="'+ esc(c.vehicule||'__________') +'" /></td></tr>' +
     '<tr style="background:#1e40af;color:white;"><td style="padding:5px 4px;font-weight:700;">MONTANT REÇU :</td>' +
     '<td style="padding:5px 4px;font-weight:700;font-size:11pt;"><input class="doc-input doc-input-num" type="text" id="recu-montant-texte" value="'+fmt(e.montantDu)+'" style="color:white;font-weight:700;" /> FCFA</td></tr>' +
@@ -5193,16 +5222,16 @@ function afficherRestitution() {
     '<div class="badge-bleu">' +
     '<p style="font-weight:700;font-size:9.5pt;margin-bottom:6px;">📄 ATTESTATION DE RESTITUTION</p>' +
     '<table style="width:100%;border-collapse:collapse;font-size:9pt;">' +
-    '<tr><td style="padding:2px 4px;width:42%;color:#1e3a5f;">MAPHAR certifie avoir restitué à :</td>' +
+    '<tr><td style="padding:2px 4px;width:42%;color:var(--charcoal);">MAPHAR certifie avoir restitué à :</td>' +
     '<td style="padding:2px 4px;font-weight:600;"><input class="doc-input doc-input-xl" value="'+esc(c.nom)+'" /></td></tr>' +
-    '<tr><td style="padding:2px 4px;color:#1e3a5f;">Caution du contrat N° :</td>' +
+    '<tr><td style="padding:2px 4px;color:var(--charcoal);">Caution du contrat N° :</td>' +
     '<td style="padding:2px 4px;font-weight:600;">'+c.numero+'</td></tr>' +
-    '<tr><td style="padding:2px 4px;color:#1e3a5f;">Relatif au véhicule :</td>' +
+    '<tr><td style="padding:2px 4px;color:var(--charcoal);">Relatif au véhicule :</td>' +
     '<td style="padding:2px 4px;"><input class="doc-input doc-input-lg" value="'+ esc(c.vehicule||'__________') +'" /></td></tr>' +
     '<tr style="background:#065f46;color:white;"><td style="padding:5px 4px;font-weight:700;">MONTANT RESTITUÉ :</td>' +
     '<td style="padding:5px 4px;font-weight:700;font-size:11pt;"><input class="doc-input doc-input-num" type="text" value="'+fmt(caution)+'" style="color:white;font-weight:700;" /> FCFA</td></tr>' +
     '</table>' +
-    '<p style="font-size:8.5pt;color:#1e3a5f;margin-top:6px;font-style:italic;">Toutes les mensualités ayant été intégralement honorées. Le présent reçu d\'avoir vaut décharge définitive.</p>' +
+    '<p style="font-size:8.5pt;color:var(--charcoal);margin-top:6px;font-style:italic;">Toutes les mensualités ayant été intégralement honorées. Le présent reçu d\'avoir vaut décharge définitive.</p>' +
     '</div>' +
 
 
@@ -5752,7 +5781,7 @@ function afficherTableauUsers() {
       '<td style="padding:12px 16px;">' +
         '<div style="display:flex;align-items:center;gap:10px;">' +
           '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#10b981,#2563eb);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;">' + initiales + '</div>' +
-          '<div><div style="font-size:13px;font-weight:600;color:#1e3a5f;">' + (u.prenom||'') + ' ' + (u.nom||'') + (estMoi?' <span style="font-size:10px;color:#2563eb;">(vous)</span>':'') + '</div>' +
+          '<div><div style="font-size:13px;font-weight:600;color:var(--charcoal);">' + (u.prenom||'') + ' ' + (u.nom||'') + (estMoi?' <span style="font-size:10px;color:#2563eb;">(vous)</span>':'') + '</div>' +
           '<div style="font-size:11px;color:#94a3b8;">' + (u.lastLogin ? new Date(u.lastLogin).toLocaleDateString('fr-FR') : 'Jamais') + '</div></div>' +
         '</div></td>' +
       '<td style="padding:12px 16px;font-size:13px;color:#475569;">' + (u.email||'') + '</td>' +
@@ -6316,7 +6345,7 @@ document.addEventListener('click', function(e) {
         <div style="display:flex;gap:10px;align-items:flex-start;">
           <span style="font-size:18px;flex-shrink:0;">🏦</span>
           <div>
-            <strong style="color:#1e3a5f;font-size:13px;">Bordereaux mensuels 12M et 24M</strong>
+            <strong style="color:var(--charcoal);font-size:13px;">Bordereaux mensuels 12M et 24M</strong>
             <p style="color:#64748b;font-size:12px;margin:2px 0 0;">Génération du bordereau de remise bancaire groupé par mensualité (M1 à M12 / M24), avec sélection individuelle des souscripteurs à inclure.</p>
           </div>
         </div>
@@ -6324,7 +6353,7 @@ document.addEventListener('click', function(e) {
         <div style="display:flex;gap:10px;align-items:flex-start;">
           <span style="font-size:18px;flex-shrink:0;">☑️</span>
           <div>
-            <strong style="color:#1e3a5f;font-size:13px;">Sélection des souscripteurs</strong>
+            <strong style="color:var(--charcoal);font-size:13px;">Sélection des souscripteurs</strong>
             <p style="color:#64748b;font-size:12px;margin:2px 0 0;">Cases à cocher pour inclure ou exclure des souscripteurs dans chaque bordereau mensuel, avec boutons "Tous" et "Aucun".</p>
           </div>
         </div>
@@ -6332,7 +6361,7 @@ document.addEventListener('click', function(e) {
         <div style="display:flex;gap:10px;align-items:flex-start;">
           <span style="font-size:18px;flex-shrink:0;">🪟</span>
           <div>
-            <strong style="color:#1e3a5f;font-size:13px;">Limite à 3 onglets simultanés</strong>
+            <strong style="color:var(--charcoal);font-size:13px;">Limite à 3 onglets simultanés</strong>
             <p style="color:#64748b;font-size:12px;margin:2px 0 0;">L'application peut désormais être ouverte sur 3 onglets au maximum. Un 4ème onglet est bloqué avec possibilité de forcer l'ouverture.</p>
           </div>
         </div>
@@ -6340,7 +6369,7 @@ document.addEventListener('click', function(e) {
         <div style="display:flex;gap:10px;align-items:flex-start;">
           <span style="font-size:18px;flex-shrink:0;">💾</span>
           <div>
-            <strong style="color:#1e3a5f;font-size:13px;">Synchronisation des chèques</strong>
+            <strong style="color:var(--charcoal);font-size:13px;">Synchronisation des chèques</strong>
             <p style="color:#64748b;font-size:12px;margin:2px 0 0;">Les numéros de chèques et banques saisis dans les bordereaux individuels sont automatiquement repris dans les bordereaux mensuels.</p>
           </div>
         </div>
