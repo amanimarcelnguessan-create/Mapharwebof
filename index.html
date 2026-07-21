@@ -1,5 +1,5 @@
 <!-- ============================================================
-     MAPHAR Mobility V12 — Application de gestion véhicule
+     MAPHAR Mobility — Application de gestion véhicule
      Version  : V12.1 — Build du 11/04/2026
      Auteur   : EROCIME GROUP / MAPHAR Secrétariat
      Audit    : Score 24/24 — Certifié conforme
@@ -12,7 +12,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAPHAR Mobility V12 — Offline</title>
+<title>MAPHAR Mobility</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -55,10 +55,10 @@ function _chargerXLSX(callback) {
 
 <!-- PWA Meta Tags -->
 <meta name="theme-color" content="#22863a">
-<meta name="description" content="MAPHAR Mobility V12 - Gestion des conventions de financement">
+<meta name="description" content="MAPHAR Mobility - Gestion des conventions de financement">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MAPHAR Mobility V12">
+<meta name="apple-mobile-web-app-title" content="MAPHAR Mobility">
 
 <!-- Manifest PWA -->
 <link rel="manifest" href="#" id="manifest-placeholder">
@@ -141,21 +141,21 @@ h2{letter-spacing:-0.2px;}
 
 .table-contrats td{padding:10px 12px;border-bottom:1px solid var(--bg);font-size:12px;vertical-align:middle;}
 .table-contrats tr:hover td{background:var(--sauge-light);}
-.progress-bar{background:#e2e8f0;border-radius:10px;height:8px;overflow:hidden;}
+.progress-bar{background:var(--border);border-radius:10px;height:8px;overflow:hidden;}
 .progress-fill{height:100%;border-radius:10px;transition:width 0.3s;}
 /* Paiements */
 .table-paiements{width:100%;border-collapse:collapse;font-size:12px;}
 .table-paiements th{background:var(--sauge-dark);color:white;padding:8px 10px;text-align:left;}
 .table-paiements td{padding:6px 8px;border-bottom:1px solid #e5e7eb;vertical-align:middle;}
-.table-paiements input{width:100%;border:1px solid #c7d7f0;border-radius:4px;padding:4px 6px;font-size:11px;background:#f8fafd;color:var(--charcoal);}
-.table-paiements select{width:100%;border:1px solid #c7d7f0;border-radius:4px;padding:4px;font-size:11px;background:#f8fafd;color:var(--charcoal);}
+.table-paiements input{width:100%;border:1px solid var(--border);border-radius:4px;padding:4px 6px;font-size:11px;background:var(--bg);color:var(--charcoal);}
+.table-paiements select{width:100%;border:1px solid var(--border);border-radius:4px;padding:4px;font-size:11px;background:var(--bg);color:var(--charcoal);}
 /* Lock screen inputs global style */
 #lock-screen input[type="password"],
 #lock-screen input[type="email"],
 #lock-screen input[type="text"]{
   width:100%;padding:11px 13px;
   background:#ffffff;
-  border:1px solid #c7d7f0;
+  border:1px solid var(--border);
   border-radius:8px;margin-bottom:8px;
   box-sizing:border-box;font-size:13px;
   color:var(--charcoal);
@@ -254,8 +254,8 @@ h2{letter-spacing:-0.2px;}
 .form-group select,
 .form-group textarea{
   padding:10px 13px;
-  background:#f8fafd;
-  border:1px solid #c7d7f0;
+  background:var(--bg);
+  border:1px solid var(--border);
   border-radius:8px;
   font-size:13px;
   color:var(--charcoal);
@@ -753,7 +753,7 @@ h2{letter-spacing:-0.2px;}
 }
 .ia-msg{border-radius:10px;padding:8px 12px;font-size:12px;line-height:1.5;max-width:95%;}
 .ia-msg.user{background:#ede9fe;color:#4c1d95;align-self:flex-end;border-bottom-right-radius:2px;}
-.ia-msg.ai{background:#f8fafd;color:var(--charcoal);align-self:flex-start;border-bottom-left-radius:2px;border:1px solid #e2e8f0;}
+.ia-msg.ai{background:var(--bg);color:var(--charcoal);align-self:flex-start;border-bottom-left-radius:2px;border:1px solid var(--border);}
 .ia-msg.typing{color:#6b7280;font-style:italic;}
 #ia-input-row{
   padding:10px 12px;background:#f8f7ff;border-top:1px solid #ede9fe;
@@ -788,7 +788,7 @@ h2{letter-spacing:-0.2px;}
     bottom: 0;
     left: 0;
     right: 0;
-    border-top: 1px solid #cbd5e1;
+    border-top: 1px solid var(--border);
     background: white;
     padding: 3px 10mm;
     font-size: 7.5pt;
@@ -826,9 +826,9 @@ h2{letter-spacing:-0.2px;}
 .search-contrats{
   display:flex;align-items:center;gap:10px;margin-bottom:14px;
   padding:10px 16px;
-  background:#f8fafd;
+  background:var(--bg);
   border-radius:10px;
-  border:1px solid #c7d7f0;
+  border:1px solid var(--border);
   box-shadow:0 2px 8px rgba(0,0,0,0.06);
   transition:border-color 0.2s;
 }
@@ -856,7 +856,7 @@ h2{letter-spacing:-0.2px;}
 
 
 /* ============================================================
-   RESPONSIVE MOBILE - MAPHAR Mobility V12
+   RESPONSIVE MOBILE - MAPHAR Mobility
    ============================================================ */
 
 /* Hamburger button - hidden on desktop */
@@ -1137,19 +1137,19 @@ h2{letter-spacing:-0.2px;}
 <div id="lock-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,var(--sauge-dark),var(--sauge));z-index:99999;align-items:center;justify-content:center;">
   <div style="background:white;border-radius:16px;padding:36px 40px;width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.5);text-align:center;">
     <img id="lock-logo" src="" alt="MAPHAR" style="width:75px;height:75px;object-fit:contain;margin-bottom:10px;" />
-    <h2 style="color:var(--charcoal);margin:0 0 4px;font-size:20px;">MAPHAR Mobility V12</h2>
+    <h2 style="color:var(--charcoal);margin:0 0 4px;font-size:20px;">MAPHAR Mobility</h2>
     <p style="color:var(--ink-muted);font-size:13px;margin:0 0 18px;" id="lock-msg">Connectez-vous pour accéder à l'application</p>
 
     <!-- Zone connexion normale -->
     <div id="login-zone">
       <input type="email" id="login-email" placeholder="Adresse email…"
-        style="width:100%;padding:11px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;box-sizing:border-box;outline:none;margin-bottom:8px;transition:border 0.2s;"
+        style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:8px;font-size:14px;box-sizing:border-box;outline:none;margin-bottom:8px;transition:border 0.2s;"
         onkeydown="if(event.key==='Enter') document.getElementById('login-password').focus();"
-        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
       <input type="password" id="login-password" placeholder="Mot de passe…"
-        style="width:100%;padding:11px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;box-sizing:border-box;outline:none;transition:border 0.2s;"
+        style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:8px;font-size:14px;box-sizing:border-box;outline:none;transition:border 0.2s;"
         onkeydown="if(event.key==='Enter') verifierConnexion();"
-        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
       <button id="login-btn" onclick="verifierConnexion()" style="width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,var(--sauge-dark),var(--sauge));color:white;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;">
         🔓 Se connecter
       </button>
@@ -1161,22 +1161,22 @@ h2{letter-spacing:-0.2px;}
       <p style="font-size:13px;color:var(--charcoal);font-weight:700;margin:0 0 14px;text-align:center;">👤 Créez votre compte administrateur</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
         <input type="text" id="setup-prenom" placeholder="Prénom *"
-          style="padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;"
-          onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+          style="padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;"
+          onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
         <input type="text" id="setup-nom" placeholder="Nom *"
-          style="padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;"
-          onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+          style="padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;"
+          onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
       </div>
       <input type="email" id="setup-email" placeholder="Email (identifiant de connexion) *"
-        style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
-        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+        style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
+        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
       <input type="password" id="setup-mdp1" placeholder="Mot de passe (min. 6 caractères) *"
-        style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
-        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+        style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
+        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
       <input type="password" id="setup-mdp2" placeholder="Confirmer le mot de passe *"
-        style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
+        style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
         onkeydown="if(event.key==='Enter') creerCompteAdmin();"
-        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
       <div id="setup-hint" style="font-size:11px;color:var(--danger);min-height:16px;margin-bottom:8px;text-align:center;"></div>
       <button onclick="creerCompteAdmin()" style="width:100%;padding:11px;background:linear-gradient(135deg,#2f6d46,var(--success));color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;">
         ✅ Créer mon compte administrateur
@@ -1187,18 +1187,18 @@ h2{letter-spacing:-0.2px;}
     <div id="changemdp-zone" style="display:none;text-align:left;">
       <p style="font-size:13px;color:var(--charcoal);font-weight:700;margin:0 0 12px;text-align:center;">🔑 Changer mon mot de passe</p>
       <input type="password" id="chg-old" placeholder="Mot de passe actuel"
-        style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
-        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+        style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
+        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
       <input type="password" id="chg-new1" placeholder="Nouveau mot de passe (min. 6 car.)"
-        style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
-        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+        style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
+        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
       <input type="password" id="chg-new2" placeholder="Confirmer le nouveau mot de passe"
-        style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
+        style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;outline:none;margin-bottom:8px;"
         onkeydown="if(event.key==='Enter') confirmerChangementMDP();"
-        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+        onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
       <div id="chg-hint" style="font-size:11px;color:var(--danger);min-height:16px;margin-bottom:8px;text-align:center;"></div>
       <div style="display:flex;gap:8px;">
-        <button onclick="annulerChangementMDP()" style="flex:1;padding:10px;background:#f1f5f9;color:var(--ink-muted);border:none;border-radius:8px;cursor:pointer;font-size:13px;">
+        <button onclick="annulerChangementMDP()" style="flex:1;padding:10px;background:var(--bg);color:var(--ink-muted);border:none;border-radius:8px;cursor:pointer;font-size:13px;">
           ← Retour
         </button>
         <button onclick="confirmerChangementMDP()" style="flex:2;padding:10px;background:var(--success);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;">
@@ -1219,17 +1219,17 @@ h2{letter-spacing:-0.2px;}
 <div class="sidebar">
   <div class="sidebar-header">
     <img id="logo-sidebar" src="" alt="MAPHAR" style="width:80px;height:80px;object-fit:contain;border-radius:50%;margin-bottom:8px;border:2px solid rgba(255,255,255,0.3);background:white;display:block;margin-left:auto;margin-right:auto;">
-    <h1>MAPHAR Mobility V12</h1>
+    <h1>MAPHAR Mobility</h1>
     <p>Gestion Administrative</p>
   </div>
   <div class="cert-badge">
     <strong>✅ CERTIFIÉ CONFORME</strong>
-    Audit V12 — Février 2026<br>
+    Audit — Février 2026<br>
     <span style="font-size:9px;opacity:0.85;line-height:1.6;display:block;margin-top:3px;">
       W3C HTML5 · ISO 216 (A4) · OHADA<br>
       Sécurité · PWA · FCFA normalisé
     </span>
-    <span style="display:block;margin-top:4px;font-size:9px;color:#6ee7b7;font-weight:700;letter-spacing:0.5px;">N° CERT-MAPHAR-V12-0226</span>
+    <span style="display:block;margin-top:4px;font-size:9px;color:#6ee7b7;font-weight:700;letter-spacing:0.5px;">N° CERT-MAPHAR-0226</span>
   </div>
 
   <div class="sidebar-section">Tableau de bord</div>
@@ -1337,7 +1337,7 @@ h2{letter-spacing:-0.2px;}
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
       <div>
         <h2 style="color:var(--charcoal);margin:0;font-size:22px;">👥 Gestion des Utilisateurs</h2>
-        <p style="color:var(--ink-muted);margin:4px 0 0;font-size:13px;">Administrez les accès à MAPHAR Mobility V12</p>
+        <p style="color:var(--ink-muted);margin:4px 0 0;font-size:13px;">Administrez les accès à MAPHAR Mobility</p>
       </div>
       <button onclick="ouvrirFormulaireAjoutUser()" style="padding:10px 20px;background:linear-gradient(135deg,var(--sauge-dark),var(--sauge));color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;">
         ➕ Ajouter un utilisateur
@@ -1351,26 +1351,26 @@ h2{letter-spacing:-0.2px;}
         <div>
           <label style="font-size:12px;color:var(--ink-muted);font-weight:600;">Prénom *</label>
           <input type="text" id="uf-prenom" placeholder="ex: Marie"
-            style="width:100%;padding:9px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;margin-top:4px;outline:none;"
-            onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+            style="width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;margin-top:4px;outline:none;"
+            onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
         </div>
         <div>
           <label style="font-size:12px;color:var(--ink-muted);font-weight:600;">Nom *</label>
           <input type="text" id="uf-nom" placeholder="ex: KOUASSI"
-            style="width:100%;padding:9px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;margin-top:4px;outline:none;"
-            onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+            style="width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;margin-top:4px;outline:none;"
+            onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
         </div>
       </div>
       <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;">
         <div>
           <label style="font-size:12px;color:var(--ink-muted);font-weight:600;">Email (identifiant) *</label>
           <input type="email" id="uf-email" placeholder="ex: marie@maphar.ci"
-            style="width:100%;padding:9px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;margin-top:4px;outline:none;"
-            onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+            style="width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;margin-top:4px;outline:none;"
+            onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
         </div>
         <div>
           <label style="font-size:12px;color:var(--ink-muted);font-weight:600;">Rôle *</label>
-          <select id="uf-role" style="width:100%;padding:9px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;margin-top:4px;outline:none;background:white;">
+          <select id="uf-role" style="width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;margin-top:4px;outline:none;background:white;">
             <option value="gestionnaire">Gestionnaire</option>
             <option value="lecteur">Lecteur</option>
             <option value="admin">Administrateur</option>
@@ -1381,20 +1381,20 @@ h2{letter-spacing:-0.2px;}
         <div>
           <label style="font-size:12px;color:var(--ink-muted);font-weight:600;" id="uf-mdp-label">Mot de passe *</label>
           <input type="password" id="uf-mdp1" placeholder="Min. 6 caractères"
-            style="width:100%;padding:9px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;margin-top:4px;outline:none;"
-            onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+            style="width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;margin-top:4px;outline:none;"
+            onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
         </div>
         <div>
           <label style="font-size:12px;color:var(--ink-muted);font-weight:600;">Confirmer mot de passe *</label>
           <input type="password" id="uf-mdp2" placeholder="Répéter le mot de passe"
-            style="width:100%;padding:9px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;margin-top:4px;outline:none;"
-            onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='#e2e8f0'" />
+            style="width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;box-sizing:border-box;margin-top:4px;outline:none;"
+            onfocus="this.style.borderColor='var(--sauge-dark)'" onblur="this.style.borderColor='var(--border)'" />
         </div>
       </div>
       <input type="hidden" id="uf-edit-email" value="" />
       <div id="uf-hint" style="font-size:12px;color:var(--danger);min-height:16px;margin-bottom:10px;"></div>
       <div style="display:flex;gap:10px;">
-        <button onclick="fermerFormulaireUser()" style="padding:9px 18px;background:#f1f5f9;color:var(--ink-muted);border:none;border-radius:8px;cursor:pointer;font-size:13px;">Annuler</button>
+        <button onclick="fermerFormulaireUser()" style="padding:9px 18px;background:var(--bg);color:var(--ink-muted);border:none;border-radius:8px;cursor:pointer;font-size:13px;">Annuler</button>
         <button onclick="sauvegarderUser()" style="padding:9px 22px;background:var(--success);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;">💾 Enregistrer</button>
       </div>
     </div>
@@ -1566,7 +1566,7 @@ h2{letter-spacing:-0.2px;}
     <input type="text" id="search-contrats-input" placeholder="Rechercher par nom, numéro, officine, véhicule…" oninput="filtrerListeContrats(this.value)">
     <button onclick="document.getElementById('search-contrats-input').value='';filtrerListeContrats('');" style="background:none;border:none;color:var(--ink-muted);cursor:pointer;font-size:16px;padding:0 4px;" title="Effacer">✕</button>
     <span style="margin-left:8px;">📦</span>
-    <select id="filtre-cohorte-gestion" onchange="filtrerGestionParCohorte(this.value)" style="padding:6px 10px;border-radius:8px;border:1px solid #e2e8f0;font-size:13px;">
+    <select id="filtre-cohorte-gestion" onchange="filtrerGestionParCohorte(this.value)" style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);font-size:13px;">
       <option value="">Toutes les cohortes</option>
     </select>
   </div>
@@ -3055,7 +3055,7 @@ function consulterArchive(idx) {
   header.innerHTML = '<div class="form-card no-print">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">' +
     '<div>' +
-    '<div style="display:inline-block;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;padding:3px 10px;font-size:11px;color:var(--ink-muted);margin-bottom:6px;">🗄️ Contrat archivé — lecture seule</div>' +
+    '<div style="display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:11px;color:var(--ink-muted);margin-bottom:6px;">🗄️ Contrat archivé — lecture seule</div>' +
     '<h3 style="margin:0;">📋 Contrat — '+c.numero+' · '+c.nom+'</h3>' +
     '<p style="font-size:12px;color:var(--ink-muted);margin-top:4px;">'+(c.vehicule||'-')+' | '+c.formule+' mois | '+fmt(c.mensualite)+' F/mois | Archivé le '+(c.dateArchivage||'-')+'</p>' +
     '</div>' +
@@ -3260,7 +3260,7 @@ function afficherTableauPaiements(idx) {
   if(besoitSauvegarder) sauvegarder(false);
 
   // Totaux
-  html += '</tbody><tfoot><tr style="background:#f1f5f9;font-weight:700;">';
+  html += '</tbody><tfoot><tr style="background:var(--bg);font-weight:700;">';
   html += '<td colspan="2" style="text-align:right;padding:8px;">TOTAUX :</td>';
   html += '<td>'+fmt(c.montant)+' F</td>';
   html += '<td colspan="3"></td>';
@@ -3542,7 +3542,7 @@ function afficherDetailDashboard(filtre) {
       if(e.statut==='retard') retardDetail += '<span style="font-size:10px;color:var(--danger);"> • M'+e.num+' ('+dateFR(e.dateEch)+')</span>';
     });
 
-    dhtml += '<div class="detail-link" style="padding:12px 14px;border-bottom:1px solid #f1f5f9;" onclick="ouvrirPaiements('+i+')">' +
+    dhtml += '<div class="detail-link" style="padding:12px 14px;border-bottom:1px solid var(--bg);" onclick="ouvrirPaiements('+i+')">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">' +
       '<div><strong>'+c.numero+' — '+c.nom+'</strong><br>' +
       '<small style="color:var(--ink-muted);">'+(c.officine||'-')+' | '+c.formule+' mois | Mensualité : '+fmt(c.mensualite)+' F</small></div>' +
@@ -3691,8 +3691,8 @@ function afficherCaution() {
     '</div>'+
 
     // ── IDENTIFICATION (police réduite) ──
-    '<div style="border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:8.5pt;">'+
-    '<p style="font-weight:700;color:'+couleur+';margin:0 0 5px;font-size:9pt;border-bottom:1px solid #e2e8f0;padding-bottom:3px;">👤 SOUSCRIPTEUR</p>'+
+    '<div style="border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:8.5pt;">'+
+    '<p style="font-weight:700;color:'+couleur+';margin:0 0 5px;font-size:9pt;border-bottom:1px solid var(--border);padding-bottom:3px;">👤 SOUSCRIPTEUR</p>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;">'+
     '<p style="margin:1px 0;"><span style="color:var(--ink-muted);">Nom :</span> <strong><input class="doc-input" style="font-size:8.5pt;" value="'+esc(c.nom)+'" /></strong></p>'+
     '<p style="margin:1px 0;"><span style="color:var(--ink-muted);">N° Contrat :</span> <strong>'+esc(c.numero)+'</strong></p>'+
@@ -3715,7 +3715,7 @@ function afficherCaution() {
     '<tr><td style="color:var(--ink-muted);padding:2px 0;">Banque émettrice :</td>'+
     '<td style="font-weight:600;padding:2px 0;"><input class="doc-input doc-input-md" style="font-size:8.5pt;" value="'+(c.cautionBanque||'')+'" placeholder="—" /></td></tr>'+
     (is12 ? '' :
-      '<tr><td colspan="2" style="border-top:1px dashed #e2e8f0;padding-top:4px;margin-top:4px;"></td></tr>'+
+      '<tr><td colspan="2" style="border-top:1px dashed var(--border);padding-top:4px;margin-top:4px;"></td></tr>'+
       '<tr><td style="color:#b45309;padding:2px 0;">N° Chèque frais :</td>'+
       '<td style="font-weight:700;padding:2px 0;color:#b45309;"><input class="doc-input doc-input-md" style="font-size:8.5pt;" value="'+(c.fraisNumeroCheque||'')+'" placeholder="—" /></td></tr>'+
       '<tr><td style="color:#b45309;padding:2px 0;">Banque frais :</td>'+
@@ -3724,7 +3724,7 @@ function afficherCaution() {
     '</table></div>'+
 
     // Bloc résumé contrat
-    '<div style="border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;background:#f8fafc;font-size:8.5pt;">'+
+    '<div style="border:1px solid var(--border);border-radius:6px;padding:8px 10px;background:var(--bg);font-size:8.5pt;">'+
     '<p style="font-weight:700;color:var(--ink-muted);margin:0 0 5px;font-size:9pt;">📋 RAPPEL CONTRAT</p>'+
     '<table style="width:100%;font-size:8pt;border-collapse:collapse;">'+
     '<tr><td style="color:var(--ink-muted);padding:2px 0;width:55%;">Montant total véhicule :</td>'+
@@ -4085,7 +4085,7 @@ function afficherBordereauMensuel(formule) {
     '<div style="font-size:8.5pt;"><strong>Mensualité :</strong> <strong style="color:'+couleurText+';">M'+moisSel+' / '+formule+' mois</strong></div>'+
     '<div style="font-size:8.5pt;"><strong>Banque :</strong> <input class="doc-input doc-input-md" placeholder="Nom de la banque" /></div>'+
     '</div>'+
-    '<div style="background:#f8fafc;padding:4px 8px;margin-bottom:6px;border-left:3px solid '+couleur+';">'+
+    '<div style="background:var(--bg);padding:4px 8px;margin-bottom:6px;border-left:3px solid '+couleur+';">'+
     '<p style="margin:0;font-size:8.5pt;"><strong>REMIS PAR :</strong> <input class="doc-input doc-input-xl" value="MAPHAR — Mutuelle pour l\'Assurance des Pharmaciens" /></p>'+
     '<p style="margin:1px 0 0;font-size:8.5pt;"><strong>Nombre de chèques :</strong> <strong>'+lignes.length+'</strong>'+
     ' &nbsp;|&nbsp; <strong>Mensualités :</strong> <strong style="color:'+couleurText+';" id="bm'+formule+'-total-hdr">'+fmt(total)+'</strong> FCFA'+
@@ -4097,49 +4097,49 @@ function afficherBordereauMensuel(formule) {
 
   lignes.forEach(function(l, i){
     var e=l.e, c=l.c, cidx=l.cidx, eidx=l.eidx;
-    var bg = i%2===0 ? 'background:#ffffff;' : 'background:#f8fafc;';
+    var bg = i%2===0 ? 'background:#ffffff;' : 'background:var(--bg);';
     var caution = c.caution || (formule===12 ? c.montant*0.20 : c.montant*0.30);
     var frais   = c.frais   || c.montant*0.05;
 
     var tdCaution = inclureCaution ?
-      '<td style="padding:4px;border:1px solid #e2e8f0;text-align:center;background:#f0fdf4;">'+
+      '<td style="padding:4px;border:1px solid var(--border);text-align:center;background:#f0fdf4;">'+
         '<input class="doc-input" style="min-width:75px;text-align:center;" value="'+ esc(c.cautionNumeroCheque||'') +'" placeholder="N° chèque"'+
         ' onchange="CONTRATS['+cidx+'].cautionNumeroCheque=this.value;sauvegarder();" /></td>'+
-      '<td style="padding:4px;border:1px solid #e2e8f0;text-align:center;background:#f0fdf4;">'+
+      '<td style="padding:4px;border:1px solid var(--border);text-align:center;background:#f0fdf4;">'+
         '<input class="doc-input" style="min-width:55px;text-align:center;" value="'+ esc(c.cautionBanque||'') +'" placeholder="Banque"'+
         ' onchange="CONTRATS['+cidx+'].cautionBanque=this.value;sauvegarder();" /></td>'+
       '<td style="padding:4px;border:1px solid #d1fae5;text-align:right;background:#d1fae5;font-weight:700;color:#065f46;white-space:nowrap;">'+fmt(caution)+' F</td>' : '';
 
     var tdFrais = inclureFrais ?
-      '<td style="padding:4px;border:1px solid #e2e8f0;text-align:center;background:#fff7ed;">'+
+      '<td style="padding:4px;border:1px solid var(--border);text-align:center;background:#fff7ed;">'+
         '<input class="doc-input" style="min-width:75px;text-align:center;" value="'+ esc(c.fraisNumeroCheque||'') +'" placeholder="N° chèque"'+
         ' onchange="CONTRATS['+cidx+'].fraisNumeroCheque=this.value;sauvegarder();" /></td>'+
-      '<td style="padding:4px;border:1px solid #e2e8f0;text-align:center;background:#fff7ed;">'+
+      '<td style="padding:4px;border:1px solid var(--border);text-align:center;background:#fff7ed;">'+
         '<input class="doc-input" style="min-width:55px;text-align:center;" value="'+ esc(c.fraisBanque||'') +'" placeholder="Banque"'+
         ' onchange="CONTRATS['+cidx+'].fraisBanque=this.value;sauvegarder();" /></td>'+
       '<td style="padding:4px;border:1px solid #fee2e2;text-align:right;background:#fee2e2;font-weight:700;color:var(--danger);white-space:nowrap;">'+fmt(frais)+' F</td>' : '';
 
     html +=
       '<tr style="'+bg+'">'+
-      '<td style="padding:4px;text-align:center;border:1px solid #e2e8f0;font-weight:700;color:'+couleur+';">'+(i+1)+'</td>'+
-      '<td style="padding:4px;border:1px solid #e2e8f0;">'+
+      '<td style="padding:4px;text-align:center;border:1px solid var(--border);font-weight:700;color:'+couleur+';">'+(i+1)+'</td>'+
+      '<td style="padding:4px;border:1px solid var(--border);">'+
         '<strong><input class="doc-input" style="min-width:110px;" value="'+esc(c.nom)+'" /></strong>'+
         '<br><small style="color:var(--ink-muted);font-size:7.5pt;"><input class="doc-input" style="min-width:90px;font-size:7.5pt;" value="'+ esc(c.officine||'') +'" placeholder="Officine" /></small>'+
       '</td>'+
-      '<td style="padding:4px;border:1px solid #e2e8f0;">'+
+      '<td style="padding:4px;border:1px solid var(--border);">'+
         '<input class="doc-input" style="min-width:90px;" value="'+ esc(c.vehicule||'') +'" placeholder="Véhicule" />'+
         '<br><small style="color:'+couleurText+';font-size:7.5pt;font-weight:600;">'+fmt(c.montant||0)+' F</small>'+
       '</td>'+
-      '<td style="padding:4px;border:1px solid #e2e8f0;text-align:center;white-space:nowrap;font-size:8pt;">'+
+      '<td style="padding:4px;border:1px solid var(--border);text-align:center;white-space:nowrap;font-size:8pt;">'+
         (e.dateEch ? dateFR(e.dateEch) : '<span style="color:var(--ink-muted);">—</span>')+
       '</td>'+
-      '<td style="padding:4px;border:1px solid #e2e8f0;text-align:center;">'+
+      '<td style="padding:4px;border:1px solid var(--border);text-align:center;">'+
         '<input class="doc-input" style="min-width:75px;text-align:center;" value="'+(e.numeroCheque||'')+'" placeholder="N° chèque"'+
         ' onchange="CONTRATS['+cidx+'].echeances['+eidx+'].numeroCheque=this.value;sauvegarder();" /></td>'+
-      '<td style="padding:4px;border:1px solid #e2e8f0;text-align:center;">'+
+      '<td style="padding:4px;border:1px solid var(--border);text-align:center;">'+
         '<input class="doc-input" style="min-width:55px;text-align:center;" value="'+(e.banque||'')+'" placeholder="Banque"'+
         ' onchange="CONTRATS['+cidx+'].echeances['+eidx+'].banque=this.value;sauvegarder();" /></td>'+
-      '<td style="padding:4px;border:1px solid #e2e8f0;text-align:right;font-weight:600;white-space:nowrap;">'+
+      '<td style="padding:4px;border:1px solid var(--border);text-align:right;font-weight:600;white-space:nowrap;">'+
         '<input class="doc-input doc-input-num" style="text-align:right;min-width:70px;" value="'+fmt(e.montantDu)+'"'+
         ' onchange="CONTRATS['+cidx+'].echeances['+eidx+'].montantDu=parseInt(this.value.replace(/[^0-9]/g,\'\'))||0;recalcBM('+formule+');sauvegarder();" /></td>'+
       tdCaution+
@@ -5090,8 +5090,8 @@ function afficherFraisRecu() {
     '</div>' +
 
     // ── IDENTIFICATION (police réduite) ──
-    '<div style="border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:8.5pt;">' +
-    '<p style="font-weight:700;color:#92400e;margin:0 0 5px;font-size:9pt;border-bottom:1px solid #e2e8f0;padding-bottom:3px;">👤 SOUSCRIPTEUR</p>' +
+    '<div style="border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:8.5pt;">' +
+    '<p style="font-weight:700;color:#92400e;margin:0 0 5px;font-size:9pt;border-bottom:1px solid var(--border);padding-bottom:3px;">👤 SOUSCRIPTEUR</p>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;">' +
     '<p style="margin:1px 0;"><span style="color:var(--ink-muted);">Nom :</span> <strong><input class="doc-input" style="font-size:8.5pt;" value="' + esc(c.nom) + '" /></strong></p>' +
     '<p style="margin:1px 0;"><span style="color:var(--ink-muted);">N° Contrat :</span> <strong>' + esc(c.numero) + '</strong></p>' +
@@ -5116,7 +5116,7 @@ function afficherFraisRecu() {
     '</table></div>' +
 
     // Bloc rappel contrat
-    '<div style="border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;background:#f8fafc;font-size:8.5pt;">' +
+    '<div style="border:1px solid var(--border);border-radius:6px;padding:8px 10px;background:var(--bg);font-size:8.5pt;">' +
     '<p style="font-weight:700;color:var(--ink-muted);margin:0 0 5px;font-size:9pt;">📋 RAPPEL CONTRAT</p>' +
     '<table style="width:100%;font-size:8pt;border-collapse:collapse;">' +
     '<tr><td style="color:var(--ink-muted);padding:2px 0;width:55%;">Montant total véhicule :</td>' +
@@ -5717,9 +5717,9 @@ function majFooterImpression(typeDoc) {
   var heureStr = maintenant.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
   el.innerHTML =
     '<span>📋 <strong>' + (typeDoc || 'MAPHAR Mobility') + '</strong></span>' +
-    '<span style="color:#cbd5e1;">|</span>' +
+    '<span style="color:var(--border);">|</span>' +
     '<span>👤 <strong>' + identite + '</strong> &nbsp;·&nbsp; ' + role + '</span>' +
-    '<span style="color:#cbd5e1;">|</span>' +
+    '<span style="color:var(--border);">|</span>' +
     '<span>🕐 ' + dateStr + ' à ' + heureStr + '</span>';
 }
 
@@ -5791,7 +5791,7 @@ function afficherTableauUsers() {
   tbody.innerHTML = users.map(function(u) {
     var initiales = ((u.prenom||'')[0]||'').toUpperCase() + ((u.nom||'')[0]||'').toUpperCase();
     var estMoi = CURRENT_USER && u.id === CURRENT_USER.id;
-    return '<tr style="border-bottom:1px solid #f1f5f9;' + (estMoi?'background:#f0f9ff;':'') + '">' +
+    return '<tr style="border-bottom:1px solid var(--bg);' + (estMoi?'background:#f0f9ff;':'') + '">' +
       '<td style="padding:12px 16px;">' +
         '<div style="display:flex;align-items:center;gap:10px;">' +
           '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--success),var(--sauge-dark));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;">' + initiales + '</div>' +
@@ -5928,7 +5928,7 @@ function resetActivityTimer() {
 
 // Manifest PWA (inline)
 const manifestData = {
-  "name": "MAPHAR Mobility V12",
+  "name": "MAPHAR Mobility",
   "short_name": "MAPHAR",
   "description": "Gestion des conventions de financement",
   "start_url": ".",
@@ -5978,16 +5978,22 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Bannière offline/online
+// Bannière offline/online + titre dynamique (reflète le vrai statut réseau)
+function majTitreConnexion() {
+  document.title = 'MAPHAR Mobility' + (navigator.onLine ? '' : ' — Hors ligne');
+}
+majTitreConnexion();
 window.addEventListener('offline', () => {
   console.log('[MAPHAR] 📴 Mode hors ligne — données locales actives');
   const banner = document.getElementById('offline-banner');
   if (banner) banner.style.display = 'flex';
+  majTitreConnexion();
 });
 window.addEventListener('online', () => {
   console.log('[MAPHAR] 🌐 Connexion rétablie');
   const banner = document.getElementById('offline-banner');
   if (banner) banner.style.display = 'none';
+  majTitreConnexion();
 });
 
 // // Bouton d'installation PWA
@@ -6005,7 +6011,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   
   // Afficher un bouton d'installation (DESKTOP uniquement)
   const installBtn = document.createElement('button');
-  installBtn.innerHTML = '📲 Installer MAPHAR Mobility V12';
+  installBtn.innerHTML = '📲 Installer MAPHAR Mobility';
   installBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;padding:12px 24px;background:#22863a;color:white;border:none;border-radius:8px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.3);font-weight:bold;z-index:10000;';
   installBtn.onclick = async () => {
     if (deferredPrompt) {
@@ -6026,7 +6032,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 window.addEventListener('appinstalled', () => {
-  console.log('✅ MAPHAR Mobility V12 installée !');
+  console.log('✅ MAPHAR Mobility installée !');
 });
 
 // ============================================================
@@ -6345,7 +6351,7 @@ document.addEventListener('click', function(e) {
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 14px;font-size:22px;font-weight:800;font-family:var(--font-display);letter-spacing:1px;">V12</div>
         <div>
-          <div style="font-size:17px;font-weight:700;margin-bottom:2px;">Mise à jour — MAPHAR Mobility V12</div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px;">Mise à jour — MAPHAR Mobility</div>
           <div style="font-size:12px;opacity:0.8;">Février 2026</div>
         </div>
       </div>
@@ -6391,7 +6397,7 @@ document.addEventListener('click', function(e) {
       </div>
     </div>
     <!-- Pied -->
-    <div style="padding:14px 26px 20px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+    <div style="padding:14px 26px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
       <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-muted);cursor:pointer;">
         <input type="checkbox" id="chk-v12-hide" style="cursor:pointer;" />
         Ne plus afficher
