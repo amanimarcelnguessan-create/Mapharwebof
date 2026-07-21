@@ -1258,6 +1258,9 @@ h2{letter-spacing:-0.2px;}
   <button class="nav-btn" onclick="showPage('frais-dossier')">
     <span class="icon">🧾</span> Frais de dossier (24m)
   </button>
+  <button class="nav-btn" onclick="showPage('doc-fiche')">
+    <span class="icon">🖨️</span> Fiche contrat
+  </button>
   <button class="nav-btn" onclick="showPage('doc-caution')">
     <span class="icon">📝</span> Reçu de caution
   </button>
@@ -1647,6 +1650,18 @@ h2{letter-spacing:-0.2px;}
 </div>
 
 <!-- ====== REÇU DE CAUTION ====== -->
+<div id="page-doc-fiche" class="page">
+  <button onclick="showPage('gestion')" style="background:var(--sauge-dark);color:white;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;min-height:40px;" class="no-print">&#8592; Retour</button>
+  <div class="selecteur-contrat no-print">
+    <h3>🖨️ Fiche Contrat — Sélectionnez un contrat</h3>
+    <select id="sel-fiche" onchange="afficherFicheContrat()">
+      <option value="">-- Choisir un contrat --</option>
+    </select>
+    <div style="display:inline-flex;gap:5px;align-items:center;flex-wrap:wrap;"><button class="btn-orientation" data-orientation="portrait" onclick="setPrintOrientation('portrait')" style="background:rgba(0,0,0,0.28);color:white;border:1px solid rgba(255,255,255,0.35);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;opacity:1;">📄 Portrait</button><button class="btn-orientation" data-orientation="landscape" onclick="setPrintOrientation('landscape')" style="background:rgba(0,0,0,0.28);color:white;border:1px solid rgba(255,255,255,0.35);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;opacity:0.45;">🔄 Paysage</button><button class="btn-print" onclick="imprimerDoc('doc-fiche')">🖨️ Imprimer</button></div>
+  </div>
+  <div class="doc-wrapper"><div id="doc-fiche" class="doc-a4"></div></div>
+</div>
+
 <div id="page-doc-caution" class="page">
   <button onclick="showPage('gestion')" style="background:var(--sauge-dark);color:white;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;min-height:40px;" class="no-print">&#8592; Retour</button>
   <div class="selecteur-contrat no-print">
@@ -2463,6 +2478,7 @@ function showPage(id) {
   }
 
   if(id==='doc-caution')             { resetDocPage('sel-caution','doc-caution'); majSelecteurs(); }
+  if(id==='doc-fiche')               { resetDocPage('sel-fiche','doc-fiche'); majSelecteurs(); }
   if(id==='doc-frais-recu')          { resetDocPage('sel-frais-recu','doc-frais-recu'); majSelecteurs(); }
   if(id==='doc-bordereau')           { resetDocPage('sel-bordereau','doc-bordereau'); majSelecteurs(); }
   if(id==='doc-bordereau-mensuel-12'){ majSelecteurBM(12); }
@@ -2882,6 +2898,18 @@ function fermerFormContrat() {
   if(sec) sec.style.display = 'none';
 }
 
+// Ajoute n mois à une date sans débordement (ex: 31 janvier + 1 mois → 28/29 février,
+// pas 3 mars comme le ferait un setMonth() naïf sur un jour qui n'existe pas dans le mois cible).
+function ajouterMoisSansDebordement(dateDebutISO, n) {
+  var base = new Date(dateDebutISO);
+  var jourOrigine = base.getDate();
+  var d = new Date(base.getFullYear(), base.getMonth(), 1);
+  d.setMonth(d.getMonth() + n);
+  var dernierJourDuMois = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+  d.setDate(Math.min(jourOrigine, dernierJourDuMois));
+  return d;
+}
+
 function enregistrerContrat() {
   if(!peutModifier()) { showRefus(); return; }
   var mode = document.getElementById('f-mode').value;
@@ -2924,9 +2952,8 @@ function enregistrerContrat() {
   if(!cohorteId) { alert('⚠️ Veuillez créer une cohorte avant d\'ajouter un contrat (page Cohortes).'); return; }
 
   var echeances = [];
-  var d = new Date(dateD);
   for(var i=1; i<=formule; i++) {
-    d.setMonth(d.getMonth()+1);
+    var d = ajouterMoisSansDebordement(dateD, i);
     echeances.push({
       num:i,
       dateEch:d.toISOString().split('T')[0],
@@ -3032,8 +3059,8 @@ function afficherArchives() {
   archives.forEach(function(item) {
     var c = item.c, i = item.i;
     html += '<tr style="opacity:0.8;">';
-    html += '<td><strong>'+c.numero+'</strong></td>';
-    html += '<td><strong>'+c.nom+'</strong><br><small style="color:var(--ink-muted);">'+(c.officine||'-')+'</small></td>';
+    html += '<td><strong>'+esc(c.numero)+'</strong></td>';
+    html += '<td><strong>'+esc(c.nom)+'</strong><br><small style="color:var(--ink-muted);">'+(esc(c.officine)||'-')+'</small></td>';
     html += '<td>'+c.formule+' mois</td>';
     html += '<td>'+fmt(c.montant)+' F</td>';
     html += '<td>'+(c.dateArchivage||'-')+'</td>';
@@ -3056,8 +3083,8 @@ function consulterArchive(idx) {
     '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">' +
     '<div>' +
     '<div style="display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:11px;color:var(--ink-muted);margin-bottom:6px;">🗄️ Contrat archivé — lecture seule</div>' +
-    '<h3 style="margin:0;">📋 Contrat — '+c.numero+' · '+c.nom+'</h3>' +
-    '<p style="font-size:12px;color:var(--ink-muted);margin-top:4px;">'+(c.vehicule||'-')+' | '+c.formule+' mois | '+fmt(c.mensualite)+' F/mois | Archivé le '+(c.dateArchivage||'-')+'</p>' +
+    '<h3 style="margin:0;">📋 Contrat — '+esc(c.numero)+' · '+esc(c.nom)+'</h3>' +
+    '<p style="font-size:12px;color:var(--ink-muted);margin-top:4px;">'+(esc(c.vehicule)||'-')+' | '+c.formule+' mois | '+fmt(c.mensualite)+' F/mois | Archivé le '+(c.dateArchivage||'-')+'</p>' +
     '</div>' +
     '<div class="btn-row" style="margin:0;">' +
     '<button class="btn btn-gray btn-sm" onclick="showPage(\'archives\')">← Retour aux archives</button>' +
@@ -3102,8 +3129,8 @@ function afficherListeContrats() {
     var couleur = pct>=100?'var(--success)':(pct>=50?'var(--gold)':'var(--danger)');
     var coh = getCohorteById(c.cohorteId);
     html += '<tr>';
-    html += '<td><strong>'+c.numero+'</strong></td>';
-    html += '<td><strong>'+c.nom+'</strong><br><small style="color:var(--ink-muted);">'+(c.officine||'-')+'</small></td>';
+    html += '<td><strong>'+esc(c.numero)+'</strong></td>';
+    html += '<td><strong>'+esc(c.nom)+'</strong><br><small style="color:var(--ink-muted);">'+(esc(c.officine)||'-')+'</small></td>';
     html += '<td><small style="background:#eef2ff;color:#3730a3;padding:2px 7px;border-radius:10px;white-space:nowrap;">'+(coh?esc(coh.nom):'—')+'</small></td>';
     html += '<td>'+c.formule+' mois</td>';
     html += '<td>'+fmt(c.mensualite)+' F</td>';
@@ -3111,6 +3138,7 @@ function afficherListeContrats() {
     html += '<td><strong style="color:var(--danger);">'+fmt(c.montant-stats.paye)+' F</strong></td>';
     html += '<td style="white-space:nowrap;">' +
       '<button class="btn btn-purple btn-sm" onclick="ouvrirPaiements('+i+')" style="margin-bottom:2px;">💰 Paiements</button> ' +
+      '<button class="btn btn-gray btn-sm" onclick="preselectionnerContrat('+i+',\'fiche\')" style="margin-bottom:2px;" title="Imprimer la fiche du contrat">🖨️ Fiche</button> ' +
       (peutModifier() ? '<button class="btn btn-blue btn-sm" onclick="modifierContrat('+i+')" style="margin-bottom:2px;">✏️ Modifier</button> ' : '') +
       (peutModifier() && pct>=100 ? '<button class="btn btn-gray btn-sm" onclick="archiverContrat('+i+')" style="margin-bottom:2px;" title="Archiver ce contrat soldé">🗄️ Archiver</button> ' : '') +
       (peutModifier() ? '<button class="btn btn-red btn-sm" onclick="supprimerContrat('+i+')">🗑️</button>' : '') +
@@ -3142,8 +3170,8 @@ function ouvrirPaiements(idx) {
   var header = document.getElementById('paiements-header');
   header.innerHTML = '<div class="form-card no-print">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">' +
-    '<div><h3 style="margin:0;">💰 Paiements — '+c.numero+' · '+c.nom+'</h3>' +
-    '<p style="font-size:12px;color:var(--ink-muted);margin-top:4px;">'+(c.vehicule||'-')+' | '+c.formule+' mois | '+fmt(c.mensualite)+' F/mois</p></div>' +
+    '<div><h3 style="margin:0;">💰 Paiements — '+esc(c.numero)+' · '+esc(c.nom)+'</h3>' +
+    '<p style="font-size:12px;color:var(--ink-muted);margin-top:4px;">'+(esc(c.vehicule)||'-')+' | '+c.formule+' mois | '+fmt(c.mensualite)+' F/mois</p></div>' +
     '<div class="btn-row" style="margin:0;">' +
     '<button class="btn btn-gray btn-sm" onclick="showPage(\'gestion\')">← Retour</button>' +
     (peutModifier() ? '<button class="btn btn-green btn-sm" onclick="sauvegarder(true)">💾 Sauvegarder</button>' : '') +
@@ -3306,7 +3334,7 @@ function genererApercuRecu(idxC, idxE) {
   var numero = '2026-RP-'+String(COMPTEURS.recu).padStart(3,'0');
   var html = buildDocRecu(c, e, numero, false);
   document.getElementById('apercu-doc').innerHTML = html;
-  majFooterImpression('Reçu de Paiement — ' + c.numero + ' M' + e.num + '/' + c.formule);
+  majFooterImpression('Reçu de Paiement — ' + esc(c.numero) + ' M' + e.num + '/' + c.formule);
   // Adapter la barre de boutons selon le rôle
   var btnRow = document.getElementById('apercu-btn-row');
   var note = document.getElementById('apercu-note');
@@ -3448,7 +3476,7 @@ function afficherDashboard() {
 function majSelecteurs() {
   // Remplir les sélecteurs de contrats dans les pages de documents
   var selects = [
-    'sel-caution', 'sel-bordereau', 'sel-recu-contrat', 
+    'sel-caution', 'sel-fiche', 'sel-bordereau', 'sel-recu-contrat', 
     'sel-solde', 'sel-releve', 'sel-impaye', 'sel-suivi', 'sel-tableau'
   ];
   
@@ -3458,7 +3486,7 @@ function majSelecteurs() {
       el.innerHTML = '<option value="">-- Choisir un contrat --</option>';
       CONTRATS.forEach(function(c, i) {
         if (c.archive) return;
-        el.innerHTML += '<option value="' + i + '">' + c.numero + ' — ' + esc(c.nom) + '</option>';
+        el.innerHTML += '<option value="' + i + '">' + esc(c.numero) + ' — ' + esc(c.nom) + '</option>';
       });
     }
   });
@@ -3470,7 +3498,7 @@ function majSelecteurs() {
     CONTRATS.forEach(function(c, i) {
       if (c.archive) return;
       if (parseInt(c.formule) !== 24) return;
-      selFrais.innerHTML += '<option value="' + i + '">' + c.numero + ' — ' + esc(c.nom) + '</option>';
+      selFrais.innerHTML += '<option value="' + i + '">' + esc(c.numero) + ' — ' + esc(c.nom) + '</option>';
     });
   }
 }
@@ -3544,8 +3572,8 @@ function afficherDetailDashboard(filtre) {
 
     dhtml += '<div class="detail-link" style="padding:12px 14px;border-bottom:1px solid var(--bg);" onclick="ouvrirPaiements('+i+')">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">' +
-      '<div><strong>'+c.numero+' — '+c.nom+'</strong><br>' +
-      '<small style="color:var(--ink-muted);">'+(c.officine||'-')+' | '+c.formule+' mois | Mensualité : '+fmt(c.mensualite)+' F</small></div>' +
+      '<div><strong>'+esc(c.numero)+' — '+esc(c.nom)+'</strong><br>' +
+      '<small style="color:var(--ink-muted);">'+(esc(c.officine)||'-')+' | '+c.formule+' mois | Mensualité : '+fmt(c.mensualite)+' F</small></div>' +
       '<div style="display:flex;gap:6px;align-items:center;">'+badge+
       '<button class="btn btn-purple btn-sm" onclick="event.stopPropagation();ouvrirPaiements('+i+')" title="Gérer les paiements">💰 Paiements</button>'+
       '<button class="btn btn-blue btn-sm" onclick="event.stopPropagation();preselectionnerContrat('+i+',\'caution\')" title="Reçu de caution">📝</button>'+
@@ -3575,7 +3603,7 @@ function afficherAlertesDashboard() {
     (c.echeances||[]).forEach(function(e){
       if(e.statut==='retard'){
         ahtml += '<div class="alerte-rouge" style="cursor:pointer;" onclick="ouvrirPaiements('+i+')">' +
-          '<strong>'+c.nom+'</strong> <span style="font-size:10px;color:#999;">('+c.numero+')</span><br>' +
+          '<strong>'+esc(c.nom)+'</strong> <span style="font-size:10px;color:#999;">('+esc(c.numero)+')</span><br>' +
           'M'+e.num+' — <strong>'+fmt(e.montantDu)+' F</strong> — Éch. '+dateFR(e.dateEch)+
           '<span style="float:right;font-size:10px;">👆 Cliquer pour gérer</span></div>';
       }
@@ -3586,9 +3614,9 @@ function afficherAlertesDashboard() {
 }
 
 function preselectionnerContrat(idx, docType) {
-  var selMap = {caution:'sel-caution',bordereau:'sel-bordereau',solde:'sel-solde',releve:'sel-releve',impaye:'sel-impaye',tableau:'sel-tableau'};
-  var pageMap = {caution:'doc-caution','frais-recu':'doc-frais-recu',bordereau:'doc-bordereau',solde:'doc-solde',releve:'doc-releve',impaye:'doc-impaye',tableau:'doc-tableau'};
-  var fnMap = {caution:afficherCaution,bordereau:afficherBordereau,solde:afficherSolde,releve:afficherReleve,impaye:afficherImpaye,tableau:afficherTableau};
+  var selMap = {caution:'sel-caution',fiche:'sel-fiche',bordereau:'sel-bordereau',solde:'sel-solde',releve:'sel-releve',impaye:'sel-impaye',tableau:'sel-tableau'};
+  var pageMap = {caution:'doc-caution',fiche:'doc-fiche','frais-recu':'doc-frais-recu',bordereau:'doc-bordereau',solde:'doc-solde',releve:'doc-releve',impaye:'doc-impaye',tableau:'doc-tableau'};
+  var fnMap = {caution:afficherCaution,fiche:afficherFicheContrat,bordereau:afficherBordereau,solde:afficherSolde,releve:afficherReleve,impaye:afficherImpaye,tableau:afficherTableau};
   showPage(pageMap[docType]);
   setTimeout(function(){
     var sel = document.getElementById(selMap[docType]);
@@ -3606,7 +3634,7 @@ function majSelecteursRestitution() {
     var s = getStats(c);
     var contratTermine = s.nbPaye === c.formule;
     var statut = c.cautionRestituee ? '✅ Restituée' : (contratTermine ? '🏁 Terminé — Prêt à restituer' : '🔄 En cours ('+s.nbPaye+'/'+c.formule+')');
-    el.innerHTML += '<option value="'+i+'">'+c.numero+' — '+esc(c.nom)+' | Caution: '+fmt(caution)+' F | '+statut+'</option>';
+    el.innerHTML += '<option value="'+i+'">'+esc(c.numero)+' — '+esc(c.nom)+' | Caution: '+fmt(caution)+' F | '+statut+'</option>';
   });
   if(el.options.length === 1) {
     el.innerHTML = '<option value="">⚠️ Aucun contrat enregistré</option>';
@@ -3617,7 +3645,7 @@ function majSelecteursRestitution() {
 // RAFRAÎCHIR TOUS LES SÉLECTEURS
 // ============================================================
 function rafraichirSelecteurs() {
-  var ids = ['sel-caution','sel-bordereau','sel-recu-contrat','sel-solde','sel-releve','sel-impaye','sel-tableau','sel-suivi'];
+  var ids = ['sel-caution','sel-fiche','sel-bordereau','sel-recu-contrat','sel-solde','sel-releve','sel-impaye','sel-tableau','sel-suivi'];
   ids.forEach(function(id){
     var el = document.getElementById(id);
     if(!el) return;
@@ -3764,7 +3792,7 @@ function afficherCaution() {
     '</div>';
 
   el.innerHTML = html;
-  majFooterImpression('Reçu de Caution — ' + c.numero);
+  majFooterImpression('Reçu de Caution — ' + esc(c.numero));
 }
 
 // ============================================================
@@ -3772,6 +3800,90 @@ function afficherCaution() {
 // ============================================================
 // Orientation d'impression (paysage / portrait)
 // ============================================================
+
+// ============================================================
+// DOCUMENT : FICHE CONTRAT (formulaire de souscription imprimable)
+// ============================================================
+function afficherFicheContrat() {
+  var idx = document.getElementById('sel-fiche').value;
+  var el  = document.getElementById('doc-fiche');
+  if(idx===''){el.innerHTML='<p style="color:var(--ink-muted);font-style:italic;padding:40px;text-align:center;">Sélectionnez un contrat pour générer le document</p>';return;}
+  var c = CONTRATS[idx];
+  var coh = getCohorteById(c.cohorteId);
+  var is12 = parseInt(c.formule)===12;
+  var couleur = 'var(--sauge-dark)';
+
+  el.innerHTML =
+    // ── Bandeau édition (no-print) ──
+    '<div style="background:var(--sauge-light);padding:6px 12px;border-radius:6px;margin-bottom:8px;font-size:9.5px;color:var(--sauge-dark);border:1px solid var(--border);" class="no-print">'+
+    '✏️ <strong>Tous les champs sont modifiables</strong> avant impression</div>'+
+
+    // ── EN-TÊTE MAPHAR ──
+    '<div style="display:flex;align-items:center;margin-bottom:8px;border-bottom:3px double var(--sauge-dark);padding-bottom:6px;">'+
+    '<img src="'+MAPHAR_LOGO+'" style="width:60px;height:60px;object-fit:contain;margin-right:12px;flex-shrink:0;" />'+
+    '<div style="flex:1;text-align:center;">'+
+    '<h2 style="margin:0 0 1px;font-size:11pt;color:var(--charcoal);">MUTUELLE POUR L\'ASSURANCE DES PHARMACIENS</h2>'+
+    '<p style="font-size:8pt;margin:0;color:var(--ink-muted);">Convention tripartite de financement véhicule — Bridge Bank</p>'+
+    '</div></div>'+
+
+    // ── TITRE ──
+    '<div style="background:'+couleur+';color:white;text-align:center;padding:7px 10px;border-radius:6px;margin-bottom:10px;">'+
+    '<h3 style="margin:0;font-size:12pt;letter-spacing:1px;">FICHE DE SOUSCRIPTION — CONTRAT '+esc(c.numero)+'</h3>'+
+    '<p style="margin:2px 0 0;font-size:8pt;opacity:0.9;">Cohorte : '+(coh?esc(coh.nom):'—')+' &nbsp;|&nbsp; Formule : '+c.formule+' mois &nbsp;|&nbsp; Établi le <input class="doc-input doc-input-md" value="'+auj()+'" style="color:white;background:rgba(255,255,255,0.15);" /></p>'+
+    '</div>'+
+
+    // ── IDENTIFICATION SOUSCRIPTEUR ──
+    '<div class="bloc">'+
+    '<p class="bloc-titre" style="color:'+couleur+';">👤 IDENTIFICATION DU SOUSCRIPTEUR</p>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:9pt;">'+
+    '<p style="margin:1px 0;"><strong>Nom et prénoms :</strong> <input class="doc-input doc-input-xl" value="'+esc(c.nom)+'" /></p>'+
+    '<p style="margin:1px 0;"><strong>N° Contrat :</strong> <input class="doc-input doc-input-md" value="'+esc(c.numero)+'" /></p>'+
+    '<p style="margin:1px 0;"><strong>Officine / Fonction :</strong> <input class="doc-input doc-input-xl" value="'+esc(c.officine||'')+'" /></p>'+
+    '<p style="margin:1px 0;"><strong>Téléphone :</strong> <input class="doc-input doc-input-md" value="'+esc(c.tel||'')+'" /></p>'+
+    '<p style="margin:1px 0;grid-column:1/-1;"><strong>Adresse :</strong> <input class="doc-input doc-input-xl" value="'+esc(c.adresse||'')+'" /></p>'+
+    '</div></div>'+
+
+    // ── VÉHICULE & FINANCEMENT ──
+    '<div class="bloc">'+
+    '<p class="bloc-titre" style="color:'+couleur+';">🚗 VÉHICULE ET FINANCEMENT</p>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:9pt;">'+
+    '<p style="margin:1px 0;grid-column:1/-1;"><strong>Véhicule :</strong> <input class="doc-input doc-input-xl" value="'+esc(c.vehicule||'')+'" /></p>'+
+    '<p style="margin:1px 0;"><strong>Montant total véhicule :</strong> <strong>'+fmt(c.montant)+' FCFA</strong></p>'+
+    '<p style="margin:1px 0;"><strong>Formule choisie :</strong> '+c.formule+' mois</p>'+
+    '<p style="margin:1px 0;"><strong>Mensualité :</strong> <strong>'+fmt(c.mensualite)+' FCFA</strong></p>'+
+    '<p style="margin:1px 0;"><strong>Date de souscription :</strong> '+dateFR(c.dateDebut)+'</p>'+
+    '</div></div>'+
+
+    // ── GARANTIE (CAUTION) ──
+    '<div class="badge-vert">'+
+    '<p style="font-weight:700;font-size:10pt;color:var(--success);margin-bottom:6px;">💳 CHÈQUE DE GARANTIE ('+(is12?'20%':'30%')+')</p>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:9pt;">'+
+    '<p style="margin:0;"><strong>Montant :</strong> '+fmt(c.cautionMontant||c.caution)+' F</p>'+
+    '<p style="margin:0;"><strong>N° Chèque :</strong> '+esc(c.cautionNumeroCheque||'—')+'</p>'+
+    '<p style="margin:0;"><strong>Banque :</strong> '+esc(c.cautionBanque||'—')+'</p>'+
+    '</div></div>'+
+
+    // ── FRAIS DE DOSSIER (24 mois uniquement) ──
+    (!is12 ? (
+    '<div class="badge-jaune">'+
+    '<p style="font-weight:700;font-size:10pt;color:#b45309;margin-bottom:6px;">🧾 FRAIS DE DOSSIER (5% — NON RESTITUABLE)</p>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:9pt;">'+
+    '<p style="margin:0;"><strong>Montant :</strong> '+fmt(c.fraisMontant||c.frais||0)+' F</p>'+
+    '<p style="margin:0;"><strong>N° Chèque :</strong> '+esc(c.fraisNumeroCheque||'—')+'</p>'+
+    '<p style="margin:0;"><strong>Banque :</strong> '+esc(c.fraisBanque||'—')+'</p>'+
+    '</div></div>'
+    ) : '') +
+
+    // ── ENGAGEMENT ──
+    '<div style="border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:8.5pt;color:var(--ink);">'+
+    '<p style="margin:0;">Le souscripteur reconnaît avoir pris connaissance des conditions de la convention tripartite liant MAPHAR, Bridge Bank et le souscripteur, notamment le calendrier des '+c.formule+' mensualités et le caractère non restituable des frais de dossier (le cas échéant).</p>'+
+    '</div>'+
+
+    '<div class="sig-grid">'+
+    '<div><p><strong>Le Souscripteur</strong></p><p style="font-size:9pt;font-style:italic;">(Signature précédée de la mention « Lu et approuvé »)</p><div class="sig-box"></div></div>'+
+    '<div><p><strong>Président MAPHAR</strong></p><p style="font-size:9pt;font-style:italic;">(Cachet et signature)</p><div class="sig-box"></div></div>'+
+    '</div>';
+}
 
 function setPrintOrientation(orientation) {
   var styleEl = document.getElementById('print-orientation-style');
@@ -4358,7 +4470,7 @@ function afficherRecu() {
   var e = c.echeances[idxE];
   var num = '2026-RP-'+String(COMPTEURS.recu).padStart(3,'0');
   el.innerHTML = buildDocRecu(c, e, num, false);
-  majFooterImpression('Reçu de Paiement — ' + c.numero + ' M' + e.num);
+  majFooterImpression('Reçu de Paiement — ' + esc(c.numero) + ' M' + e.num);
 }
 
 function buildDocRecu(c, e, num, minimal) {
@@ -4398,7 +4510,7 @@ function buildDocRecu(c, e, num, minimal) {
     '<tr><td style="padding:2px 4px;width:42%;color:var(--charcoal);">La Mutuelle MAPHAR reconnaît avoir reçu de :</td>' +
     '<td style="padding:2px 4px;font-weight:600;"><input class="doc-input doc-input-xl" value="'+ esc(c.nom) +'" /></td></tr>' +
     '<tr><td style="padding:2px 4px;color:var(--charcoal);">Au titre de la mensualité N° :</td>' +
-    '<td style="padding:2px 4px;font-weight:600;">M'+e.num+' / '+c.formule+' — Contrat '+c.numero+'</td></tr>' +
+    '<td style="padding:2px 4px;font-weight:600;">M'+e.num+' / '+c.formule+' — Contrat '+esc(c.numero)+'</td></tr>' +
     '<tr><td style="padding:2px 4px;color:var(--charcoal);">Relatif au véhicule :</td>' +
     '<td style="padding:2px 4px;"><input class="doc-input doc-input-lg" value="'+ esc(c.vehicule||'__________') +'" /></td></tr>' +
     '<tr style="background:var(--sauge-dark);color:white;"><td style="padding:5px 4px;font-weight:700;">MONTANT REÇU :</td>' +
@@ -4470,7 +4582,7 @@ function afficherSolde() {
     '<div><p><strong>Président MAPHAR</strong></p><p style="font-size:9pt;font-style:italic;">(Cachet et signature)</p><div class="sig-box"></div></div>' +
     '</div>';
   el.innerHTML = html;
-  majFooterImpression('Attestation de Solde de Tout Compte — ' + c.numero);
+  majFooterImpression('Attestation de Solde de Tout Compte — ' + esc(c.numero));
 }
 
 // ============================================================
@@ -4490,9 +4602,9 @@ function afficherReleve() {
     '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">' +
     '<div class="bloc" style="margin:0;">' +
-    '<p><strong>Bénéficiaire :</strong> '+c.nom+'</p>' +
-    '<p><strong>Officine / Fonction :</strong> '+(c.officine||'-')+'</p>' +
-    '<p><strong>N° Contrat :</strong> '+c.numero+'</p>' +
+    '<p><strong>Bénéficiaire :</strong> '+esc(c.nom)+'</p>' +
+    '<p><strong>Officine / Fonction :</strong> '+(esc(c.officine)||'-')+'</p>' +
+    '<p><strong>N° Contrat :</strong> '+esc(c.numero)+'</p>' +
     '</div>' +
     '<div class="bloc" style="margin:0;">' +
     '<p><strong>Date édition :</strong> '+auj()+'</p>' +
@@ -4512,7 +4624,7 @@ function afficherReleve() {
     var bg = e.statut==='paye'?'background:#d1fae5;':(e.statut==='retard'?'background:#fee2e2;':'');
     var stat = e.statut==='paye'?'✅ Payé':(e.statut==='retard'?'⚠️ Retard':'⏳ Attente');
     html += '<tr style="'+bg+'"><td style="padding:4px;border:1px solid #ccc;text-align:center;"><strong>M'+e.num+'</strong></td>' +
-      '<td style="padding:4px;border:1px solid #ccc;">Mensualité M'+e.num+' — '+(c.vehicule||'-')+'</td>' +
+      '<td style="padding:4px;border:1px solid #ccc;">Mensualité M'+e.num+' — '+(esc(c.vehicule)||'-')+'</td>' +
       '<td style="padding:4px;border:1px solid #ccc;text-align:center;">'+dateFR(e.dateEch)+'</td>' +
       '<td style="padding:4px;border:1px solid #ccc;text-align:right;">'+fmt(e.montantDu)+' F</td>' +
       '<td style="padding:4px;border:1px solid #ccc;text-align:right;">'+(e.montantPaye?fmt(e.montantPaye)+' F':'—')+'</td>' +
@@ -4526,7 +4638,7 @@ function afficherReleve() {
     '</tbody></table>' +
     '<div class="badge-jaune"><p><strong>Reste à solder : <span style="color:var(--danger);">'+fmt(c.montant-totalPaye)+' FCFA</span></strong></p></div>';
   el.innerHTML = html;
-  majFooterImpression('Relevé de Compte — ' + c.numero);
+  majFooterImpression('Relevé de Compte — ' + esc(c.numero));
 }
 
 // ============================================================
@@ -4669,7 +4781,7 @@ function genererPVImpaye() {
     '</div>';
   
   document.getElementById('doc-impaye').innerHTML = html;
-  majFooterImpression('PV d\'Impayé — ' + c.numero);
+  majFooterImpression('PV d\'Impayé — ' + esc(c.numero));
 }
 
 // ============================================================
@@ -4688,8 +4800,8 @@ function afficherTableau() {
     '<p style="font-size:9pt;margin:0;">MAPHAR — Mutuelle Pour l\'Assurance des Pharmaciens</p></div>' +
     '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">' +
-    '<div class="bloc" style="margin:0;"><p><strong>Client :</strong> '+c.nom+'</p><p><strong>Officine :</strong> '+(c.officine||'-')+'</p><p><strong>N° Contrat :</strong> '+c.numero+'</p></div>' +
-    '<div class="bloc" style="margin:0;"><p><strong>Véhicule :</strong> '+(c.vehicule||'-')+'</p><p><strong>Montant mensuel :</strong> '+fmt(c.mensualite)+' F</p><p><strong>Durée :</strong> '+c.formule+' mois</p></div>' +
+    '<div class="bloc" style="margin:0;"><p><strong>Client :</strong> '+esc(c.nom)+'</p><p><strong>Officine :</strong> '+(esc(c.officine)||'-')+'</p><p><strong>N° Contrat :</strong> '+esc(c.numero)+'</p></div>' +
+    '<div class="bloc" style="margin:0;"><p><strong>Véhicule :</strong> '+(esc(c.vehicule)||'-')+'</p><p><strong>Montant mensuel :</strong> '+fmt(c.mensualite)+' F</p><p><strong>Durée :</strong> '+c.formule+' mois</p></div>' +
     '</div>' +
     '<table style="width:100%;border-collapse:collapse;font-size:9pt;">' +
     '<thead><tr style="background:var(--sauge-dark);color:white;">' +
@@ -4722,7 +4834,7 @@ function afficherTableau() {
     '</tr></tbody></table>';
   el.innerHTML = html;
   var c2 = CONTRATS[document.getElementById('sel-tableau').value];
-  if(c2) majFooterImpression('Tableau de Suivi — ' + c2.numero);
+  if(c2) majFooterImpression('Tableau de Suivi — ' + esc(c2.numero));
 }
 
 // ============================================================
@@ -4740,8 +4852,8 @@ function afficherSuivi() {
     '<p style="font-size:9pt;margin:0;">MAPHAR — Mutuelle Pour l\'Assurance des Pharmaciens</p></div>' +
     '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">' +
-    '<div class="bloc" style="margin:0;"><p><strong>Souscripteur :</strong> '+c.nom+'</p><p><strong>Officine :</strong> '+(c.officine||'-')+'</p></div>' +
-    '<div class="bloc" style="margin:0;"><p><strong>N° Contrat :</strong> '+c.numero+'</p><p><strong>Édité le :</strong> '+auj()+'</p></div>' +
+    '<div class="bloc" style="margin:0;"><p><strong>Souscripteur :</strong> '+esc(c.nom)+'</p><p><strong>Officine :</strong> '+(esc(c.officine)||'-')+'</p></div>' +
+    '<div class="bloc" style="margin:0;"><p><strong>N° Contrat :</strong> '+esc(c.numero)+'</p><p><strong>Édité le :</strong> '+auj()+'</p></div>' +
     '</div>' +
     '<table style="width:100%;border-collapse:collapse;font-size:9pt;">' +
     '<thead><tr style="background:#15803d;color:white;">' +
@@ -4776,7 +4888,7 @@ function afficherSuivi() {
     '<td colspan="2" style="border:1px solid #1a5c2e;"></td></tr>' +
     '</tbody></table>';
   el.innerHTML = html;
-  majFooterImpression('Suivi des Chèques — ' + c.numero);
+  majFooterImpression('Suivi des Chèques — ' + esc(c.numero));
 }
 
 
@@ -5153,7 +5265,7 @@ function afficherFraisRecu() {
     '</div>';
 
   el.innerHTML = html;
-  majFooterImpression('Reçu Frais de Dossier — ' + c.numero);
+  majFooterImpression('Reçu Frais de Dossier — ' + esc(c.numero));
 }
 
 function afficherRestitution() {
@@ -5239,7 +5351,7 @@ function afficherRestitution() {
     '<tr><td style="padding:2px 4px;width:42%;color:var(--charcoal);">MAPHAR certifie avoir restitué à :</td>' +
     '<td style="padding:2px 4px;font-weight:600;"><input class="doc-input doc-input-xl" value="'+esc(c.nom)+'" /></td></tr>' +
     '<tr><td style="padding:2px 4px;color:var(--charcoal);">Caution du contrat N° :</td>' +
-    '<td style="padding:2px 4px;font-weight:600;">'+c.numero+'</td></tr>' +
+    '<td style="padding:2px 4px;font-weight:600;">'+esc(c.numero)+'</td></tr>' +
     '<tr><td style="padding:2px 4px;color:var(--charcoal);">Relatif au véhicule :</td>' +
     '<td style="padding:2px 4px;"><input class="doc-input doc-input-lg" value="'+ esc(c.vehicule||'__________') +'" /></td></tr>' +
     '<tr style="background:#065f46;color:white;"><td style="padding:5px 4px;font-weight:700;">MONTANT RESTITUÉ :</td>' +
@@ -5269,7 +5381,7 @@ function afficherRestitution() {
 
   el.innerHTML = html;
   var cR = CONTRATS[document.getElementById('sel-restitution').value];
-  if(cR) majFooterImpression('Reçu de Restitution de Caution — ' + cR.numero);
+  if(cR) majFooterImpression('Reçu de Restitution de Caution — ' + esc(cR.numero));
 }
 
 // Valider la restitution et imprimer (synchronisation automatique)
@@ -5308,8 +5420,10 @@ var CURRENT_USER = null;
 var USERS_CACHE = null; // Cache mémoire — chargé une fois au démarrage
 
 // ---- HASHAGE ----
+// ⚠️ hashMDP / hashMDPAncien : anciens schémas XOR (réversibles), conservés
+// UNIQUEMENT pour vérifier/migrer les comptes créés avant le passage au SHA-256 salé.
+// Aucun nouveau mot de passe n'est plus jamais stocké avec ces fonctions.
 function hashMDP(mdp) {
-  // Nouveau sel AccessOS
   var salt = 'MAPHAR_ACCESSOS_2026';
   var h = '';
   for(var i = 0; i < mdp.length; i++) {
@@ -5319,7 +5433,6 @@ function hashMDP(mdp) {
 }
 
 function hashMDPAncien(mdp) {
-  // Ancien sel V8 (avant AccessOS) — utilisé uniquement pour migration
   var salt = 'MAPHAR2026';
   var h = '';
   for(var i = 0; i < mdp.length; i++) {
@@ -5328,8 +5441,36 @@ function hashMDPAncien(mdp) {
   return btoa(h);
 }
 
-function verifierHash(mdp, storedHash) {
-  // Essaie le nouveau hash d'abord, puis l'ancien (comptes migrés)
+// Génère un sel aléatoire de 16 octets (unique par utilisateur)
+function genererSalt() {
+  var arr = new Uint8Array(16);
+  (window.crypto || window.msCrypto).getRandomValues(arr);
+  return Array.from(arr).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
+
+// Hachage sécurisé : SHA-256(sel + mot de passe) via Web Crypto (irréversible)
+async function hashSecurise(mdp, salt) {
+  if(window.crypto && window.crypto.subtle) {
+    var enc = new TextEncoder().encode(salt + ':' + mdp);
+    var buf = await window.crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  }
+  // Repli si contexte non sécurisé (ex: ouverture locale hors HTTPS) — au moins salé
+  console.warn('[Sécurité] Web Crypto indisponible (nécessite HTTPS) — hachage de repli utilisé.');
+  return hashMDP(salt + ':' + mdp);
+}
+
+// Vérifie un mot de passe contre un utilisateur, quel que soit son schéma de hachage
+// Retourne 'securise' | 'nouveau' | 'ancien' | false
+async function verifierHash(mdp, user) {
+  var storedHash = (typeof user === 'string') ? user : user.passwordHash;
+  var salt = (typeof user === 'object' && user) ? user.passwordSalt : null;
+  if(salt) {
+    var h = await hashSecurise(mdp, salt);
+    if(h === storedHash) return 'securise';
+    return false; // compte déjà migré : pas de repli vers l'ancien schéma
+  }
+  // Compte pas encore migré : on tente les anciens schémas XOR
   if(hashMDP(mdp) === storedHash) return 'nouveau';
   if(hashMDPAncien(mdp) === storedHash) return 'ancien';
   return false;
@@ -5524,7 +5665,7 @@ function afficherZoneSetup(msg) {
 }
 
 // ---- CONNEXION ----
-function verifierConnexion() {
+async function verifierConnexion() {
   var email = (document.getElementById('login-email').value || '').trim();
   var mdp = document.getElementById('login-password').value || '';
   var hint = document.getElementById('login-hint');
@@ -5537,7 +5678,7 @@ function verifierConnexion() {
     hint.textContent = 'Email ou mot de passe incorrect.';
     return;
   }
-  var hashResult = verifierHash(mdp, user.passwordHash);
+  var hashResult = await verifierHash(mdp, user);
   if(!hashResult) {
     TENTATIVES++;
     if(TENTATIVES >= MAX_TENTATIVES) {
@@ -5566,12 +5707,17 @@ function verifierConnexion() {
     return;
   }
   TENTATIVES = 0;
+  // Si compte pas encore sur le schéma sécurisé : migration silencieuse vers SHA-256 salé
+  var nouveauSalt = null, nouveauHash = null;
+  if(hashResult !== 'securise') {
+    nouveauSalt = genererSalt();
+    nouveauHash = await hashSecurise(mdp, nouveauSalt);
+  }
   var users = getUsers();
   users.forEach(function(u) {
     if(u.id === user.id) {
       u.lastLogin = Date.now();
-      // Si ancien sel détecté : re-hasher avec le nouveau sel silencieusement
-      if(hashResult === 'ancien') u.passwordHash = hashMDP(mdp);
+      if(nouveauSalt) { u.passwordSalt = nouveauSalt; u.passwordHash = nouveauHash; }
       // Garantir le rôle (compte legacy sans champ role = admin)
       if(!u.role) u.role = 'admin';
     }
@@ -5585,7 +5731,7 @@ function verifierConnexion() {
 }
 
 // ---- CREATION COMPTE ADMIN ----
-function creerCompteAdmin() {
+async function creerCompteAdmin() {
   var prenom = (document.getElementById('setup-prenom').value || '').trim();
   var nom = (document.getElementById('setup-nom').value || '').trim();
   var email = (document.getElementById('setup-email').value || '').trim();
@@ -5597,11 +5743,12 @@ function creerCompteAdmin() {
   if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { hint.textContent = 'Email valide requis.'; return; }
   if(mdp1.length < 6) { hint.textContent = 'Mot de passe minimum 6 caracteres.'; return; }
   if(mdp1 !== mdp2) { hint.textContent = 'Les mots de passe ne correspondent pas.'; return; }
+  var salt = genererSalt();
   var admin = {
     id: 'user_' + Date.now(),
     prenom: prenom, nom: nom.toUpperCase(),
     email: email.toLowerCase(), role: 'admin',
-    passwordHash: hashMDP(mdp1),
+    passwordSalt: salt, passwordHash: await hashSecurise(mdp1, salt),
     actif: true, createdAt: Date.now(), lastLogin: Date.now()
   };
   saveUsers([admin]);
@@ -5624,7 +5771,7 @@ function deverrouiller() {
   // Toujours revenir au tableau de bord à la (re)connexion
   showPage('dashboard');
   resetActivityTimer();
-  var nom = CURRENT_USER ? CURRENT_USER.prenom + ' ' + CURRENT_USER.nom : '';
+  var nom = CURRENT_USER ? CURRENT_USER.prenom + ' ' + esc(CURRENT_USER.nom) : '';
   showToast('Connecte — ' + nom, 'success');
 }
 
@@ -5657,20 +5804,24 @@ function ouvrirChangementMDP() {
   setTimeout(function() { var el = document.getElementById('chg-old'); if(el) el.focus(); }, 100);
 }
 
-function confirmerChangementMDP() {
+async function confirmerChangementMDP() {
   if(!CURRENT_USER) return;
   if(getRoleEffectif() !== 'admin') { showRefus('Seul l\'Administrateur peut modifier les mots de passe.'); return; }
   var old = document.getElementById('chg-old').value || '';
   var n1 = document.getElementById('chg-new1').value || '';
   var n2 = document.getElementById('chg-new2').value || '';
   var hint = document.getElementById('chg-hint');
-  if(hashMDP(old) !== CURRENT_USER.passwordHash) { hint.textContent = 'Ancien mot de passe incorrect.'; return; }
+  var okAncien = await verifierHash(old, CURRENT_USER);
+  if(!okAncien) { hint.textContent = 'Ancien mot de passe incorrect.'; return; }
   if(n1.length < 6) { hint.textContent = 'Nouveau mot de passe minimum 6 caracteres.'; return; }
   if(n1 !== n2) { hint.textContent = 'Les nouveaux mots de passe ne correspondent pas.'; return; }
+  var salt = genererSalt();
+  var hash = await hashSecurise(n1, salt);
   var users = getUsers();
-  users.forEach(function(u) { if(u.id === CURRENT_USER.id) { u.passwordHash = hashMDP(n1); } });
+  users.forEach(function(u) { if(u.id === CURRENT_USER.id) { u.passwordSalt = salt; u.passwordHash = hash; } });
   saveUsers(users);
-  CURRENT_USER.passwordHash = hashMDP(n1);
+  CURRENT_USER.passwordSalt = salt;
+  CURRENT_USER.passwordHash = hash;
   document.getElementById('lock-screen').style.display = 'none';
   APP_LOCKED = false;
   showToast('Mot de passe modifie avec succes !', 'success');
@@ -5789,13 +5940,13 @@ function afficherTableauUsers() {
     lecteur: '<span style="background:var(--sauge-light);color:var(--sauge-dark);padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;">Lecteur</span>'
   };
   tbody.innerHTML = users.map(function(u) {
-    var initiales = ((u.prenom||'')[0]||'').toUpperCase() + ((u.nom||'')[0]||'').toUpperCase();
+    var initiales = ((u.prenom||'')[0]||'').toUpperCase() + ((esc(u.nom)||'')[0]||'').toUpperCase();
     var estMoi = CURRENT_USER && u.id === CURRENT_USER.id;
     return '<tr style="border-bottom:1px solid var(--bg);' + (estMoi?'background:#f0f9ff;':'') + '">' +
       '<td style="padding:12px 16px;">' +
         '<div style="display:flex;align-items:center;gap:10px;">' +
           '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--success),var(--sauge-dark));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;">' + initiales + '</div>' +
-          '<div><div style="font-size:13px;font-weight:600;color:var(--charcoal);">' + (u.prenom||'') + ' ' + (u.nom||'') + (estMoi?' <span style="font-size:10px;color:var(--sauge-dark);">(vous)</span>':'') + '</div>' +
+          '<div><div style="font-size:13px;font-weight:600;color:var(--charcoal);">' + (u.prenom||'') + ' ' + (esc(u.nom)||'') + (estMoi?' <span style="font-size:10px;color:var(--sauge-dark);">(vous)</span>':'') + '</div>' +
           '<div style="font-size:11px;color:var(--ink-muted);">' + (u.lastLogin ? new Date(u.lastLogin).toLocaleDateString('fr-FR') : 'Jamais') + '</div></div>' +
         '</div></td>' +
       '<td style="padding:12px 16px;font-size:13px;color:var(--ink-muted);">' + (u.email||'') + '</td>' +
@@ -5848,7 +5999,7 @@ function fermerFormulaireUser() {
   document.getElementById('user-form-zone').style.display = 'none';
 }
 
-function sauvegarderUser() {
+async function sauvegarderUser() {
   var editEmail = document.getElementById('uf-edit-email').value;
   var prenom = (document.getElementById('uf-prenom').value || '').trim();
   var nom = (document.getElementById('uf-nom').value || '').trim();
@@ -5866,21 +6017,24 @@ function sauvegarderUser() {
     if(mdp1.length < 6) { hint.textContent = 'Mot de passe minimum 6 caracteres.'; return; }
     if(mdp1 !== mdp2) { hint.textContent = 'Les mots de passe ne correspondent pas.'; return; }
     if(users.find(function(u) { return u.email.toLowerCase() === email; })) { hint.textContent = 'Cet email est deja utilise.'; return; }
-    users.push({ id: 'user_' + Date.now(), prenom: prenom, nom: nom.toUpperCase(), email: email, role: role, passwordHash: hashMDP(mdp1), actif: true, createdAt: Date.now(), lastLogin: null });
+    var saltNouveau = genererSalt();
+    users.push({ id: 'user_' + Date.now(), prenom: prenom, nom: nom.toUpperCase(), email: email, role: role, passwordSalt: saltNouveau, passwordHash: await hashSecurise(mdp1, saltNouveau), actif: true, createdAt: Date.now(), lastLogin: null });
     showToast('Utilisateur cree : ' + prenom + ' ' + nom, 'success');
   } else {
     var erreur = false;
-    users = users.map(function(u) {
+    for(var i = 0; i < users.length; i++) {
+      var u = users[i];
       if(u.email.toLowerCase() === editEmail.toLowerCase()) {
         u.prenom = prenom; u.nom = nom.toUpperCase(); u.role = role;
         if(mdp1) {
-          if(mdp1.length < 6) { hint.textContent = 'MDP minimum 6 caracteres.'; erreur = true; return u; }
-          if(mdp1 !== mdp2) { hint.textContent = 'Les MDP ne correspondent pas.'; erreur = true; return u; }
-          u.passwordHash = hashMDP(mdp1);
+          if(mdp1.length < 6) { hint.textContent = 'MDP minimum 6 caracteres.'; erreur = true; break; }
+          if(mdp1 !== mdp2) { hint.textContent = 'Les MDP ne correspondent pas.'; erreur = true; break; }
+          var saltMaj = genererSalt();
+          u.passwordSalt = saltMaj;
+          u.passwordHash = await hashSecurise(mdp1, saltMaj);
         }
       }
-      return u;
-    });
+    }
     if(erreur) return;
     showToast('Utilisateur mis a jour : ' + prenom + ' ' + nom, 'success');
   }
@@ -5899,7 +6053,7 @@ function toggleUserActif(email) {
 function supprimerUser(email) {
   var user = getUserByEmail(email);
   if(!user) return;
-  if(!confirm('Supprimer ' + user.prenom + ' ' + user.nom + ' ?')) return;
+  if(!confirm('Supprimer ' + user.prenom + ' ' + esc(user.nom) + ' ?')) return;
   saveUsers(getUsers().filter(function(u) { return u.email.toLowerCase() !== email.toLowerCase(); }));
   afficherTableauUsers();
   showToast('Utilisateur supprime.', 'info');
