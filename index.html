@@ -13,6 +13,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MAPHAR Mobility V12 — Offline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<!-- Si hors ligne au premier chargement, cette feuille de style échoue silencieusement
+     et var(--font-display) retombe automatiquement sur la police système (voir :root). -->
 <script>
 /* ── Chargeur XLSX différé (non bloquant) ──────────────────────────
    La bibliothèque XLSX est chargée uniquement à la demande (export Excel).
@@ -65,9 +70,18 @@ function _chargerXLSX(callback) {
   --bg:#F6F7F3; --surface:#FFFFFF; --border:#E4E7DE;
   --success:#3F8F5C; --warning:#B8934B; --danger:#B14A3C;
   --radius:12px; --shadow:0 1px 3px rgba(43,46,44,0.06),0 6px 20px rgba(43,46,44,0.05);
+  --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  --font-display:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--charcoal);font-size:14px;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--charcoal);font-size:14px;}
+h2,h3{font-family:var(--font-display);}
+.sidebar-header h1{font-family:var(--font-display);}
+.stat-card .val{font-family:var(--font-display);}
+.banner-cumul .grand-total{font-family:var(--font-display);}
+.kpi-chip>div[style*="font-size:20px"],
+.cohort-card div[style*="font-size:20px"]{font-family:var(--font-display);}
+.banner-cumul .chip b{font-family:var(--font-display);}
 .sidebar{position:fixed;left:0;top:0;width:220px;height:100vh;background:linear-gradient(180deg,#2E3B30,#232C24);color:white;overflow-y:auto;z-index:100;padding:0;}
 .sidebar-header{padding:16px;background:rgba(0,0,0,0.18);text-align:center;border-bottom:1px solid rgba(255,255,255,0.08);}
 .sidebar-header h1{font-size:18px;font-weight:700;color:white;}
