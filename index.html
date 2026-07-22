@@ -1518,7 +1518,10 @@ h2{letter-spacing:-0.2px;}
 <div id="page-gestion" class="page">
   <h2 style="margin-bottom:16px;color:var(--charcoal);">📁 Gestion des Contrats</h2>
   <div id="form-contrat" style="display:none;" class="form-card">
-    <h3 id="form-titre">➕ Nouveau contrat</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <h3 id="form-titre">➕ Nouveau contrat</h3>
+      <button id="btn-imprimer-fiche-form" style="display:none;" class="btn btn-gray btn-sm" onclick="preselectionnerContrat(parseInt(document.getElementById('f-idx').value),'fiche')">🖨️ Imprimer la fiche</button>
+    </div>
     <input type="hidden" id="f-mode" value="creation">
     <input type="hidden" id="f-idx" value="">
     <div class="form-grid">
@@ -1572,6 +1575,9 @@ h2{letter-spacing:-0.2px;}
     <select id="filtre-cohorte-gestion" onchange="filtrerGestionParCohorte(this.value)" style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);font-size:13px;">
       <option value="">Toutes les cohortes</option>
     </select>
+    <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-muted);cursor:pointer;margin-left:6px;">
+      <input type="checkbox" id="chk-inclure-archives" onchange="toggleInclureArchives(this.checked)"> Inclure les archivés
+    </label>
   </div>
   <div id="liste-contrats">
     <p style="color:var(--ink-muted);font-style:italic;text-align:center;padding:30px;">Aucun contrat. Créez votre premier contrat ci-dessus.</p>
@@ -2269,6 +2275,22 @@ function renderBanniereCumul() {
   '</div>';
 }
 
+// Nombre de jours écoulés depuis le lancement d'une cohorte
+function joursDepuis(dateISO) {
+  if(!dateISO) return 0;
+  var d = new Date(dateISO);
+  var maintenant = new Date();
+  return Math.floor((maintenant - d) / (1000*60*60*24));
+}
+
+// Badge d'alerte si une cohorte reste "En constitution" plus de 30 jours
+function badgeAlerteCohorte(co) {
+  if(co.statut !== 'En constitution') return '';
+  var j = joursDepuis(co.dateLancement);
+  if(j < 30) return '';
+  return '<div style="margin-top:8px;background:var(--gold-light);border:1px solid var(--gold);border-radius:6px;padding:5px 8px;font-size:11px;color:#8a6b35;font-weight:600;">⏰ En constitution depuis '+j+' jours — pensez à la soumettre à Bridge Bank ou à mettre à jour son statut.</div>';
+}
+
 function afficherCohortes() {
   var el = document.getElementById('liste-cohortes');
   var elTotal = document.getElementById('cohortes-page-total');
@@ -2305,6 +2327,7 @@ function afficherCohortes() {
         '<div>✅ Loyers encaissés : <strong style="color:var(--success);">'+fmt(s.totalEncaisse)+' F</strong></div>' +
         '<div>⏳ Reste dû : <strong style="color:var(--danger);">'+fmt(s.totalReste)+' F</strong></div>' +
       '</div>' +
+      badgeAlerteCohorte(co) +
       '<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">' +
         '<button class="btn btn-blue btn-sm" onclick="filtrerGestionParCohorte(\''+co.id+'\');showPage(\'gestion\');">📁 Voir les dossiers</button>' +
         (peutModifier() ? '<button class="btn btn-gray btn-sm" onclick="modifierCohorte('+idxReel+')">✏️ Modifier</button>' : '') +
@@ -2348,6 +2371,7 @@ function afficherCohortesDashboard() {
       '<div style="font-size:20px;font-weight:700;font-family:var(--font-display);margin-top:8px;color:var(--charcoal);">'+fmt(s.totalMontant)+' F</div>' +
       '<div style="font-size:11px;color:var(--ink-muted);">véhicules · '+s.nb+' dossier'+(s.nb>1?'s':'')+' ('+s.nb12+' × 12m · '+s.nb24+' × 24m)</div>' +
       '<div style="font-size:11px;margin-top:6px;color:var(--sauge-dark);font-weight:600;">💳 '+fmt(s.totalCaution)+' F · 🧾 '+fmt(s.totalFrais)+' F</div>' +
+      badgeAlerteCohorte(co) +
     '</div>';
   });
   el.innerHTML = html;
@@ -2599,16 +2623,17 @@ function exporterExcel() {
       if (ok) {
         exporterExcel(); // relancer maintenant que XLSX est disponible
       } else {
-        // Fallback CSV si pas de connexion
-        var lignes = [['N° Contrat','Nom','Officine','Telephone','Vehicule','Formule','Montant F','Mensualite F','Montant paye F','Reste F','Statut']];
+        // Fallback CSV si pas de connexion (mêmes calculs corrects que la version Excel)
+        var lignes = [['N° Contrat','Cohorte','Nom','Officine','Adresse','Téléphone','Véhicule','Formule','Montant F','Caution F','Frais dossier F','Mensualité F','Date début','Échéances payées','Montant payé F','Reste F','Statut','Caution restituée']];
         CONTRATS.forEach(function(c) {
           if (c.archive) return;
           var s = getStats(c);
+          var coh = getCohorteById(c.cohorteId);
           var pct = c.montant > 0 ? Math.round((s.paye / c.montant) * 100) : 0;
-          var statut = pct >= 100 ? 'Solde' : (s.nbRetard > 0 ? 'En retard' : 'En cours');
-          lignes.push([c.numero||'', c.nom||'', c.officine||'', c.tel||'', c.vehicule||'',
-            (c.formule||'') + ' mois', c.montant||0, Math.round(c.mensualite||0),
-            Math.round(s.paye), Math.round(c.montant - s.paye), statut]);
+          var statut = pct >= 100 ? 'Soldé' : (s.nbRetard > 0 ? 'En retard' : 'En cours');
+          lignes.push([c.numero||'', coh?coh.nom:'', c.nom||'', c.officine||'', c.adresse||'', c.tel||'', c.vehicule||'',
+            (c.formule||'') + ' mois', c.montant||0, c.cautionMontant||c.caution||0, c.fraisMontant||c.frais||0, Math.round(c.mensualite||0),
+            c.dateDebut||'', s.nbPaye+'/'+c.formule, Math.round(s.paye), Math.round(c.montant - s.paye), statut, c.cautionRestituee?'Oui':'Non']);
         });
         var csv = lignes.map(function(r) {
           return r.map(function(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(';');
@@ -2626,132 +2651,199 @@ function exporterExcel() {
 
   var wb = XLSX.utils.book_new();
   var dateExport = new Date().toLocaleDateString('fr-FR');
-  var headerStyle = {font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1E3A5F'}},alignment:{horizontal:'center'}};
+  var SAUGE = '4F6B54', SAUGE_L = 'EAF0E7', GOLD = 'B8934B', CHARCOAL = '2B2E2C',
+      VERT='C6E8CE', ROUGE='F3D3CC', OR='F5E7C4', GRIS='E4E7DE';
+  var FMT_F = '#,##0" F"';
+  var headerStyle = {font:{bold:true,color:{rgb:'FFFFFF'},sz:11},fill:{fgColor:{rgb:SAUGE}},alignment:{horizontal:'center',vertical:'center',wrapText:true},border:{bottom:{style:'thin',color:{rgb:CHARCOAL}}}};
+  var titleStyle  = {font:{bold:true,sz:14,color:{rgb:SAUGE}},alignment:{horizontal:'left'}};
+  var subStyle    = {font:{italic:true,sz:9,color:{rgb:'71786F'}}};
 
-  /* ── Feuille 1 : Contrats actifs ── */
-  var rowsContrats = [
-    ['N° Contrat','Nom','Officine','Adresse','Téléphone','Véhicule',
-     'Formule','Montant (F)','Caution (F)','Frais dossier (F)','Mensualité (F)',
-     'Date début','Mois restants','Montant payé (F)','Reste (F)',
-     'Caution payée','Caution restituée','Statut']
-  ];
+  function styliserFeuille(ws, nbCols, nbRows, colStatutIdx, statutParLigne) {
+    // Bordure légère + police sur toutes les cellules de données, alternance de fond (zébrage)
+    for (var r = 3; r < nbRows; r++) {
+      for (var c = 0; c < nbCols; c++) {
+        var addr = XLSX.utils.encode_cell({r:r, c:c});
+        if (!ws[addr]) continue;
+        var bg = (r % 2 === 0) ? 'FFFFFF' : 'F6F7F3';
+        var s = {font:{sz:10,color:{rgb:CHARCOAL}},fill:{fgColor:{rgb:bg}},border:{bottom:{style:'hair',color:{rgb:GRIS}}}};
+        if (colStatutIdx !== undefined && c === colStatutIdx && statutParLigne) {
+          var st = statutParLigne[r-3];
+          if (st === 'Soldé')      s.fill.fgColor.rgb = VERT;
+          else if (st === 'En retard') s.fill.fgColor.rgb = ROUGE;
+          else if (st === 'En cours')  s.fill.fgColor.rgb = OR;
+          s.font.bold = true;
+        }
+        ws[addr].s = s;
+      }
+    }
+  }
+
+  function poserEnTete(ws, titre, sousTitre, headers) {
+    XLSX.utils.sheet_add_aoa(ws, [[titre],[sousTitre],headers], {origin:'A1'});
+    ws['A1'].s = titleStyle;
+    ws['A2'].s = subStyle;
+    for (var c = 0; c < headers.length; c++) {
+      var addr = XLSX.utils.encode_cell({r:2, c:c});
+      if (ws[addr]) ws[addr].s = headerStyle;
+    }
+    if (!ws['!merges']) ws['!merges'] = [];
+    ws['!merges'].push({s:{r:0,c:0},e:{r:0,c:headers.length-1}});
+    ws['!merges'].push({s:{r:1,c:0},e:{r:1,c:headers.length-1}});
+    ws['!autofilter'] = {ref: XLSX.utils.encode_range({s:{r:2,c:0},e:{r:2,c:headers.length-1}})};
+    ws['!rows'] = [{hpt:22},{hpt:14},{hpt:26}];
+  }
+
+  /* ── Feuille 1 : Contrats actifs (TOUS les champs) ── */
+  var headersContrats = ['N° Contrat','Cohorte','Souscripteur','Officine','Adresse','Téléphone','Véhicule',
+     'Formule','Montant véhicule','N° Chèque garantie','Banque garantie','Caution (F)',
+     'N° Chèque frais','Banque frais','Frais dossier (F)','Mensualité (F)',
+     'Date début','Échéances soldées','Montant encaissé (F)','Reste dû (F)','Progression %',
+     'Caution restituée','Statut'];
+  var rowsContrats = [];
+  var statutsContrats = [];
+  var totC = {montant:0,caution:0,frais:0,paye:0,reste:0};
   CONTRATS.forEach(function(c) {
-    if (c.archive) return; // exclure les archivés
-    var paye = 0;
-    if (c.echeances) c.echeances.forEach(function(e){ if(e.paye) paye += (e.montant||0); });
+    if (c.archive) return; // exclure les archivés (feuille dédiée)
+    var s = getStats(c);
+    var coh = getCohorteById(c.cohorteId);
     var montant = c.montant || 0;
-    var reste = montant - paye;
-    var moisRestants = c.echeances ? c.echeances.filter(function(e){ return !e.paye; }).length : 0;
-    var retard = c.echeances ? c.echeances.some(function(e){
-      return !e.paye && e.date && new Date(e.date) < new Date();
-    }) : false;
-    var statut = reste <= 0 ? 'Soldé' : retard ? 'En retard' : 'En cours';
+    var reste = montant - s.paye;
+    var pct = montant > 0 ? Math.round((s.paye / montant) * 100) : 0;
+    var statut = reste <= 0 ? 'Soldé' : (s.nbRetard > 0 ? 'En retard' : 'En cours');
+    statutsContrats.push(statut);
+    totC.montant += montant; totC.caution += (c.cautionMontant||c.caution||0);
+    totC.frais += (c.fraisMontant||c.frais||0); totC.paye += s.paye; totC.reste += reste;
     rowsContrats.push([
-      c.numero||'', c.nom||'', c.officine||'', c.adresse||'', c.tel||'', c.vehicule||'',
+      c.numero||'', coh?coh.nom:'—', c.nom||'', c.officine||'', c.adresse||'', c.tel||'', c.vehicule||'',
       c.formule ? c.formule+' mois' : '', montant,
-      c.caution||0, c.frais||0, Math.round(c.mensualite||0),
-      c.dateDebut||'', moisRestants, paye, reste,
-      c.cautionPayee ? 'Oui' : 'Non',
-      c.cautionRestituee ? 'Oui' : 'Non',
-      statut
+      c.cautionNumeroCheque||'', c.cautionBanque||'', c.cautionMontant||c.caution||0,
+      c.fraisNumeroCheque||'', c.fraisBanque||'', c.fraisMontant||c.frais||0, Math.round(c.mensualite||0),
+      c.dateDebut||'', s.nbPaye+'/'+c.formule, Math.round(s.paye), Math.round(reste), pct,
+      c.cautionRestituee ? 'Oui' : 'Non', statut
     ]);
   });
-  var wsContrats = XLSX.utils.aoa_to_sheet(rowsContrats);
+  rowsContrats.push(['TOTAL','','','','','','','', totC.montant,'','',totC.caution,'','',totC.frais,'','','',totC.paye,totC.reste,'','','']);
+  var wsContrats = XLSX.utils.aoa_to_sheet([]);
+  poserEnTete(wsContrats, 'MAPHAR MOBILITY — Portefeuille de contrats actifs', 'Export du ' + dateExport + ' · ' + rowsContrats.length.toString().replace(/\B/,'') + ' ligne(s) (hors archivés)', headersContrats);
+  XLSX.utils.sheet_add_aoa(wsContrats, rowsContrats, {origin:'A4'});
   wsContrats['!cols'] = [
-    {wch:14},{wch:22},{wch:22},{wch:28},{wch:14},{wch:18},
-    {wch:10},{wch:14},{wch:13},{wch:16},{wch:14},
-    {wch:12},{wch:14},{wch:14},{wch:12},
-    {wch:14},{wch:16},{wch:10}
+    {wch:13},{wch:16},{wch:22},{wch:20},{wch:26},{wch:13},{wch:16},
+    {wch:9},{wch:14},{wch:13},{wch:14},{wch:12},
+    {wch:13},{wch:14},{wch:13},{wch:13},
+    {wch:11},{wch:14},{wch:15},{wch:13},{wch:10},
+    {wch:15},{wch:10}
   ];
-  var headerRange = XLSX.utils.decode_range(wsContrats['!ref']);
-  for (var col = headerRange.s.c; col <= headerRange.e.c; col++) {
-    var cellAddr = XLSX.utils.encode_cell({r:0, c:col});
-    if (wsContrats[cellAddr]) wsContrats[cellAddr].s = headerStyle;
+  [8,11,14,15,18,19].forEach(function(colIdx){
+    for (var r = 3; r < 3+rowsContrats.length; r++) {
+      var addr = XLSX.utils.encode_cell({r:r,c:colIdx});
+      if (wsContrats[addr] && typeof wsContrats[addr].v === 'number') wsContrats[addr].z = FMT_F;
+    }
+  });
+  styliserFeuille(wsContrats, headersContrats.length, 3+rowsContrats.length, 22, statutsContrats);
+  // Ligne TOTAL en gras
+  var rTot = 3 + rowsContrats.length - 1;
+  for (var cT = 0; cT < headersContrats.length; cT++) {
+    var addrT = XLSX.utils.encode_cell({r:rTot, c:cT});
+    if (wsContrats[addrT]) wsContrats[addrT].s = {font:{bold:true,color:{rgb:CHARCOAL}},fill:{fgColor:{rgb:SAUGE_L}},border:{top:{style:'medium',color:{rgb:SAUGE}}}};
   }
   XLSX.utils.book_append_sheet(wb, wsContrats, 'Contrats actifs');
 
-  /* ── Feuille 2 : Échéances (contrats actifs uniquement) ── */
-  var rowsEch = [
-    ['N° Contrat','Nom','Officine','Mois','Date','Montant (F)','Statut']
-  ];
+  /* ── Feuille 2 : Échéanciers détaillés (structure réelle : statut/montantDu/montantPaye/dateEch) ── */
+  var headersEch = ['N° Contrat','Cohorte','Souscripteur','Mois','Date échéance','Montant dû (F)','Date paiement','N° Chèque','Banque','Montant payé (F)','Statut'];
+  var rowsEch = [];
+  var statutsEch = [];
   CONTRATS.forEach(function(c) {
-    if (c.archive) return; // exclure les archivés
+    if (c.archive) return;
     if (!c.echeances) return;
-    c.echeances.forEach(function(e, idx) {
-      var retard = !e.paye && e.date && new Date(e.date) < new Date();
+    var coh = getCohorteById(c.cohorteId);
+    c.echeances.forEach(function(e) {
+      var statutLbl = e.statut === 'paye' ? 'Payé' : (e.statut === 'retard' ? 'En retard' : 'En attente');
+      statutsEch.push(statutLbl === 'Payé' ? 'Soldé' : (statutLbl === 'En retard' ? 'En retard' : 'En cours'));
       rowsEch.push([
-        c.numero||'', c.nom||'', c.officine||'',
-        'Mois '+(idx+1), e.date||'', e.montant||0,
-        e.paye ? 'Payé' : retard ? 'En retard' : 'À venir'
+        c.numero||'', coh?coh.nom:'—', c.nom||'', 'M'+e.num, e.dateEch||'',
+        Math.round(e.montantDu||0), e.datePaiement||'', e.numeroCheque||'', e.banque||'',
+        Math.round(e.montantPaye||0), statutLbl
       ]);
     });
   });
-  var wsEch = XLSX.utils.aoa_to_sheet(rowsEch);
-  wsEch['!cols'] = [{wch:14},{wch:22},{wch:22},{wch:8},{wch:12},{wch:14},{wch:10}];
-  var hdrEch = XLSX.utils.decode_range(wsEch['!ref']);
-  for (var c2 = hdrEch.s.c; c2 <= hdrEch.e.c; c2++) {
-    var ca = XLSX.utils.encode_cell({r:0, c:c2});
-    if (wsEch[ca]) wsEch[ca].s = headerStyle;
-  }
+  var wsEch = XLSX.utils.aoa_to_sheet([]);
+  poserEnTete(wsEch, 'MAPHAR MOBILITY — Échéanciers détaillés', 'Export du ' + dateExport + ' · ' + rowsEch.length + ' échéance(s)', headersEch);
+  XLSX.utils.sheet_add_aoa(wsEch, rowsEch, {origin:'A4'});
+  wsEch['!cols'] = [{wch:13},{wch:16},{wch:22},{wch:7},{wch:13},{wch:14},{wch:13},{wch:13},{wch:14},{wch:14},{wch:11}];
+  [5,9].forEach(function(colIdx){
+    for (var r = 3; r < 3+rowsEch.length; r++) {
+      var addr = XLSX.utils.encode_cell({r:r,c:colIdx});
+      if (wsEch[addr] && typeof wsEch[addr].v === 'number') wsEch[addr].z = FMT_F;
+    }
+  });
+  styliserFeuille(wsEch, headersEch.length, 3+rowsEch.length, 10, statutsEch);
   XLSX.utils.book_append_sheet(wb, wsEch, 'Échéanciers');
 
-  /* ── Feuille 3 : Archives ── */
-  var rowsArchives = [
-    ['N° Contrat','Nom','Officine','Téléphone','Véhicule',
-     'Formule','Montant (F)','Caution (F)','Montant payé (F)','Date début','Date archivage']
-  ];
+  /* ── Feuille 3 : Cohortes ── */
+  var headersCoh = ['Cohorte','Statut','Date lancement','Date livraison','Dossiers','12 mois','24 mois','Montant véhicules (F)','Garanties (F)','Frais dossier (F)','Encaissé (F)','Reste dû (F)','Note'];
+  var rowsCoh = [];
+  COHORTES.slice().sort(function(a,b){return (a.dateLancement||'').localeCompare(b.dateLancement||'');}).forEach(function(co) {
+    var s = getCohorteStats(co.id);
+    rowsCoh.push([co.nom||'', co.statut||'', co.dateLancement||'', co.dateLivraison||'',
+      s.nb, s.nb12, s.nb24, s.totalMontant, s.totalCaution, s.totalFrais, s.totalEncaisse, s.totalReste, co.note||'']);
+  });
+  var wsCoh = XLSX.utils.aoa_to_sheet([]);
+  poserEnTete(wsCoh, 'MAPHAR MOBILITY — Suivi par cohortes', 'Export du ' + dateExport, headersCoh);
+  XLSX.utils.sheet_add_aoa(wsCoh, rowsCoh, {origin:'A4'});
+  wsCoh['!cols'] = [{wch:22},{wch:18},{wch:13},{wch:13},{wch:9},{wch:8},{wch:8},{wch:16},{wch:14},{wch:14},{wch:14},{wch:13},{wch:28}];
+  [7,8,9,10,11].forEach(function(colIdx){
+    for (var r = 3; r < 3+rowsCoh.length; r++) {
+      var addr = XLSX.utils.encode_cell({r:r,c:colIdx});
+      if (wsCoh[addr] && typeof wsCoh[addr].v === 'number') wsCoh[addr].z = FMT_F;
+    }
+  });
+  styliserFeuille(wsCoh, headersCoh.length, 3+rowsCoh.length);
+  XLSX.utils.book_append_sheet(wb, wsCoh, 'Cohortes');
+
+  /* ── Feuille 4 : Archives ── */
+  var headersArch = ['N° Contrat','Cohorte','Souscripteur','Officine','Téléphone','Véhicule','Formule','Montant (F)','Caution (F)','Montant encaissé (F)','Date début','Date archivage'];
+  var rowsArchives = [];
   var nbArchives = 0;
   CONTRATS.forEach(function(c) {
     if (!c.archive) return;
     nbArchives++;
-    var paye = 0;
-    if (c.echeances) c.echeances.forEach(function(e){ if(e.paye) paye += (e.montant||0); });
+    var s = getStats(c);
+    var coh = getCohorteById(c.cohorteId);
     rowsArchives.push([
-      c.numero||'', c.nom||'', c.officine||'', c.tel||'', c.vehicule||'',
+      c.numero||'', coh?coh.nom:'—', c.nom||'', c.officine||'', c.tel||'', c.vehicule||'',
       c.formule ? c.formule+' mois' : '', c.montant||0,
-      c.caution||0, paye,
+      c.cautionMontant||c.caution||0, Math.round(s.paye),
       c.dateDebut||'', c.dateArchivage||'-'
     ]);
   });
   if (nbArchives > 0) {
-    var wsArchives = XLSX.utils.aoa_to_sheet(rowsArchives);
-    wsArchives['!cols'] = [{wch:14},{wch:22},{wch:22},{wch:14},{wch:18},{wch:10},{wch:14},{wch:13},{wch:14},{wch:12},{wch:14}];
-    var hdrArch = XLSX.utils.decode_range(wsArchives['!ref']);
-    for (var ca2 = hdrArch.s.c; ca2 <= hdrArch.e.c; ca2++) {
-      var cellA = XLSX.utils.encode_cell({r:0, c:ca2});
-      if (wsArchives[cellA]) wsArchives[cellA].s = {font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'475569'}},alignment:{horizontal:'center'}};
-    }
+    var wsArchives = XLSX.utils.aoa_to_sheet([]);
+    poserEnTete(wsArchives, 'MAPHAR MOBILITY — Contrats archivés (soldés)', 'Export du ' + dateExport + ' · ' + nbArchives + ' dossier(s)', headersArch);
+    XLSX.utils.sheet_add_aoa(wsArchives, rowsArchives, {origin:'A4'});
+    wsArchives['!cols'] = [{wch:13},{wch:16},{wch:22},{wch:20},{wch:13},{wch:16},{wch:9},{wch:14},{wch:13},{wch:15},{wch:11},{wch:13}];
+    [7,8,9].forEach(function(colIdx){
+      for (var r = 3; r < 3+rowsArchives.length; r++) {
+        var addr = XLSX.utils.encode_cell({r:r,c:colIdx});
+        if (wsArchives[addr] && typeof wsArchives[addr].v === 'number') wsArchives[addr].z = FMT_F;
+      }
+    });
+    styliserFeuille(wsArchives, headersArch.length, 3+rowsArchives.length);
     XLSX.utils.book_append_sheet(wb, wsArchives, 'Archives');
   }
 
-  /* ── Feuille 4 : Récapitulatif financier (actifs uniquement) ── */
-  var totalMontant = 0, totalCaution = 0, totalFrais = 0, totalPaye = 0, totalReste = 0;
-  var nbSoldes = 0, nbEnCours = 0, nbRetard = 0, nbActifs = 0;
-  CONTRATS.forEach(function(c) {
-    if (c.archive) return; // exclure archivés du récap actif
-    nbActifs++;
-    var montant = c.montant || 0;
-    totalMontant += montant;
-    totalCaution += c.caution || 0;
-    totalFrais   += c.frais || 0;
-    var paye = 0;
-    var retard = false;
-    if (c.echeances) c.echeances.forEach(function(e){
-      if (e.paye) paye += (e.montant||0);
-      if (!e.paye && e.date && new Date(e.date) < new Date()) retard = true;
-    });
-    totalPaye  += paye;
-    totalReste += montant - paye;
-    if (montant - paye <= 0) nbSoldes++;
-    else if (retard) nbRetard++;
-    else nbEnCours++;
+  /* ── Feuille 5 : Récapitulatif financier ── */
+  var totalMontant = totC.montant, totalCaution = totC.caution, totalFrais = totC.frais,
+      totalPaye = totC.paye, totalReste = totC.reste;
+  var nbSoldes = 0, nbEnCours = 0, nbRetard = 0, nbActifs = rowsContrats.length - 1;
+  statutsContrats.forEach(function(st){
+    if (st === 'Soldé') nbSoldes++; else if (st === 'En retard') nbRetard++; else nbEnCours++;
   });
   var rowsRecap = [
-    ['RÉCAPITULATIF FINANCIER MAPHAR — '+dateExport, ''],
+    ['RÉCAPITULATIF FINANCIER MAPHAR MOBILITY — '+dateExport, ''],
     ['',''],
     ['Indicateur','Montant (F)'],
     ['Montant total portefeuille actif', totalMontant],
-    ['Total cautions reçues', totalCaution],
+    ['Total garanties reçues', totalCaution],
     ['Total frais de dossier', totalFrais],
     ['Total encaissé (mensualités)', totalPaye],
     ['Reste à solder', totalReste],
@@ -2763,22 +2855,34 @@ function exporterExcel() {
     ['TOTAL contrats actifs', nbActifs],
     ['',''],
     ['Contrats archivés (soldés)', nbArchives],
-    ['TOTAL général (actifs + archivés)', nbActifs + nbArchives]
+    ['TOTAL général (actifs + archivés)', nbActifs + nbArchives],
+    ['',''],
+    ['Cohortes','Nombre / Montant'],
+    ['Nombre de cohortes', COHORTES.length]
   ];
+  COHORTES.slice().sort(function(a,b){return (a.dateLancement||'').localeCompare(b.dateLancement||'');}).forEach(function(co){
+    var s = getCohorteStats(co.id);
+    rowsRecap.push([co.nom + ' ('+co.statut+')', s.totalMontant]);
+  });
   var wsRecap = XLSX.utils.aoa_to_sheet(rowsRecap);
-  wsRecap['!cols'] = [{wch:38},{wch:20}];
+  wsRecap['!cols'] = [{wch:40},{wch:20}];
   wsRecap['!merges'] = [{s:{r:0,c:0},e:{r:0,c:1}}];
-  var titleCell = wsRecap['A1'];
-  if (titleCell) titleCell.s = {font:{bold:true,sz:13,color:{rgb:'1E3A5F'}},alignment:{horizontal:'center'}};
-  ['A3','B3','A10','B10'].forEach(function(a){
+  if (wsRecap['A1']) wsRecap['A1'].s = titleStyle;
+  ['A3','B3','A10','B10','A19','B19'].forEach(function(a){
     if (wsRecap[a]) wsRecap[a].s = headerStyle;
   });
+  for (var rr = 0; rr < rowsRecap.length; rr++) {
+    var addrA = 'A'+(rr+1), addrB = 'B'+(rr+1);
+    if (wsRecap[addrB] && typeof wsRecap[addrB].v === 'number' && rr >= 3 && rr <= 7) wsRecap[addrB].z = FMT_F;
+    if (wsRecap[addrB] && typeof wsRecap[addrB].v === 'number' && rr >= 19) wsRecap[addrB].z = FMT_F;
+  }
   XLSX.utils.book_append_sheet(wb, wsRecap, 'Récapitulatif');
 
   var nomFichier = 'MAPHAR_export_'+new Date().toISOString().split('T')[0]+'.xlsx';
   XLSX.writeFile(wb, nomFichier);
   showToast('✅ Export Excel généré : '+nomFichier, 'success');
 }
+
 
 function importerFichier() {
   if(!peutModifier()) { showRefus(); return; }
@@ -2839,6 +2943,35 @@ function majMontantsCaution() {
   if(elFM && !elFM.dataset.manuel && formule===24) elFM.value = montant>0 ? Math.round(montant*0.05) : '';
 }
 
+// Ajoute une entrée à l'historique d'un contrat (traçabilité multi-utilisateurs)
+function logHistorique(c, action) {
+  if(!c.historique) c.historique = [];
+  var auteur = CURRENT_USER ? (CURRENT_USER.prenom + ' ' + CURRENT_USER.nom) : 'Système';
+  c.historique.push({ date: new Date().toISOString(), auteur: auteur, action: action });
+  // Limite raisonnable pour éviter une croissance illimitée du document
+  if(c.historique.length > 100) c.historique = c.historique.slice(-100);
+}
+
+function ouvrirHistorique(idx) {
+  var c = CONTRATS[idx];
+  document.getElementById('hist-sous-titre').textContent = c.numero + ' — ' + c.nom;
+  var el = document.getElementById('hist-liste');
+  var h = (c.historique || []).slice().reverse();
+  if(!h.length) {
+    el.innerHTML = '<p style="color:var(--ink-muted);font-style:italic;text-align:center;padding:20px;">Aucun historique enregistré pour ce contrat (dossier créé avant l\'activation de cette fonctionnalité, ou aucune modification depuis).</p>';
+  } else {
+    el.innerHTML = h.map(function(e) {
+      var d = new Date(e.date);
+      var dStr = d.toLocaleDateString('fr-FR') + ' à ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+      return '<div style="border-left:2px solid var(--sauge); padding:2px 0 12px 14px; margin-bottom:2px;">' +
+        '<div style="font-size:12px;color:var(--ink-muted);">' + dStr + ' — <strong>' + esc(e.auteur) + '</strong></div>' +
+        '<div style="font-size:13px;color:var(--charcoal);margin-top:2px;">' + esc(e.action) + '</div>' +
+      '</div>';
+    }).join('');
+  }
+  document.getElementById('modal-historique').style.display = 'flex';
+}
+
 function ouvrirFormCreation() {
   if(!peutModifier()) { showRefus(); return; }
   document.getElementById('f-mode').value = 'creation';
@@ -2846,6 +2979,7 @@ function ouvrirFormCreation() {
   document.getElementById('form-titre').textContent = '➕ Nouveau contrat';
   document.getElementById('btn-enregistrer').textContent = '✓ Enregistrer';
   document.getElementById('f-modif-info').style.display = 'none';
+  document.getElementById('btn-imprimer-fiche-form').style.display = 'none';
   document.getElementById('f-montant').disabled = false;
   document.getElementById('f-formule').disabled = false;
   document.getElementById('f-date').disabled = false;
@@ -2863,6 +2997,7 @@ function modifierContrat(idx) {
   document.getElementById('form-titre').textContent = '✏️ Modifier le contrat — ' + c.numero;
   document.getElementById('btn-enregistrer').textContent = '✓ Enregistrer les modifications';
   document.getElementById('f-modif-info').style.display = 'block';
+  document.getElementById('btn-imprimer-fiche-form').style.display = 'inline-flex';
   // Remplir les champs
   document.getElementById('f-nom').value = c.nom || '';
   document.getElementById('f-officine').value = c.officine || '';
@@ -2926,6 +3061,7 @@ function enregistrerContrat() {
     CONTRATS[idx].vehicule = document.getElementById('f-vehicule').value.trim();
     var elFCoh = document.getElementById('f-cohorte');
     if(elFCoh && elFCoh.value) CONTRATS[idx].cohorteId = parseInt(elFCoh.value);
+    logHistorique(CONTRATS[idx], 'Informations souscripteur/véhicule modifiées');
     sauvegarder(false);
     rafraichirSelecteurs();
     afficherListeContrats();
@@ -2989,8 +3125,10 @@ function enregistrerContrat() {
     cautionBanque:(document.getElementById('f-caution-banque')||{}).value||'',
     fraisNumeroCheque:formule===24?((document.getElementById('f-frais-cheque')||{}).value||''):'',
     fraisMontant:formule===24?(parseFloat((document.getElementById('f-frais-montant')||{}).value)||frais):0,
-    fraisBanque:formule===24?((document.getElementById('f-frais-banque')||{}).value||''):''
+    fraisBanque:formule===24?((document.getElementById('f-frais-banque')||{}).value||''):'',
+    historique:[]
   });
+  logHistorique(CONTRATS[CONTRATS.length-1], 'Contrat créé (' + formule + ' mois, ' + fmt(montant) + ' F)');
 
   sauvegarder(false);
   rafraichirSelecteurs();
@@ -3018,6 +3156,7 @@ function archiverContrat(idx) {
   if(confirm('🗄️ Archiver le contrat '+c.numero+' de '+c.nom+' ?\n\nIl sera retiré de la liste principale et du tableau de bord, et placé dans la section Archives.')) {
     CONTRATS[idx].archive = true;
     CONTRATS[idx].dateArchivage = new Date().toISOString().split('T')[0];
+    logHistorique(CONTRATS[idx], 'Contrat archivé (soldé)');
     sauvegarder();
     afficherListeContrats();
     afficherDashboard();
@@ -3030,8 +3169,10 @@ function desarchiverContrat(idx) {
   var c = CONTRATS[idx];
   CONTRATS[idx].archive = false;
   delete CONTRATS[idx].dateArchivage;
+  logHistorique(CONTRATS[idx], 'Contrat restauré depuis les archives');
   sauvegarder();
   afficherArchives();
+  afficherListeContrats();
   afficherDashboard();
   showToast('↩️ Contrat '+c.numero+' restauré dans la liste principale.', 'success');
 }
@@ -3093,6 +3234,12 @@ function consulterArchive(idx) {
   showPage('paiements');
 }
 
+var INCLURE_ARCHIVES_RECHERCHE = false;
+function toggleInclureArchives(val) {
+  INCLURE_ARCHIVES_RECHERCHE = val;
+  afficherListeContrats();
+}
+
 function afficherListeContrats() {
   var el = document.getElementById('liste-contrats');
   function matchCohorte(c) {
@@ -3100,7 +3247,7 @@ function afficherListeContrats() {
   }
   var indicesAffiches = [];
   CONTRATS.forEach(function(c, i) {
-    if(c.archive) return; // exclure archivés
+    if(c.archive && !INCLURE_ARCHIVES_RECHERCHE) return; // exclure archivés sauf si case cochée
     if(!matchCohorte(c)) return;
     if(!SEARCH_TERME) { indicesAffiches.push(i); return; }
     if ((c.numero||'').toLowerCase().includes(SEARCH_TERME) ||
@@ -3128,10 +3275,10 @@ function afficherListeContrats() {
     var pct = c.montant>0 ? Math.round((stats.paye/c.montant)*100) : 0;
     var couleur = pct>=100?'var(--success)':(pct>=50?'var(--gold)':'var(--danger)');
     var coh = getCohorteById(c.cohorteId);
-    html += '<tr>';
-    html += '<td><strong>'+esc(c.numero)+'</strong></td>';
+    html += '<tr'+(c.archive?' style="opacity:0.7;"':'')+'>';
+    html += '<td><strong>'+esc(c.numero)+'</strong>'+(c.archive?' <span class="cohort-pill" style="background:var(--ink-muted);">🗄️ Archivé</span>':'')+'</td>';
     html += '<td><strong>'+esc(c.nom)+'</strong><br><small style="color:var(--ink-muted);">'+(esc(c.officine)||'-')+'</small></td>';
-    html += '<td><small style="background:#eef2ff;color:#3730a3;padding:2px 7px;border-radius:10px;white-space:nowrap;">'+(coh?esc(coh.nom):'—')+'</small></td>';
+    html += '<td><small style="background:var(--sauge-light);color:var(--sauge-dark);padding:2px 7px;border-radius:10px;white-space:nowrap;">'+(coh?esc(coh.nom):'—')+'</small></td>';
     html += '<td>'+c.formule+' mois</td>';
     html += '<td>'+fmt(c.mensualite)+' F</td>';
     html += '<td style="min-width:120px;"><div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%;background:'+couleur+';"></div></div><small>'+stats.nbPaye+'/'+c.formule+' — '+pct+'%</small></td>';
@@ -3139,8 +3286,12 @@ function afficherListeContrats() {
     html += '<td style="white-space:nowrap;">' +
       '<button class="btn btn-purple btn-sm" onclick="ouvrirPaiements('+i+')" style="margin-bottom:2px;">💰 Paiements</button> ' +
       '<button class="btn btn-gray btn-sm" onclick="preselectionnerContrat('+i+',\'fiche\')" style="margin-bottom:2px;" title="Imprimer la fiche du contrat">🖨️ Fiche</button> ' +
-      (peutModifier() ? '<button class="btn btn-blue btn-sm" onclick="modifierContrat('+i+')" style="margin-bottom:2px;">✏️ Modifier</button> ' : '') +
-      (peutModifier() && pct>=100 ? '<button class="btn btn-gray btn-sm" onclick="archiverContrat('+i+')" style="margin-bottom:2px;" title="Archiver ce contrat soldé">🗄️ Archiver</button> ' : '') +
+      '<button class="btn btn-gray btn-sm" onclick="ouvrirHistorique('+i+')" style="margin-bottom:2px;" title="Voir l\'historique des modifications">🕒</button> ' +
+      (c.archive
+        ? (peutModifier() ? '<button class="btn btn-blue btn-sm" onclick="desarchiverContrat('+i+')" style="margin-bottom:2px;" title="Restaurer dans la liste principale">↩️ Restaurer</button> ' : '')
+        : ((peutModifier() ? '<button class="btn btn-blue btn-sm" onclick="modifierContrat('+i+')" style="margin-bottom:2px;">✏️ Modifier</button> ' : '') +
+           (peutModifier() && pct>=100 ? '<button class="btn btn-gray btn-sm" onclick="archiverContrat('+i+')" style="margin-bottom:2px;" title="Archiver ce contrat soldé">🗄️ Archiver</button> ' : ''))
+      ) +
       (peutModifier() ? '<button class="btn btn-red btn-sm" onclick="supprimerContrat('+i+')">🗑️</button>' : '') +
       '</td>';
     html += '</tr>';
@@ -3373,6 +3524,7 @@ function validerEtImprimer() {
   if(!e.datePaiement) e.datePaiement = new Date().toISOString().split('T')[0];
   if(!e.montantPaye || e.montantPaye===0) e.montantPaye = e.montantDu;
   COMPTEURS.recu++;
+  logHistorique(CONTRATS[APERCU_CONTRAT_IDX], 'Échéance M' + e.num + ' payée (' + fmt(e.montantPaye) + ' F)');
   sauvegarder();
 
   // Vérifier si toutes les échéances sont maintenant payées → fin de contrat
@@ -6498,6 +6650,19 @@ document.addEventListener('click', function(e) {
 </script>
 
 <!-- ====== MODAL MISE À JOUR V12 ====== -->
+<div id="modal-historique" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99998;align-items:center;justify-content:center;" class="no-print">
+  <div style="background:white;border-radius:16px;padding:0;max-width:520px;width:92%;max-height:80vh;box-shadow:0 24px 64px rgba(0,0,0,0.4);overflow:hidden;display:flex;flex-direction:column;">
+    <div style="background:linear-gradient(135deg,var(--sauge-dark),var(--sauge));padding:18px 22px;color:white;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:16px;font-weight:700;">🕒 Historique des modifications</div>
+        <div id="hist-sous-titre" style="font-size:12px;opacity:0.85;margin-top:2px;"></div>
+      </div>
+      <button onclick="document.getElementById('modal-historique').style.display='none';" style="background:rgba(255,255,255,0.2);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;">✕</button>
+    </div>
+    <div id="hist-liste" style="padding:16px 22px;overflow-y:auto;flex:1;"></div>
+  </div>
+</div>
+
 <div id="modal-v12" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99998;align-items:center;justify-content:center;">
   <div style="background:white;border-radius:16px;padding:0;max-width:520px;width:92%;box-shadow:0 24px 64px rgba(0,0,0,0.4);overflow:hidden;animation:toastIn 0.35s ease;">
     <!-- En-tête -->
