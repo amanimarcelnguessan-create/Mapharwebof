@@ -1864,11 +1864,13 @@ h2{letter-spacing:-0.2px;}
   <div class="selecteur-contrat no-print" style="background:linear-gradient(135deg,var(--sauge-dark),var(--sauge));">
     <h3>🏦 Bordereau mensuel — Contrats <strong>12 mois</strong></h3>
     <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-      <div>
-        <label style="font-size:11px;color:var(--border);display:block;margin-bottom:4px;">Mensualité</label>
-        <select id="sel-bm12-mois" onchange="chargerContratsBM(12)">
-          <option value="">-- Choisir la mensualité --</option>
-        </select>
+      <div style="min-width:220px;">
+        <label style="font-size:11px;color:var(--border);display:block;margin-bottom:4px;">
+          Mensualités à inclure &nbsp;
+          <button onclick="toggleTousMoisBM(12,true)" style="font-size:10px;padding:1px 6px;background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.4);border-radius:3px;cursor:pointer;">✅ Tous</button>
+          <button onclick="toggleTousMoisBM(12,false)" style="font-size:10px;padding:1px 6px;background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.4);border-radius:3px;cursor:pointer;">☐ Aucun</button>
+        </label>
+        <div id="bm12-mois-list" style="background:rgba(0,0,0,0.25);border-radius:6px;padding:6px 8px;max-height:60px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:4px;max-width:280px;"></div>
       </div>
       <div>
         <label style="font-size:11px;color:var(--border);display:block;margin-bottom:4px;">📦 Cohorte</label>
@@ -1890,7 +1892,7 @@ h2{letter-spacing:-0.2px;}
           <button onclick="toggleTousBM(12,false)" style="font-size:10px;padding:1px 6px;background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.4);border-radius:3px;cursor:pointer;">☐ Aucun</button>
         </label>
         <div id="bm12-contrats-list" style="background:rgba(0,0,0,0.25);border-radius:6px;padding:6px 8px;max-height:90px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:4px;">
-          <span style="color:#93c5fd;font-size:11px;font-style:italic;">Sélectionnez d'abord la mensualité</span>
+          <span style="color:#93c5fd;font-size:11px;font-style:italic;">Cochez au moins une mensualité, ou la caution/les frais</span>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;">
@@ -1913,10 +1915,13 @@ h2{letter-spacing:-0.2px;}
   <div class="selecteur-contrat no-print" style="background:linear-gradient(135deg,#7c2d12,#ea580c);padding:10px 14px;margin-bottom:8px;">
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
       <h3 style="margin:0;font-size:13px;white-space:nowrap;">🏦 Bordereau mensuel <strong>24M</strong></h3>
-      <div>
-        <select id="sel-bm24-mois" onchange="chargerContratsBM(24)" style="padding:5px 10px;border-radius:6px;border:none;font-size:12px;background:white;color:var(--charcoal);cursor:pointer;">
-          <option value="">-- Mensualité --</option>
-        </select>
+      <div style="min-width:200px;">
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">
+          <span style="font-size:11px;color:#fed7aa;">Mensualités</span>
+          <button onclick="toggleTousMoisBM(24,true)" style="font-size:10px;padding:1px 6px;background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.4);border-radius:3px;cursor:pointer;">✅ Tous</button>
+          <button onclick="toggleTousMoisBM(24,false)" style="font-size:10px;padding:1px 6px;background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.4);border-radius:3px;cursor:pointer;">☐ Aucun</button>
+        </div>
+        <div id="bm24-mois-list" style="background:rgba(0,0,0,0.25);border-radius:6px;padding:4px 6px;max-height:52px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:3px;max-width:260px;"></div>
       </div>
       <div>
         <select id="sel-bm24-cohorte" onchange="chargerContratsBM(24)" style="padding:5px 10px;border-radius:6px;border:none;font-size:12px;background:white;color:var(--charcoal);cursor:pointer;">
@@ -1940,7 +1945,7 @@ h2{letter-spacing:-0.2px;}
           <button onclick="toggleTousBM(24,false)" style="font-size:10px;padding:1px 6px;background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.4);border-radius:3px;cursor:pointer;">☐ Aucun</button>
         </div>
         <div id="bm24-contrats-list" style="background:rgba(0,0,0,0.25);border-radius:6px;padding:4px 6px;max-height:52px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:3px;">
-          <span style="color:#fdba74;font-size:11px;font-style:italic;">Sélectionnez d'abord la mensualité</span>
+          <span style="color:#fdba74;font-size:11px;font-style:italic;">Cochez au moins une mensualité, ou la caution/les frais</span>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;">
@@ -4257,9 +4262,9 @@ function imprimerDoc(docId) {
 // Prépare l'impression du bordereau mensuel avec orientation adaptée
 function imprimerBordereauMensuel(formule) {
   document.body.classList.remove('print-bm12','print-bm24');
-  var inclureCaution = !!(document.getElementById('chk-bm'+formule+'-caution') && document.getElementById('chk-bm'+formule+'-caution').checked);
-  // BM24 toujours paysage ; BM12 paysage si caution incluse
-  var paysage = (formule===24) || (formule===12 && inclureCaution);
+  var opt = getOptionsBM(formule);
+  // BM24 toujours paysage ; BM12 paysage si caution incluse ou plusieurs mois combinés
+  var paysage = (formule===24) || opt.inclureCaution || opt.inclureFrais || opt.moisSel.length>1;
   if(paysage) {
     document.body.classList.add('print-bm'+formule);
     setPrintOrientation('landscape');
@@ -4290,61 +4295,88 @@ function peuplerSelectCohorteBordereau(formule) {
   sel.value = val || '';
 }
 
-function majSelecteurBM(formule) {
-  peuplerSelectCohorteBordereau(formule);
-  var sel = document.getElementById('sel-bm'+formule+'-mois');
-  if(!sel) return;
-  var val = sel.value;
-  sel.innerHTML = '<option value="">-- Choisir la mensualité --</option>';
-  for(var m=1; m<=formule; m++) {
-    sel.innerHTML += '<option value="'+m+'"'+(val==m?' selected':'')+'>M'+m+'</option>';
+// Retourne la liste des mois cochés (ex: [1,2,3] si M1,M2,M3 sont cochés)
+function getMoisSelectionnesBM(formule) {
+  var mois = [];
+  for(var m=1; m<=formule; m++){
+    var chk = document.getElementById('chk-bm'+formule+'-m'+m);
+    if(chk && chk.checked) mois.push(m);
   }
-  // Remettre la liste à l'état vide
-  var listEl = document.getElementById('bm'+formule+'-contrats-list');
-  var placeholderColor = formule===12 ? '#93c5fd' : '#fdba74';
-  if(listEl) listEl.innerHTML = '<span style="color:'+placeholderColor+';font-size:11px;font-style:italic;">Sélectionnez d\'abord la mensualité</span>';
-  if(val) chargerContratsBM(formule);
+  return mois;
 }
 
-// Charge les cases à cocher des souscripteurs dès qu'on choisit une mensualité
+function toggleTousMoisBM(formule, etat) {
+  for(var m=1; m<=formule; m++){
+    var chk = document.getElementById('chk-bm'+formule+'-m'+m);
+    if(chk) chk.checked = etat;
+  }
+  chargerContratsBM(formule);
+}
+
+// Options actuellement choisies (mois + cohorte + caution + frais) — source unique de vérité,
+// utilisée par chargerContratsBM, toggleTousBM et afficherBordereauMensuel pour rester cohérentes.
+function getOptionsBM(formule) {
+  var selCohEl = document.getElementById('sel-bm'+formule+'-cohorte');
+  return {
+    moisSel: getMoisSelectionnesBM(formule),
+    cohorteSel: selCohEl ? selCohEl.value : '',
+    inclureCaution: !!(document.getElementById('chk-bm'+formule+'-caution') && document.getElementById('chk-bm'+formule+'-caution').checked),
+    inclureFrais: formule===24 && !!(document.getElementById('chk-bm'+formule+'-frais') && document.getElementById('chk-bm'+formule+'-frais').checked)
+  };
+}
+
+// Contrats éligibles selon la formule, la cohorte, et le fait qu'au moins un mois OU la caution/les frais soient demandés
+function getEligiblesBM(formule) {
+  var opt = getOptionsBM(formule);
+  var eligibles = [];
+  if(opt.moisSel.length===0 && !opt.inclureCaution && !opt.inclureFrais) return {opt:opt, eligibles:eligibles};
+  CONTRATS.forEach(function(c, cidx){
+    if(c.archive) return; // exclure archivés
+    if(parseInt(c.formule) !== formule) return;
+    if(opt.cohorteSel && parseInt(c.cohorteId) !== parseInt(opt.cohorteSel)) return;
+    eligibles.push({cidx:cidx, c:c});
+  });
+  return {opt:opt, eligibles:eligibles};
+}
+
+function majSelecteurBM(formule) {
+  peuplerSelectCohorteBordereau(formule);
+  var listEl = document.getElementById('bm'+formule+'-mois-list');
+  if(listEl && !listEl.dataset.built) {
+    var html = '';
+    for(var m=1; m<=formule; m++){
+      html += '<label style="display:inline-flex;align-items:center;gap:3px;background:rgba(255,255,255,0.15);padding:2px 6px;border-radius:10px;cursor:pointer;font-size:10.5px;color:white;white-space:nowrap;">'+
+        '<input type="checkbox" id="chk-bm'+formule+'-m'+m+'" '+(m===1?'checked':'')+' onchange="chargerContratsBM('+formule+')" style="cursor:pointer;width:12px;height:12px;" /> M'+m+
+        '</label>';
+    }
+    listEl.innerHTML = html;
+    listEl.dataset.built = '1';
+  }
+  chargerContratsBM(formule);
+}
+
+// Charge les cases à cocher des souscripteurs dès qu'on change mois/cohorte/caution/frais
 function chargerContratsBM(formule) {
-  var moisSel = parseInt(document.getElementById('sel-bm'+formule+'-mois').value);
   var listEl  = document.getElementById('bm'+formule+'-contrats-list');
   var docEl   = document.getElementById('doc-bordereau-mensuel-'+formule);
   var resume  = document.getElementById('bm'+formule+'-resume');
 
-  // Réinitialiser doc et résumé
   if(docEl)  docEl.innerHTML  = '<p style="color:var(--ink-muted);font-style:italic;padding:40px;text-align:center;">Cliquez sur <strong>📄 Générer</strong> pour produire le bordereau</p>';
   if(resume) resume.innerHTML = '';
+  if(!listEl) return;
 
-  if(!moisSel || !listEl) return;
-
-  // Auto-cocher caution/frais uniquement sur M1, décocher sur les autres mensualités
-  var chkCaution = document.getElementById('chk-bm'+formule+'-caution');
-  var chkFrais   = document.getElementById('chk-bm'+formule+'-frais');
-  if(chkCaution) chkCaution.checked = (moisSel === 1);
-  if(chkFrais)   chkFrais.checked   = (moisSel === 1);
-
-  // Filtrer les contrats éligibles
-  var selCohEl = document.getElementById('sel-bm'+formule+'-cohorte');
-  var cohorteSel = selCohEl ? selCohEl.value : '';
-  var eligibles = [];
-  CONTRATS.forEach(function(c, cidx){
-    if(c.archive) return; // exclure archivés
-    if(parseInt(c.formule) !== formule) return;
-    if(cohorteSel && parseInt(c.cohorteId) !== parseInt(cohorteSel)) return;
-    if(!c.echeances || c.echeances.length < moisSel) return;
-    if(!c.echeances[moisSel-1]) return;
-    eligibles.push({cidx:cidx, c:c});
-  });
-
-  if(eligibles.length === 0){
-    listEl.innerHTML = '<span style="color:#f87171;font-size:11px;">Aucun contrat '+formule+' mois pour M'+moisSel+'</span>';
+  var r = getEligiblesBM(formule);
+  if(r.opt.moisSel.length===0 && !r.opt.inclureCaution && !r.opt.inclureFrais) {
+    listEl.innerHTML = '<span style="color:var(--ink-muted);font-size:11px;font-style:italic;">Cochez au moins une mensualité, ou la caution / les frais</span>';
+    return;
+  }
+  if(r.eligibles.length === 0){
+    listEl.innerHTML = '<span style="color:#f87171;font-size:11px;">Aucun contrat '+formule+' mois pour cette sélection</span>';
     return;
   }
 
   var html = '';
-  eligibles.forEach(function(item){
+  r.eligibles.forEach(function(item){
     var c = item.c, cidx = item.cidx;
     html += '<label style="display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.15);'+
             'padding:3px 7px;border-radius:12px;cursor:pointer;font-size:11px;color:white;white-space:nowrap;">'+
@@ -4353,53 +4385,39 @@ function chargerContratsBM(formule) {
             esc(c.nom)+'</label>';
   });
   listEl.innerHTML = html;
-
-  // Résumé initial
-  resume.innerHTML = '✅ <strong>'+eligibles.length+' souscripteur'+(eligibles.length>1?'s':'')+' disponibles — Cliquez sur Générer</strong>';
+  resume.innerHTML = '✅ <strong>'+r.eligibles.length+' souscripteur'+(r.eligibles.length>1?'s':'')+' disponibles — Cliquez sur Générer</strong>';
 }
 
-// Coche/décoche tous les souscripteurs
+// Coche/décoche tous les souscripteurs éligibles (respecte cohorte + mois + caution/frais)
 function toggleTousBM(formule, etat) {
-  var moisSel = parseInt(document.getElementById('sel-bm'+formule+'-mois').value);
-  if(!moisSel) return;
-  var selCohEl = document.getElementById('sel-bm'+formule+'-cohorte');
-  var cohorteSel = selCohEl ? selCohEl.value : '';
-  CONTRATS.forEach(function(c, cidx){
-    if(c.archive) return; // exclure archivés
-    if(parseInt(c.formule) !== formule) return;
-    if(cohorteSel && parseInt(c.cohorteId) !== parseInt(cohorteSel)) return;
-    var chk = document.getElementById('chk-bm'+formule+'-'+cidx);
+  var r = getEligiblesBM(formule);
+  r.eligibles.forEach(function(item){
+    var chk = document.getElementById('chk-bm'+formule+'-'+item.cidx);
     if(chk) chk.checked = etat;
   });
 }
 
-// Génère le document avec les souscripteurs cochés
+// Génère le document avec les souscripteurs cochés — supporte une combinaison libre
+// de mensualités (M1, M2, M1+M2+M3...) et/ou caution seule et/ou frais de dossier seuls.
 function afficherBordereauMensuel(formule) {
-  var moisSel = parseInt(document.getElementById('sel-bm'+formule+'-mois').value);
   var el      = document.getElementById('doc-bordereau-mensuel-'+formule);
   var resume  = document.getElementById('bm'+formule+'-resume');
+  var r = getEligiblesBM(formule);
+  var moisSel = r.opt.moisSel, inclureCaution = r.opt.inclureCaution, inclureFrais = r.opt.inclureFrais;
 
-  if(!moisSel){
-    el.innerHTML = '<p style="color:var(--ink-muted);font-style:italic;padding:40px;text-align:center;">Sélectionnez une mensualité pour générer le bordereau</p>';
-    resume.innerHTML = '';
+  if(moisSel.length===0 && !inclureCaution && !inclureFrais){
+    el.innerHTML = '<p style="color:var(--ink-muted);font-style:italic;padding:40px;text-align:center;">Cochez au moins une mensualité, la caution ou les frais de dossier.</p>';
+    if(resume) resume.innerHTML = '';
     return;
   }
 
-  // Lire les toggles caution/frais
-  var inclureCaution = !!(document.getElementById('chk-bm'+formule+'-caution') && document.getElementById('chk-bm'+formule+'-caution').checked);
-  var inclureFrais   = formule===24 && !!(document.getElementById('chk-bm'+formule+'-frais') && document.getElementById('chk-bm'+formule+'-frais').checked);
-
-  // Récupérer les contrats cochés
+  // Contrats effectivement cochés : la case doit exister ET être cochée
+  // (corrige l'ancien bug où un contrat hors filtre, sans case affichée, était inclus par défaut)
   var lignes = [];
-  CONTRATS.forEach(function(c, cidx){
-    if(c.archive) return;
-    if(parseInt(c.formule) !== formule) return;
-    if(!c.echeances || c.echeances.length < moisSel) return;
-    var e = c.echeances[moisSel-1];
-    if(!e) return;
-    var chk = document.getElementById('chk-bm'+formule+'-'+cidx);
-    if(chk && !chk.checked) return;
-    lignes.push({c:c, e:e, cidx:cidx, eidx:moisSel-1});
+  r.eligibles.forEach(function(item){
+    var chk = document.getElementById('chk-bm'+formule+'-'+item.cidx);
+    if(!chk || !chk.checked) return;
+    lignes.push(item);
   });
 
   var couleur      = formule===12 ? 'var(--sauge-dark)'  : '#7c2d12';
@@ -4407,60 +4425,66 @@ function afficherBordereauMensuel(formule) {
   var couleurBord  = formule===12 ? '#93c5fd'  : '#fed7aa';
   var couleurText  = formule===12 ? 'var(--sauge-dark)'  : '#c2410c';
 
-  var total = 0, totalCaution = 0, totalFrais = 0;
-  lignes.forEach(function(l){
-    total += (l.e.montantDu||0);
-    if(inclureCaution) totalCaution += (l.c.caution || (formule===12 ? l.c.montant*0.20 : l.c.montant*0.30));
-    if(inclureFrais)   totalFrais   += (l.c.frais   || l.c.montant*0.05);
+  var totauxMois = {}; moisSel.forEach(function(m){ totauxMois[m]=0; });
+  var totalCaution=0, totalFrais=0;
+  lignes.forEach(function(item){
+    var c = item.c;
+    moisSel.forEach(function(m){
+      var e = c.echeances[m-1];
+      totauxMois[m] += (e && e.montantDu) || 0;
+    });
+    if(inclureCaution) totalCaution += (c.cautionMontant || c.caution || (formule===12?c.montant*0.20:c.montant*0.30));
+    if(inclureFrais)   totalFrais   += (c.fraisMontant   || c.frais   || c.montant*0.05);
   });
+  var totalMensualites = 0; moisSel.forEach(function(m){ totalMensualites += totauxMois[m]; });
+  var totalGeneral = totalMensualites + totalCaution + totalFrais;
+  var libelleMois = moisSel.length ? ('M'+moisSel.join('+M')) : '';
 
-  var totalGeneral = total + totalCaution + totalFrais;
-  resume.innerHTML = '📊 <strong>'+lignes.length+' souscripteur'+(lignes.length>1?'s':'')+' inclus — Total général : '+fmt(totalGeneral)+' FCFA</strong>';
+  if(resume) resume.innerHTML = '📊 <strong>'+lignes.length+' souscripteur'+(lignes.length>1?'s':'')+' inclus — Total général : '+fmt(totalGeneral)+' FCFA</strong>';
 
   if(lignes.length === 0){
     el.innerHTML = '<p style="color:var(--ink-muted);font-style:italic;padding:40px;text-align:center;">Aucun souscripteur sélectionné.</p>';
     return;
   }
 
-  var numBRD = 'BRD-M'+String(moisSel).padStart(2,'0')+'-'+formule+'M-'+new Date().getFullYear();
+  var numBRD = 'BRD-'+(libelleMois||'CAU')+'-'+formule+'M-'+new Date().getFullYear();
 
-  // Résumé en-tête
   var resumeExtras = '';
+  moisSel.forEach(function(m){ resumeExtras += ' &nbsp;|&nbsp; <strong>M'+m+' :</strong> '+fmt(totauxMois[m]); });
   if(inclureCaution) resumeExtras += ' &nbsp;|&nbsp; <strong>Cautions '+(formule===12?'20%':'30%')+' :</strong> <strong style="color:#065f46;">'+fmt(totalCaution)+'</strong> FCFA';
   if(inclureFrais)   resumeExtras += ' &nbsp;|&nbsp; <strong>Frais 5% :</strong> <strong style="color:var(--danger);">'+fmt(totalFrais)+'</strong> FCFA';
 
-  // Calcul précis du nombre total de colonnes
-  // Colonnes fixes : N°(1) + Souscripteur(1) + Véhicule(1) + Mensualité(3) = 6
-  var nbColMens    = 3; // N°Chq, Banque, Montant
+  var nbColFixe    = 3; // N°, Souscripteur, Véhicule
+  var nbColParMois = 4; // Date Éch, N°Chèque, Banque, Montant
   var nbColCaution = inclureCaution ? 3 : 0;
   var nbColFrais   = inclureFrais   ? 3 : 0;
-  var nbColTotal   = 3 + nbColMens + nbColCaution + nbColFrais; // 3 fixes + groupes
+  var nbColTotal   = nbColFixe + moisSel.length*nbColParMois + nbColCaution + nbColFrais;
 
-  // ---- EN-TÊTE NIVEAU 1 : groupes ----
   var th1 = '<tr style="background:'+couleur+';color:white;font-size:8pt;">'+
     '<th rowspan="2" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);">N°</th>'+
     '<th rowspan="2" style="padding:5px 4px;border:1px solid rgba(255,255,255,0.2);">Souscripteur</th>'+
-    '<th rowspan="2" style="padding:5px 4px;border:1px solid rgba(255,255,255,0.2);">Véhicule</th>'+
-    '<th rowspan="2" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);">Date<br>Échéance</th>'+
-    '<th colspan="3" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.12);">MENSUALITÉ</th>'+
-    (inclureCaution ? '<th colspan="3" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:#065f46;">CAUTION '+(formule===12?'20%':'30%')+'</th>' : '')+
-    (inclureFrais   ? '<th colspan="3" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:#9a3412;">FRAIS DOSSIER 5%</th>' : '')+
-    '</tr>';
+    '<th rowspan="2" style="padding:5px 4px;border:1px solid rgba(255,255,255,0.2);">Véhicule</th>';
+  moisSel.forEach(function(m){
+    th1 += '<th colspan="4" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.12);">MENSUALITÉ M'+m+'</th>';
+  });
+  if(inclureCaution) th1 += '<th colspan="3" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:#065f46;">CAUTION '+(formule===12?'20%':'30%')+'</th>';
+  if(inclureFrais)   th1 += '<th colspan="3" style="padding:5px 4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:#9a3412;">FRAIS DOSSIER 5%</th>';
+  th1 += '</tr>';
 
-  // ---- EN-TÊTE NIVEAU 2 : sous-colonnes ----
-  var th2 = '<tr style="background:'+couleur+';color:rgba(255,255,255,0.85);font-size:7.5pt;">'+
-    '<th style="padding:4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);">N° Chèque</th>'+
-    '<th style="padding:4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);">Banque</th>'+
-    '<th style="padding:4px;text-align:right;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);">Montant</th>'+
-    (inclureCaution ?
-      '<th style="padding:4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:#047857;">N° Chèque</th>'+
+  var th2 = '<tr style="background:'+couleur+';color:rgba(255,255,255,0.85);font-size:7.5pt;">';
+  moisSel.forEach(function(){
+    th2 += '<th style="padding:4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);">Date Éch.</th>'+
+           '<th style="padding:4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);">N° Chèque</th>'+
+           '<th style="padding:4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);">Banque</th>'+
+           '<th style="padding:4px;text-align:right;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);">Montant</th>';
+  });
+  if(inclureCaution) th2 += '<th style="padding:4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:#047857;">N° Chèque</th>'+
       '<th style="padding:4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:#047857;">Banque</th>'+
-      '<th style="padding:4px;text-align:right;border:1px solid rgba(255,255,255,0.2);background:#047857;">Montant</th>' : '')+
-    (inclureFrais ?
-      '<th style="padding:4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:#b45309;">N° Chèque</th>'+
+      '<th style="padding:4px;text-align:right;border:1px solid rgba(255,255,255,0.2);background:#047857;">Montant</th>';
+  if(inclureFrais) th2 += '<th style="padding:4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:#b45309;">N° Chèque</th>'+
       '<th style="padding:4px;text-align:center;border:1px solid rgba(255,255,255,0.2);background:#b45309;">Banque</th>'+
-      '<th style="padding:4px;text-align:right;border:1px solid rgba(255,255,255,0.2);background:#b45309;">Montant</th>' : '')+
-    '</tr>';
+      '<th style="padding:4px;text-align:right;border:1px solid rgba(255,255,255,0.2);background:#b45309;">Montant</th>';
+  th2 += '</tr>';
 
   var html =
     '<div style="background:'+couleurClair+';padding:4px 10px;border-radius:6px;margin-bottom:6px;font-size:10px;color:'+couleurText+';border:1px solid '+couleurBord+';" class="no-print">'+
@@ -4469,7 +4493,7 @@ function afficherBordereauMensuel(formule) {
     '<img src="'+MAPHAR_LOGO+'" style="width:48px;height:48px;object-fit:contain;margin-right:10px;flex-shrink:0;" />'+
     '<div style="flex:1;text-align:center;">'+
     '<h2 style="margin:0 0 1px;font-size:12pt;color:'+couleur+';">BORDEREAU DE REMISE DE CHÈQUES</h2>'+
-    '<p style="font-size:9pt;margin:0 0 1px;font-weight:600;">MENSUALITÉ M'+moisSel+' — FORMULE '+formule+' MOIS'+
+    '<p style="font-size:9pt;margin:0 0 1px;font-weight:600;">'+(libelleMois?libelleMois+' — ':'')+'FORMULE '+formule+' MOIS'+
     (inclureCaution||inclureFrais ? ' — Avec '+(inclureCaution?'Caution':'')+(inclureCaution&&inclureFrais?' + ':'')+(inclureFrais?'Frais dossier':'') : '')+
     '</p>'+
     '<p style="font-size:8.5pt;margin:0;color:var(--ink-muted);">MAPHAR — Mutuelle Pour l\'Assurance des Pharmaciens</p>'+
@@ -4477,24 +4501,42 @@ function afficherBordereauMensuel(formule) {
     '<div style="background:'+couleurClair+';padding:5px 8px;margin-bottom:6px;border:1px solid '+couleurBord+';border-radius:6px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px;">'+
     '<div style="font-size:8.5pt;"><strong>Date de remise :</strong> <input class="doc-input doc-input-md" value="'+auj()+'" /></div>'+
     '<div style="font-size:8.5pt;"><strong>N° Bordereau :</strong> <input class="doc-input doc-input-md" value="'+numBRD+'" /></div>'+
-    '<div style="font-size:8.5pt;"><strong>Mensualité :</strong> <strong style="color:'+couleurText+';">M'+moisSel+' / '+formule+' mois</strong></div>'+
+    '<div style="font-size:8.5pt;"><strong>Mensualités :</strong> <strong style="color:'+couleurText+';">'+(libelleMois||'—')+' / '+formule+' mois</strong></div>'+
     '<div style="font-size:8.5pt;"><strong>Banque :</strong> <input class="doc-input doc-input-md" placeholder="Nom de la banque" /></div>'+
     '</div>'+
     '<div style="background:var(--bg);padding:4px 8px;margin-bottom:6px;border-left:3px solid '+couleur+';">'+
     '<p style="margin:0;font-size:8.5pt;"><strong>REMIS PAR :</strong> <input class="doc-input doc-input-xl" value="MAPHAR — Mutuelle pour l\'Assurance des Pharmaciens" /></p>'+
-    '<p style="margin:1px 0 0;font-size:8.5pt;"><strong>Nombre de chèques :</strong> <strong>'+lignes.length+'</strong>'+
-    ' &nbsp;|&nbsp; <strong>Mensualités :</strong> <strong style="color:'+couleurText+';" id="bm'+formule+'-total-hdr">'+fmt(total)+'</strong> FCFA'+
+    '<p style="margin:1px 0 0;font-size:8.5pt;"><strong>Nombre de chèques :</strong> <strong>'+(lignes.length*(moisSel.length+(inclureCaution?1:0)+(inclureFrais?1:0)))+'</strong>'+
     resumeExtras+
     '</p>'+
     '</div>'+
     '<table style="width:100%;border-collapse:collapse;font-size:8pt;margin-bottom:0;">'+
     '<thead>'+th1+th2+'</thead><tbody>';
 
-  lignes.forEach(function(l, i){
-    var e=l.e, c=l.c, cidx=l.cidx, eidx=l.eidx;
+  lignes.forEach(function(item, i){
+    var c = item.c, cidx = item.cidx;
     var bg = i%2===0 ? 'background:#ffffff;' : 'background:var(--bg);';
-    var caution = c.caution || (formule===12 ? c.montant*0.20 : c.montant*0.30);
-    var frais   = c.frais   || c.montant*0.05;
+    var caution = c.cautionMontant || c.caution || (formule===12 ? c.montant*0.20 : c.montant*0.30);
+    var frais   = c.fraisMontant   || c.frais   || c.montant*0.05;
+
+    var tdMois = '';
+    moisSel.forEach(function(m){
+      var eidx = m-1;
+      var e = c.echeances[eidx] || {};
+      tdMois +=
+        '<td style="padding:4px;border:1px solid var(--border);text-align:center;white-space:nowrap;font-size:8pt;">'+
+          (e.dateEch ? dateFR(e.dateEch) : '<span style="color:var(--ink-muted);">—</span>')+
+        '</td>'+
+        '<td style="padding:4px;border:1px solid var(--border);text-align:center;">'+
+          '<input class="doc-input" style="min-width:75px;text-align:center;" value="'+esc(e.numeroCheque||'')+'" placeholder="N° chèque"'+
+          ' onchange="CONTRATS['+cidx+'].echeances['+eidx+'].numeroCheque=this.value;sauvegarder();" /></td>'+
+        '<td style="padding:4px;border:1px solid var(--border);text-align:center;">'+
+          '<input class="doc-input" style="min-width:55px;text-align:center;" value="'+esc(e.banque||'')+'" placeholder="Banque"'+
+          ' onchange="CONTRATS['+cidx+'].echeances['+eidx+'].banque=this.value;sauvegarder();" /></td>'+
+        '<td style="padding:4px;border:1px solid var(--border);text-align:right;font-weight:600;white-space:nowrap;">'+
+          '<input class="doc-input doc-input-num" style="text-align:right;min-width:70px;" value="'+fmt(e.montantDu||0)+'"'+
+          ' onchange="CONTRATS['+cidx+'].echeances['+eidx+'].montantDu=parseInt(this.value.replace(/[^0-9]/g,\'\'))||0;sauvegarder();afficherBordereauMensuel('+formule+');" /></td>';
+    });
 
     var tdCaution = inclureCaution ?
       '<td style="padding:4px;border:1px solid var(--border);text-align:center;background:#f0fdf4;">'+
@@ -4525,39 +4567,27 @@ function afficherBordereauMensuel(formule) {
         '<input class="doc-input" style="min-width:90px;" value="'+ esc(c.vehicule||'') +'" placeholder="Véhicule" />'+
         '<br><small style="color:'+couleurText+';font-size:7.5pt;font-weight:600;">'+fmt(c.montant||0)+' F</small>'+
       '</td>'+
-      '<td style="padding:4px;border:1px solid var(--border);text-align:center;white-space:nowrap;font-size:8pt;">'+
-        (e.dateEch ? dateFR(e.dateEch) : '<span style="color:var(--ink-muted);">—</span>')+
-      '</td>'+
-      '<td style="padding:4px;border:1px solid var(--border);text-align:center;">'+
-        '<input class="doc-input" style="min-width:75px;text-align:center;" value="'+(e.numeroCheque||'')+'" placeholder="N° chèque"'+
-        ' onchange="CONTRATS['+cidx+'].echeances['+eidx+'].numeroCheque=this.value;sauvegarder();" /></td>'+
-      '<td style="padding:4px;border:1px solid var(--border);text-align:center;">'+
-        '<input class="doc-input" style="min-width:55px;text-align:center;" value="'+(e.banque||'')+'" placeholder="Banque"'+
-        ' onchange="CONTRATS['+cidx+'].echeances['+eidx+'].banque=this.value;sauvegarder();" /></td>'+
-      '<td style="padding:4px;border:1px solid var(--border);text-align:right;font-weight:600;white-space:nowrap;">'+
-        '<input class="doc-input doc-input-num" style="text-align:right;min-width:70px;" value="'+fmt(e.montantDu)+'"'+
-        ' onchange="CONTRATS['+cidx+'].echeances['+eidx+'].montantDu=parseInt(this.value.replace(/[^0-9]/g,\'\'))||0;recalcBM('+formule+');sauvegarder();" /></td>'+
-      tdCaution+
-      tdFrais+
+      tdMois + tdCaution + tdFrais +
       '</tr>';
   });
 
-  // ---- LIGNE SOUS-TOTAUX (alignée colonne par colonne) ----
-  var trSousTot =
-    '<tr style="background:'+couleur+';color:white;font-weight:700;font-size:8.5pt;">'+
-    '<td colspan="3" style="padding:6px 8px;text-align:right;border:1px solid rgba(255,255,255,0.2);">Sous-totaux :</td>'+
-    '<td colspan="2" style="border:1px solid rgba(255,255,255,0.2);"></td>'+
-    '<td id="bm'+formule+'-total-cell" style="padding:6px 8px;text-align:right;border:1px solid rgba(255,255,255,0.2);white-space:nowrap;">'+fmt(total)+' FCFA</td>'+
-    (inclureCaution ?
-      '<td colspan="2" style="border:1px solid rgba(255,255,255,0.2);background:#047857;"></td>'+
-      '<td style="padding:6px 8px;text-align:right;border:1px solid rgba(255,255,255,0.2);background:#047857;white-space:nowrap;">'+fmt(totalCaution)+' FCFA</td>' : '')+
-    (inclureFrais ?
-      '<td colspan="2" style="border:1px solid rgba(255,255,255,0.2);background:#b45309;"></td>'+
-      '<td style="padding:6px 8px;text-align:right;border:1px solid rgba(255,255,255,0.2);background:#b45309;white-space:nowrap;">'+fmt(totalFrais)+' FCFA</td>' : '')+
-    '</tr>';
+  var trSousTot = '<tr style="background:'+couleur+';color:white;font-weight:700;font-size:8.5pt;">'+
+    '<td colspan="3" style="padding:6px 8px;text-align:right;border:1px solid rgba(255,255,255,0.2);">Sous-totaux :</td>';
+  moisSel.forEach(function(m){
+    trSousTot += '<td colspan="3" style="border:1px solid rgba(255,255,255,0.2);"></td>'+
+      '<td style="padding:6px 8px;text-align:right;border:1px solid rgba(255,255,255,0.2);white-space:nowrap;">'+fmt(totauxMois[m])+' FCFA</td>';
+  });
+  if(inclureCaution) trSousTot += '<td colspan="2" style="border:1px solid rgba(255,255,255,0.2);background:#047857;"></td>'+
+    '<td style="padding:6px 8px;text-align:right;border:1px solid rgba(255,255,255,0.2);background:#047857;white-space:nowrap;">'+fmt(totalCaution)+' FCFA</td>';
+  if(inclureFrais) trSousTot += '<td colspan="2" style="border:1px solid rgba(255,255,255,0.2);background:#b45309;"></td>'+
+    '<td style="padding:6px 8px;text-align:right;border:1px solid rgba(255,255,255,0.2);background:#b45309;white-space:nowrap;">'+fmt(totalFrais)+' FCFA</td>';
+  trSousTot += '</tr>';
 
-  // ---- LIGNE TOTAL GÉNÉRAL (s'étend sur toutes les colonnes sauf la dernière) ----
-  var libelleTotalGen = 'TOTAL GÉNÉRAL'+(inclureCaution||inclureFrais?' (Mensualité'+(inclureCaution?' + Caution':'')+(inclureFrais?' + Frais dossier':'')+')'  :'')+' :';
+  var libelleParts = [];
+  if(moisSel.length) libelleParts.push(libelleMois);
+  if(inclureCaution) libelleParts.push('Caution');
+  if(inclureFrais) libelleParts.push('Frais dossier');
+  var libelleTotalGen = 'TOTAL GÉNÉRAL ('+libelleParts.join(' + ')+') :';
 
   var trTotalGen =
     '<tr style="background:var(--sauge-dark);color:#fbbf24;font-weight:800;font-size:10pt;">'+
@@ -4579,50 +4609,19 @@ function afficherBordereauMensuel(formule) {
     '<div style="text-align:right;"><p><strong>Président MAPHAR</strong></p><p style="font-size:8.5pt;font-style:italic;">(Cachet et signature)</p><div class="sig-box"></div></div>'+
     '</div>'+
     '<div style="margin-top:14px;border-top:1px solid #ccc;padding-top:6px;text-align:center;font-size:8pt;color:var(--ink-muted);">'+
-    'MAPHAR — Mutuelle pour l\'Assurance des Pharmaciens — Bordereau M'+moisSel+' / Formule '+formule+' mois — Généré le '+auj()+' — Document officiel de remise bancaire'+
+    'MAPHAR — Mutuelle pour l\'Assurance des Pharmaciens — Bordereau '+(libelleMois||'Caution/Frais')+' / Formule '+formule+' mois — Généré le '+auj()+' — Document officiel de remise bancaire'+
     '</div>';
 
   el.innerHTML = html;
-  majFooterImpression('Bordereau Mensuel ' + formule + ' mois — M' + moisSel);
+  majFooterImpression('Bordereau Mensuel ' + formule + ' mois — ' + (libelleMois||'Caution/Frais'));
 
-  // Auto-orientation : paysage si beaucoup de colonnes
-  if(formule===24 || inclureCaution) {
+  if(formule===24 || inclureCaution || inclureFrais || moisSel.length>1) {
     setPrintOrientation('landscape');
   } else {
     setPrintOrientation('portrait');
   }
 }
 
-function recalcBM(formule) {
-  var moisSel = parseInt(document.getElementById('sel-bm'+formule+'-mois').value);
-  if(!moisSel) return;
-  var total = 0, totalCaution = 0, totalFrais = 0;
-  CONTRATS.forEach(function(c, cidx){
-    if(c.archive) return; // exclure archivés
-    if(parseInt(c.formule) !== formule) return;
-    var chk = document.getElementById('chk-bm'+formule+'-'+cidx);
-    if(chk && !chk.checked) return;
-    if(!c.echeances || c.echeances.length < moisSel) return;
-    total        += (c.echeances[moisSel-1].montantDu || 0);
-    totalCaution += (c.caution || (formule===12 ? c.montant*0.20 : c.montant*0.30));
-    if(formule===24) totalFrais += (c.frais || c.montant*0.05);
-  });
-  var cell = document.getElementById('bm'+formule+'-total-cell'); if(cell) cell.textContent = fmt(total)+' FCFA';
-  var hdr  = document.getElementById('bm'+formule+'-total-hdr');  if(hdr)  hdr.textContent  = fmt(total);
-  var inclCaution = document.getElementById('chk-bm'+formule+'-caution') && document.getElementById('chk-bm'+formule+'-caution').checked;
-  var inclFrais   = formule===24 && document.getElementById('chk-bm24-frais') && document.getElementById('chk-bm24-frais').checked;
-  var totalGen = total + (inclCaution?totalCaution:0) + (inclFrais?totalFrais:0);
-  var cellGen = document.getElementById('bm'+formule+'-total-gen'); if(cellGen) cellGen.textContent = fmt(totalGen)+' FCFA';
-  var res  = document.getElementById('bm'+formule+'-resume');
-  if(res){
-    var n = res.textContent.match(/\d+ souscripteur/);
-    var parts = 'Mensualités : '+fmt(total)+' FCFA';
-    if(inclCaution) parts += ' | Cautions : '+fmt(totalCaution)+' FCFA';
-    if(inclFrais)   parts += ' | Frais : '+fmt(totalFrais)+' FCFA';
-    parts += ' | <strong>Total général : '+fmt(totalGen)+' FCFA</strong>';
-    if(n) res.innerHTML='📊 <strong>'+n[0]+'s</strong> — '+parts;
-  }
-}
 
 
 
