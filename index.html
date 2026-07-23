@@ -1261,6 +1261,9 @@ h2{letter-spacing:-0.2px;}
   <button class="nav-btn" onclick="showPage('doc-fiche')">
     <span class="icon">🖨️</span> Fiche contrat
   </button>
+  <button class="nav-btn" onclick="showPage('doc-tirage')">
+    <span class="icon">📋</span> État de tirage (cohorte)
+  </button>
   <button class="nav-btn" onclick="showPage('doc-caution')">
     <span class="icon">📝</span> Reçu de caution
   </button>
@@ -1529,6 +1532,7 @@ h2{letter-spacing:-0.2px;}
       <div class="form-group"><label>Officine / Fonction</label><input id="f-officine" placeholder="Ex: Pharmacie Centrale / Titulaire"></div>
       <div class="form-group"><label>Adresse</label><input id="f-adresse" placeholder="Cocody, Abidjan"></div>
       <div class="form-group"><label>Téléphone</label><input id="f-tel" placeholder="07 00 00 00 00"></div>
+      <div class="form-group"><label>Email</label><input id="f-email" type="email" placeholder="contact@pharmacie.ci"></div>
       <div class="form-group"><label>Véhicule</label><input id="f-vehicule" placeholder="Toyota Corolla 2024"></div>
       <div class="form-group"><label>Montant total véhicule (FCFA) *</label><input id="f-montant" type="number" placeholder="6000000" oninput="majMontantsCaution()"></div>
       <div class="form-group"><label>Formule *</label><select id="f-formule" onchange="toggleSectionCaution()"><option value="12">12 mois</option><option value="24">24 mois</option></select></div>
@@ -1656,6 +1660,19 @@ h2{letter-spacing:-0.2px;}
 </div>
 
 <!-- ====== REÇU DE CAUTION ====== -->
+<div id="page-doc-tirage" class="page">
+  <button onclick="showPage('cohortes')" style="background:var(--sauge-dark);color:white;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;min-height:40px;" class="no-print">&#8592; Retour</button>
+  <div class="selecteur-contrat no-print">
+    <h3>📋 État de Tirage — Sélectionnez une cohorte</h3>
+    <select id="sel-tirage" onchange="afficherEtatTirage()">
+      <option value="">-- Choisir une cohorte --</option>
+    </select>
+    <div style="display:inline-flex;gap:5px;align-items:center;flex-wrap:wrap;"><button class="btn-orientation" data-orientation="portrait" onclick="setPrintOrientation('portrait')" style="background:rgba(0,0,0,0.28);color:white;border:1px solid rgba(255,255,255,0.35);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;opacity:0.45;">📄 Portrait</button><button class="btn-orientation" data-orientation="landscape" onclick="setPrintOrientation('landscape')" style="background:rgba(0,0,0,0.28);color:white;border:1px solid rgba(255,255,255,0.35);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;opacity:1;">🔄 Paysage</button><button class="btn-print" onclick="imprimerDoc('doc-tirage')">🖨️ Imprimer</button></div>
+    <p style="font-size:10.5px;color:rgba(255,255,255,0.85);margin-top:6px;width:100%;">💡 Ce document liste tous les souscripteurs de la cohorte, prêt à joindre au dossier de dépôt de chèques à Bridge Bank.</p>
+  </div>
+  <div class="doc-wrapper"><div id="doc-tirage" class="doc-a4"></div></div>
+</div>
+
 <div id="page-doc-fiche" class="page">
   <button onclick="showPage('gestion')" style="background:var(--sauge-dark);color:white;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;min-height:40px;" class="no-print">&#8592; Retour</button>
   <div class="selecteur-contrat no-print">
@@ -2105,6 +2122,27 @@ function peuplerSelectCohorteForm(idSelectionne) {
   }).join('');
 }
 
+function ouvrirEtatTirage(cohId) {
+  showPage('doc-tirage');
+  setTimeout(function() {
+    var sel = document.getElementById('sel-tirage');
+    if(sel) { sel.value = cohId; afficherEtatTirage(); }
+  }, 50);
+}
+
+function peuplerSelectCohorteTirage() {
+  var sel = document.getElementById('sel-tirage');
+  if(!sel) return;
+  var val = sel.value;
+  var triees = COHORTES.slice().sort(function(a,b){
+    return (b.dateLancement||'').localeCompare(a.dateLancement||'');
+  });
+  sel.innerHTML = '<option value="">-- Choisir une cohorte --</option>' + triees.map(function(co){
+    return '<option value="'+co.id+'">'+esc(co.nom)+' ('+co.statut+')</option>';
+  }).join('');
+  sel.value = val || '';
+}
+
 function peuplerFiltreCohorteGestion() {
   var sel = document.getElementById('filtre-cohorte-gestion');
   if(!sel) return;
@@ -2330,6 +2368,7 @@ function afficherCohortes() {
       badgeAlerteCohorte(co) +
       '<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">' +
         '<button class="btn btn-blue btn-sm" onclick="filtrerGestionParCohorte(\''+co.id+'\');showPage(\'gestion\');">📁 Voir les dossiers</button>' +
+        '<button class="btn btn-gray btn-sm" onclick="ouvrirEtatTirage(\''+co.id+'\')" title="Générer l\'état de tirage pour Bridge Bank">📋 État de tirage</button>' +
         (peutModifier() ? '<button class="btn btn-gray btn-sm" onclick="modifierCohorte('+idxReel+')">✏️ Modifier</button>' : '') +
         (peutModifier() ? '<button class="btn btn-red btn-sm" onclick="supprimerCohorte('+idxReel+')">🗑️</button>' : '') +
       '</div>' +
@@ -2503,6 +2542,7 @@ function showPage(id) {
 
   if(id==='doc-caution')             { resetDocPage('sel-caution','doc-caution'); majSelecteurs(); }
   if(id==='doc-fiche')               { resetDocPage('sel-fiche','doc-fiche'); majSelecteurs(); }
+  if(id==='doc-tirage')              { resetDocPage('sel-tirage','doc-tirage'); peuplerSelectCohorteTirage(); document.getElementById('doc-tirage').innerHTML=''; setPrintOrientation('landscape'); }
   if(id==='doc-frais-recu')          { resetDocPage('sel-frais-recu','doc-frais-recu'); majSelecteurs(); }
   if(id==='doc-bordereau')           { resetDocPage('sel-bordereau','doc-bordereau'); majSelecteurs(); }
   if(id==='doc-bordereau-mensuel-12'){ majSelecteurBM(12); }
@@ -2624,14 +2664,14 @@ function exporterExcel() {
         exporterExcel(); // relancer maintenant que XLSX est disponible
       } else {
         // Fallback CSV si pas de connexion (mêmes calculs corrects que la version Excel)
-        var lignes = [['N° Contrat','Cohorte','Nom','Officine','Adresse','Téléphone','Véhicule','Formule','Montant F','Caution F','Frais dossier F','Mensualité F','Date début','Échéances payées','Montant payé F','Reste F','Statut','Caution restituée']];
+        var lignes = [['N° Contrat','Cohorte','Nom','Officine','Adresse','Téléphone','Email','Véhicule','Formule','Montant F','Caution F','Frais dossier F','Mensualité F','Date début','Échéances payées','Montant payé F','Reste F','Statut','Caution restituée']];
         CONTRATS.forEach(function(c) {
           if (c.archive) return;
           var s = getStats(c);
           var coh = getCohorteById(c.cohorteId);
           var pct = c.montant > 0 ? Math.round((s.paye / c.montant) * 100) : 0;
           var statut = pct >= 100 ? 'Soldé' : (s.nbRetard > 0 ? 'En retard' : 'En cours');
-          lignes.push([c.numero||'', coh?coh.nom:'', c.nom||'', c.officine||'', c.adresse||'', c.tel||'', c.vehicule||'',
+          lignes.push([c.numero||'', coh?coh.nom:'', c.nom||'', c.officine||'', c.adresse||'', c.tel||'', c.email||'', c.vehicule||'',
             (c.formule||'') + ' mois', c.montant||0, c.cautionMontant||c.caution||0, c.fraisMontant||c.frais||0, Math.round(c.mensualite||0),
             c.dateDebut||'', s.nbPaye+'/'+c.formule, Math.round(s.paye), Math.round(c.montant - s.paye), statut, c.cautionRestituee?'Oui':'Non']);
         });
@@ -2694,7 +2734,7 @@ function exporterExcel() {
   }
 
   /* ── Feuille 1 : Contrats actifs (TOUS les champs) ── */
-  var headersContrats = ['N° Contrat','Cohorte','Souscripteur','Officine','Adresse','Téléphone','Véhicule',
+  var headersContrats = ['N° Contrat','Cohorte','Souscripteur','Officine','Adresse','Téléphone','Email','Véhicule',
      'Formule','Montant véhicule','N° Chèque garantie','Banque garantie','Caution (F)',
      'N° Chèque frais','Banque frais','Frais dossier (F)','Mensualité (F)',
      'Date début','Échéances soldées','Montant encaissé (F)','Reste dû (F)','Progression %',
@@ -2714,7 +2754,7 @@ function exporterExcel() {
     totC.montant += montant; totC.caution += (c.cautionMontant||c.caution||0);
     totC.frais += (c.fraisMontant||c.frais||0); totC.paye += s.paye; totC.reste += reste;
     rowsContrats.push([
-      c.numero||'', coh?coh.nom:'—', c.nom||'', c.officine||'', c.adresse||'', c.tel||'', c.vehicule||'',
+      c.numero||'', coh?coh.nom:'—', c.nom||'', c.officine||'', c.adresse||'', c.tel||'', c.email||'', c.vehicule||'',
       c.formule ? c.formule+' mois' : '', montant,
       c.cautionNumeroCheque||'', c.cautionBanque||'', c.cautionMontant||c.caution||0,
       c.fraisNumeroCheque||'', c.fraisBanque||'', c.fraisMontant||c.frais||0, Math.round(c.mensualite||0),
@@ -2722,24 +2762,24 @@ function exporterExcel() {
       c.cautionRestituee ? 'Oui' : 'Non', statut
     ]);
   });
-  rowsContrats.push(['TOTAL','','','','','','','', totC.montant,'','',totC.caution,'','',totC.frais,'','','',totC.paye,totC.reste,'','','']);
+  rowsContrats.push(['TOTAL','','','','','','','','', totC.montant,'','', totC.caution,'','', totC.frais,'','','', totC.paye, totC.reste,'','','']);
   var wsContrats = XLSX.utils.aoa_to_sheet([]);
   poserEnTete(wsContrats, 'MAPHAR MOBILITY — Portefeuille de contrats actifs', 'Export du ' + dateExport + ' · ' + rowsContrats.length.toString().replace(/\B/,'') + ' ligne(s) (hors archivés)', headersContrats);
   XLSX.utils.sheet_add_aoa(wsContrats, rowsContrats, {origin:'A4'});
   wsContrats['!cols'] = [
-    {wch:13},{wch:16},{wch:22},{wch:20},{wch:26},{wch:13},{wch:16},
+    {wch:13},{wch:16},{wch:22},{wch:20},{wch:26},{wch:13},{wch:20},{wch:16},
     {wch:9},{wch:14},{wch:13},{wch:14},{wch:12},
     {wch:13},{wch:14},{wch:13},{wch:13},
     {wch:11},{wch:14},{wch:15},{wch:13},{wch:10},
     {wch:15},{wch:10}
   ];
-  [8,11,14,15,18,19].forEach(function(colIdx){
+  [9,12,15,16,19,20].forEach(function(colIdx){
     for (var r = 3; r < 3+rowsContrats.length; r++) {
       var addr = XLSX.utils.encode_cell({r:r,c:colIdx});
       if (wsContrats[addr] && typeof wsContrats[addr].v === 'number') wsContrats[addr].z = FMT_F;
     }
   });
-  styliserFeuille(wsContrats, headersContrats.length, 3+rowsContrats.length, 22, statutsContrats);
+  styliserFeuille(wsContrats, headersContrats.length, 3+rowsContrats.length, 23, statutsContrats);
   // Ligne TOTAL en gras
   var rTot = 3 + rowsContrats.length - 1;
   for (var cT = 0; cT < headersContrats.length; cT++) {
@@ -2983,7 +3023,7 @@ function ouvrirFormCreation() {
   document.getElementById('f-montant').disabled = false;
   document.getElementById('f-formule').disabled = false;
   document.getElementById('f-date').disabled = false;
-  ['f-nom','f-officine','f-adresse','f-tel','f-vehicule','f-montant','f-date','f-caution-cheque','f-caution-montant','f-caution-banque','f-frais-cheque','f-frais-montant','f-frais-banque'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  ['f-nom','f-officine','f-adresse','f-tel','f-email','f-vehicule','f-montant','f-date','f-caution-cheque','f-caution-montant','f-caution-banque','f-frais-cheque','f-frais-montant','f-frais-banque'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   toggleSectionCaution();
   peuplerSelectCohorteForm(COHORTE_ACTIVE_PAR_DEFAUT());
   document.getElementById('form-contrat').style.display='block';
@@ -3003,6 +3043,7 @@ function modifierContrat(idx) {
   document.getElementById('f-officine').value = c.officine || '';
   document.getElementById('f-adresse').value = c.adresse || '';
   document.getElementById('f-tel').value = c.tel || '';
+  document.getElementById('f-email').value = c.email || '';
   document.getElementById('f-vehicule').value = c.vehicule || '';
   document.getElementById('f-montant').value = c.montant || '';
   document.getElementById('f-formule').value = c.formule || 12;
@@ -3058,6 +3099,7 @@ function enregistrerContrat() {
     CONTRATS[idx].officine = document.getElementById('f-officine').value.trim();
     CONTRATS[idx].adresse = document.getElementById('f-adresse').value.trim();
     CONTRATS[idx].tel = document.getElementById('f-tel').value.trim();
+    CONTRATS[idx].email = document.getElementById('f-email').value.trim();
     CONTRATS[idx].vehicule = document.getElementById('f-vehicule').value.trim();
     var elFCoh = document.getElementById('f-cohorte');
     if(elFCoh && elFCoh.value) CONTRATS[idx].cohorteId = parseInt(elFCoh.value);
@@ -3111,6 +3153,7 @@ function enregistrerContrat() {
     officine:document.getElementById('f-officine').value.trim(),
     adresse:document.getElementById('f-adresse').value.trim(),
     tel:document.getElementById('f-tel').value.trim(),
+    email:document.getElementById('f-email').value.trim(),
     vehicule:document.getElementById('f-vehicule').value.trim(),
     montant:montant,
     formule:formule,
@@ -3811,6 +3854,7 @@ function rafraichirSelecteurs() {
   });
   majSelecteursRestitution();
   peuplerFiltreCohorteGestion();
+  peuplerSelectCohorteTirage();
   peuplerSelectCohorteBordereau(12);
   peuplerSelectCohorteBordereau(24);
 }
@@ -3992,6 +4036,7 @@ function afficherFicheContrat() {
     '<p style="margin:1px 0;"><strong>N° Contrat :</strong> <input class="doc-input doc-input-md" value="'+esc(c.numero)+'" /></p>'+
     '<p style="margin:1px 0;"><strong>Officine / Fonction :</strong> <input class="doc-input doc-input-xl" value="'+esc(c.officine||'')+'" /></p>'+
     '<p style="margin:1px 0;"><strong>Téléphone :</strong> <input class="doc-input doc-input-md" value="'+esc(c.tel||'')+'" /></p>'+
+    '<p style="margin:1px 0;"><strong>Email :</strong> <input class="doc-input doc-input-md" value="'+esc(c.email||'')+'" /></p>'+
     '<p style="margin:1px 0;grid-column:1/-1;"><strong>Adresse :</strong> <input class="doc-input doc-input-xl" value="'+esc(c.adresse||'')+'" /></p>'+
     '</div></div>'+
 
@@ -4034,6 +4079,92 @@ function afficherFicheContrat() {
     '<div class="sig-grid">'+
     '<div><p><strong>Le Souscripteur</strong></p><p style="font-size:9pt;font-style:italic;">(Signature précédée de la mention « Lu et approuvé »)</p><div class="sig-box"></div></div>'+
     '<div><p><strong>Président MAPHAR</strong></p><p style="font-size:9pt;font-style:italic;">(Cachet et signature)</p><div class="sig-box"></div></div>'+
+    '</div>';
+}
+
+// ============================================================
+// DOCUMENT : ÉTAT DE TIRAGE DE SOUSCRIPTIONS (par cohorte)
+// À joindre au dossier de dépôt de chèques à Bridge Bank
+// ============================================================
+function afficherEtatTirage() {
+  var cohId = document.getElementById('sel-tirage').value;
+  var el = document.getElementById('doc-tirage');
+  if(!cohId) { el.innerHTML = '<p style="color:var(--ink-muted);font-style:italic;padding:40px;text-align:center;">Sélectionnez une cohorte pour générer le document</p>'; return; }
+  var coh = getCohorteById(cohId);
+  var dossiers = CONTRATS.filter(function(c){ return parseInt(c.cohorteId) === parseInt(cohId); });
+
+  var totMontant=0, totMensualite=0, totCaution=0, totFrais=0;
+  var lignes = '';
+  dossiers.forEach(function(c, i) {
+    var caution = c.cautionMontant || c.caution || 0;
+    var frais = c.fraisMontant || c.frais || 0;
+    totMontant += c.montant||0; totMensualite += c.mensualite||0; totCaution += caution; totFrais += frais;
+    lignes +=
+      '<tr>'+
+      '<td style="text-align:center;">'+(i+1)+'</td>'+
+      '<td><strong>'+esc(c.nom)+'</strong></td>'+
+      '<td>'+esc(c.adresse||'—')+'</td>'+
+      '<td>'+esc(c.officine||'—')+'</td>'+
+      '<td>'+esc(c.tel||'—')+'</td>'+
+      '<td style="font-size:8pt;">'+esc(c.email||'—')+'</td>'+
+      '<td>'+esc(c.vehicule||'—')+'</td>'+
+      '<td style="text-align:right;">'+fmt(c.montant)+' F</td>'+
+      '<td style="text-align:right;">'+fmt(c.mensualite)+' F</td>'+
+      '<td style="text-align:right;">'+fmt(caution)+' F</td>'+
+      '<td style="text-align:right;">'+(frais>0?fmt(frais)+' F':'—')+'</td>'+
+      '<td style="text-align:center;">'+c.formule+' mois</td>'+
+      '</tr>';
+  });
+
+  el.innerHTML =
+    // ── EN-TÊTE MAPHAR ──
+    '<div style="display:flex;align-items:center;margin-bottom:8px;border-bottom:3px double var(--sauge-dark);padding-bottom:6px;">'+
+    '<img src="'+MAPHAR_LOGO+'" style="width:55px;height:55px;object-fit:contain;margin-right:12px;flex-shrink:0;" />'+
+    '<div style="flex:1;text-align:center;">'+
+    '<h2 style="margin:0 0 1px;font-size:12pt;color:var(--charcoal);">MUTUELLE POUR L\'ASSURANCE DES PHARMACIENS</h2>'+
+    '<p style="font-size:8pt;margin:0;color:var(--ink-muted);">Convention tripartite de financement véhicule — Bridge Bank</p>'+
+    '</div></div>'+
+
+    // ── TITRE ──
+    '<div style="background:linear-gradient(135deg,var(--sauge-dark),var(--sauge));color:white;text-align:center;padding:8px 10px;border-radius:6px;margin-bottom:10px;">'+
+    '<h3 style="margin:0;font-size:13pt;letter-spacing:1px;">ÉTAT DE TIRAGE DE SOUSCRIPTIONS</h3>'+
+    '<p style="margin:3px 0 0;font-size:9pt;opacity:0.95;">'+esc(coh.nom)+' &nbsp;|&nbsp; Lancée le '+fmtDate(coh.dateLancement)+' &nbsp;|&nbsp; '+dossiers.length+' dossier'+(dossiers.length>1?'s':'')+' &nbsp;|&nbsp; Statut : '+esc(coh.statut)+'</p>'+
+    '</div>'+
+
+    '<div style="background:var(--gold-light);border:1px solid var(--gold);border-radius:6px;padding:6px 10px;margin-bottom:10px;font-size:8.5pt;color:#8a6b35;">'+
+    '📋 Document à joindre au dossier de dépôt des chèques de garantie et de frais de dossier auprès de <strong>Bridge Bank</strong>.'+
+    '</div>'+
+
+    // ── TABLEAU ──
+    '<table style="width:100%;border-collapse:collapse;font-size:8pt;">'+
+    '<thead><tr style="background:var(--sauge-dark);color:white;">'+
+    '<th style="padding:5px 4px;">N°</th>'+
+    '<th style="padding:5px 4px;text-align:left;">Nom et prénoms</th>'+
+    '<th style="padding:5px 4px;text-align:left;">Situation géographique</th>'+
+    '<th style="padding:5px 4px;text-align:left;">Pharmacie</th>'+
+    '<th style="padding:5px 4px;text-align:left;">Contact</th>'+
+    '<th style="padding:5px 4px;text-align:left;">Email</th>'+
+    '<th style="padding:5px 4px;text-align:left;">Véhicule</th>'+
+    '<th style="padding:5px 4px;text-align:right;">Montant véhicule</th>'+
+    '<th style="padding:5px 4px;text-align:right;">Mensualité</th>'+
+    '<th style="padding:5px 4px;text-align:right;">Caution</th>'+
+    '<th style="padding:5px 4px;text-align:right;">Frais dossier</th>'+
+    '<th style="padding:5px 4px;">Formule</th>'+
+    '</tr></thead>'+
+    '<tbody>'+lignes+'</tbody>'+
+    '<tfoot><tr style="background:var(--gold-light);font-weight:700;color:var(--charcoal);border-top:2px solid var(--gold);">'+
+    '<td colspan="7" style="padding:6px 4px;text-align:right;">TOTAL GÉNÉRAL</td>'+
+    '<td style="padding:6px 4px;text-align:right;">'+fmt(totMontant)+' F</td>'+
+    '<td style="padding:6px 4px;text-align:right;">'+fmt(totMensualite)+' F</td>'+
+    '<td style="padding:6px 4px;text-align:right;">'+fmt(totCaution)+' F</td>'+
+    '<td style="padding:6px 4px;text-align:right;">'+fmt(totFrais)+' F</td>'+
+    '<td></td>'+
+    '</tr></tfoot>'+
+    '</table>'+
+
+    '<div class="sig-grid" style="margin-top:24px;">'+
+    '<div><p><strong>Le Président MAPHAR</strong></p><p style="font-size:9pt;font-style:italic;">(Cachet et signature)</p><div class="sig-box"></div></div>'+
+    '<div><p><strong>Bridge Bank</strong></p><p style="font-size:9pt;font-style:italic;">(Accusé de réception du dépôt)</p><div class="sig-box"></div></div>'+
     '</div>';
 }
 
