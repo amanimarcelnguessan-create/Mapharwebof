@@ -611,6 +611,33 @@ h2{letter-spacing:-0.2px;}
   #doc-bordereau-mensuel-12 .sig-box,#doc-bordereau-mensuel-24 .sig-box{height:12px!important;}
   #doc-bordereau-mensuel-12 .sig-grid,#doc-bordereau-mensuel-24 .sig-grid{margin-top:4px!important;}
   #doc-bordereau-mensuel-12 .doc-input,#doc-bordereau-mensuel-24 .doc-input{font-size:5pt!important;}
+
+  /* ======================================================
+     ÉTAT DE TIRAGE — 12 colonnes paysage
+     N°(3%)|Nom(12%)|Situation(10%)|Pharmacie(12%)|Contact(8%)|Email(10%)|
+     Véhicule(8%)|Mnt véh.(8%)|Mensualité(8%)|Caution(8%)|Frais(8%)|Formule(5%)
+     ====================================================== */
+  #doc-tirage{padding:4mm 6mm!important;overflow:visible!important;height:auto!important;}
+  #doc-tirage table{font-size:6.5pt!important;table-layout:fixed!important;}
+  #doc-tirage table th,#doc-tirage table td{
+    padding:2px 3px!important;font-size:6.5pt!important;
+    overflow:visible!important;text-overflow:clip!important;
+    word-break:break-word!important;line-height:1.15!important;
+  }
+  #doc-tirage table th:nth-child(1),#doc-tirage table td:nth-child(1){width:3%!important;}
+  #doc-tirage table th:nth-child(2),#doc-tirage table td:nth-child(2){width:12%!important;}
+  #doc-tirage table th:nth-child(3),#doc-tirage table td:nth-child(3){width:10%!important;}
+  #doc-tirage table th:nth-child(4),#doc-tirage table td:nth-child(4){width:12%!important;}
+  #doc-tirage table th:nth-child(5),#doc-tirage table td:nth-child(5){width:8%!important;}
+  #doc-tirage table th:nth-child(6),#doc-tirage table td:nth-child(6){width:10%!important;font-size:6pt!important;}
+  #doc-tirage table th:nth-child(7),#doc-tirage table td:nth-child(7){width:8%!important;}
+  #doc-tirage table th:nth-child(8),#doc-tirage table td:nth-child(8){width:8%!important;text-align:right!important;}
+  #doc-tirage table th:nth-child(9),#doc-tirage table td:nth-child(9){width:8%!important;text-align:right!important;}
+  #doc-tirage table th:nth-child(10),#doc-tirage table td:nth-child(10){width:8%!important;text-align:right!important;}
+  #doc-tirage table th:nth-child(11),#doc-tirage table td:nth-child(11){width:8%!important;text-align:right!important;}
+  #doc-tirage table th:nth-child(12),#doc-tirage table td:nth-child(12){width:5%!important;text-align:center!important;}
+  #doc-tirage .sig-box{height:14px!important;}
+  #doc-tirage .sig-grid{margin-top:6px!important;}
 }
 
 /* ===== ORIENTATION PAR DÉFAUT : définie dynamiquement via print-orientation-style ===== */
@@ -1116,6 +1143,8 @@ h2{letter-spacing:-0.2px;}
           } catch(e) { console.warn("Snapshot erreur:", e); }
         }, function(e) { console.warn("Listener erreur:", e); });
     }
+    // Expose une vraie fonction de désabonnement au reste de l'app (ex: bouton Déconnexion)
+    window.unsubscribeContrats = function() { if(unsub) { unsub(); unsub = null; } };
 
     document.addEventListener("DOMContentLoaded", function() {
       setTimeout(startListener, 3000);
@@ -3753,6 +3782,7 @@ function majSelecteurs() {
 
 function filtrerDashboard(filtre) {
   FILTRE_ACTIF = filtre;
+  PAGE_DETAIL_DASHBOARD = 1;
   var bar = document.getElementById('filtre-bar');
   var lbl = document.getElementById('filtre-label');
   var labels = {
@@ -3786,6 +3816,16 @@ function filtrerDashboard(filtre) {
   afficherDetailDashboard(filtre);
 }
 
+var PAGE_DETAIL_DASHBOARD = 1;
+var TAILLE_PAGE_DETAIL_DASHBOARD = 15;
+
+function allerPageDetailDashboard(p) {
+  PAGE_DETAIL_DASHBOARD = p;
+  afficherDetailDashboard(FILTRE_ACTIF);
+  var d = document.getElementById('d-detail');
+  if(d) d.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
 function afficherDetailDashboard(filtre) {
   var dhtml = '';
   var indices = [];
@@ -3803,7 +3843,17 @@ function afficherDetailDashboard(filtre) {
     if(ok) indices.push(i);
   });
 
-  indices.forEach(function(i){
+  var nbPages = Math.max(1, Math.ceil(indices.length / TAILLE_PAGE_DETAIL_DASHBOARD));
+  if(PAGE_DETAIL_DASHBOARD > nbPages) PAGE_DETAIL_DASHBOARD = nbPages;
+  if(PAGE_DETAIL_DASHBOARD < 1) PAGE_DETAIL_DASHBOARD = 1;
+  var debut = (PAGE_DETAIL_DASHBOARD - 1) * TAILLE_PAGE_DETAIL_DASHBOARD;
+  var indicesPage = indices.slice(debut, debut + TAILLE_PAGE_DETAIL_DASHBOARD);
+
+  if(indices.length) {
+    dhtml += '<p style="font-size:11px;color:var(--ink-muted);margin:0 0 8px;padding:0 14px;">'+indices.length+' contrat(s) — page '+PAGE_DETAIL_DASHBOARD+'/'+nbPages+'</p>';
+  }
+
+  indicesPage.forEach(function(i){
     var c = CONTRATS[i];
     var s = getStats(c);
     var pct = c.montant>0?Math.round((s.paye/c.montant)*100):0;
@@ -3838,6 +3888,16 @@ function afficherDetailDashboard(filtre) {
   if(!dhtml){
     if(FILTRE_ACTIF==='tous') dhtml = '<p style="color:var(--ink-muted);font-style:italic;padding:20px;text-align:center;">Aucun contrat enregistré</p>';
     else dhtml = '<p style="color:var(--ink-muted);font-style:italic;padding:20px;text-align:center;">Aucun contrat dans cette catégorie</p>';
+  } else if(nbPages > 1) {
+    dhtml += '<div style="display:flex;justify-content:center;align-items:center;gap:6px;padding:12px 14px 4px;flex-wrap:wrap;">';
+    dhtml += '<button class="btn btn-gray btn-sm" '+(PAGE_DETAIL_DASHBOARD<=1?'disabled style="opacity:0.4;cursor:not-allowed;"':'')+' onclick="allerPageDetailDashboard('+(PAGE_DETAIL_DASHBOARD-1)+')">← Précédent</button>';
+    var db = Math.max(1, PAGE_DETAIL_DASHBOARD-2), fb = Math.min(nbPages, db+4);
+    db = Math.max(1, fb-4);
+    for(var p2 = db; p2 <= fb; p2++) {
+      dhtml += '<button class="btn btn-sm" style="'+(p2===PAGE_DETAIL_DASHBOARD?'background:var(--sauge-dark);color:white;':'background:white;color:var(--charcoal);border:1px solid var(--border);')+'min-width:30px;" onclick="allerPageDetailDashboard('+p2+')">'+p2+'</button>';
+    }
+    dhtml += '<button class="btn btn-gray btn-sm" '+(PAGE_DETAIL_DASHBOARD>=nbPages?'disabled style="opacity:0.4;cursor:not-allowed;"':'')+' onclick="allerPageDetailDashboard('+(PAGE_DETAIL_DASHBOARD+1)+')">Suivant →</button>';
+    dhtml += '</div>';
   }
   document.getElementById('d-detail').innerHTML = dhtml;
 }
@@ -3864,7 +3924,7 @@ function afficherAlertesDashboard() {
 function preselectionnerContrat(idx, docType) {
   var selMap = {caution:'sel-caution',fiche:'sel-fiche',bordereau:'sel-bordereau',solde:'sel-solde',releve:'sel-releve',impaye:'sel-impaye',tableau:'sel-tableau'};
   var pageMap = {caution:'doc-caution',fiche:'doc-fiche','frais-recu':'doc-frais-recu',bordereau:'doc-bordereau',solde:'doc-solde',releve:'doc-releve',impaye:'doc-impaye',tableau:'doc-tableau'};
-  var fnMap = {caution:afficherCaution,fiche:afficherFicheContrat,bordereau:afficherBordereau,solde:afficherSolde,releve:afficherReleve,impaye:afficherImpaye,tableau:afficherTableau};
+  var fnMap = {caution:afficherCaution,fiche:afficherFicheContrat,bordereau:afficherBordereau,solde:afficherSolde,releve:afficherReleve,impaye:afficherSelectionMensuImpaye,tableau:afficherTableau};
   showPage(pageMap[docType]);
   setTimeout(function(){
     var sel = document.getElementById(selMap[docType]);
@@ -4280,14 +4340,18 @@ function imprimerDoc(docId) {
   var styleEl = document.getElementById('print-orientation-style');
   var isLandscape = styleEl && styleEl.textContent.indexOf('landscape') !== -1;
 
-  // Hauteur utile A4 selon orientation (marges incluses)
+  // Dimensions utiles A4 selon orientation (marges incluses)
   function usableH(landscape) {
     return ((landscape ? 210 : 297) - (landscape ? 14 : 18)) * MM;
   }
+  function usableW(landscape) {
+    return ((landscape ? 297 : 210) - (landscape ? 16 : 20)) * MM;
+  }
 
   var contentH = doc.scrollHeight;
+  var contentW = doc.scrollWidth;
 
-  // Auto-détection orientation si contenu déborde
+  // Auto-détection orientation si le contenu déborde en hauteur mais tiendrait en paysage
   if (contentH > usableH(isLandscape) * 1.08) {
     if (!isLandscape && contentH <= usableH(true) * 1.08) {
       setPrintOrientation('landscape');
@@ -4295,9 +4359,14 @@ function imprimerDoc(docId) {
     }
   }
 
-  // Calcul zoom (mesure écran — fiable pour tous les autres docs sans print CSS conflictuel)
+  // Calcul du zoom : on prend le ratio le plus contraignant entre largeur ET hauteur,
+  // pour ne jamais couper une colonne (ex: État de tirage, bordereaux larges) même si
+  // le contenu tient déjà verticalement sur une page.
   var targetH = usableH(isLandscape);
-  var zoom = (contentH > targetH * 1.08) ? Math.max(0.50, targetH / contentH) : 1;
+  var targetW = usableW(isLandscape);
+  var zoomH = (contentH > targetH * 1.08) ? targetH / contentH : 1;
+  var zoomW = (contentW > targetW * 1.02) ? targetW / contentW : 1;
+  var zoom = Math.max(0.50, Math.min(zoomH, zoomW));
 
   var prevZoom = doc.style.zoom || '';
   if (zoom < 1) doc.style.zoom = zoom.toFixed(3);
