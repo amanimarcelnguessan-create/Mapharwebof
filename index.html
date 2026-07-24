@@ -141,6 +141,21 @@ h2{letter-spacing:-0.2px;}
 
 .table-contrats td{padding:10px 12px;border-bottom:1px solid var(--bg);font-size:12px;vertical-align:middle;}
 .table-contrats tr:hover td{background:var(--sauge-light);}
+/* ── Vue mobile : le tableau devient une pile de cartes compactes ── */
+@media (max-width:780px){
+  .table-contrats thead{display:none;}
+  .table-contrats, .table-contrats tbody, .table-contrats tr, .table-contrats td{display:block;width:100%;}
+  .table-contrats{box-shadow:none;border:none;background:transparent;}
+  .table-contrats tr{background:white;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;box-shadow:var(--shadow);overflow:hidden;}
+  .table-contrats td{text-align:right;padding:7px 12px 7px 42%;border-bottom:1px solid var(--bg);position:relative;min-height:20px;font-size:12.5px;}
+  .table-contrats td:last-child{border-bottom:none;}
+  .table-contrats td::before{content:attr(data-label);position:absolute;left:12px;top:7px;font-weight:700;color:var(--ink-muted);font-size:10.5px;text-align:left;text-transform:uppercase;letter-spacing:.3px;}
+  .table-contrats td[data-label="Actions"]{text-align:left;padding-left:12px;background:var(--bg);}
+  .table-contrats td[data-label="Actions"]::before{display:none;}
+  .table-contrats td[data-label="Actions"] .btn{padding:6px 9px;font-size:11px;}
+  .table-contrats td[data-label="Actions"] .btn-txt{display:none;}
+  .table-contrats td[data-label="Progression"]{padding-top:10px;padding-bottom:10px;}
+}
 .progress-bar{background:var(--border);border-radius:10px;height:8px;overflow:hidden;}
 .progress-fill{height:100%;border-radius:10px;transition:width 0.3s;}
 /* Paiements */
@@ -224,7 +239,7 @@ h2{letter-spacing:-0.2px;}
   position:absolute;
   top:0;left:0;right:0;
   height:3px;
-  background:linear-gradient(90deg,var(--sauge-dark),#6366f1,var(--sauge-dark));
+  background:linear-gradient(90deg,var(--sauge-dark),var(--gold),var(--sauge-dark));
   opacity:0.85;
 }
 .form-card h3{
@@ -1898,10 +1913,10 @@ h2{letter-spacing:-0.2px;}
       <div style="display:flex;flex-direction:column;gap:6px;">
         <button onclick="afficherBordereauMensuel(12)" style="background:var(--sauge-dark);color:white;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;">📄 Générer</button>
         <div style="display:flex;gap:4px;">
-          <button class="btn-orientation" data-orientation="portrait" onclick="setPrintOrientation('portrait')" style="background:#0f3460;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;opacity:1;" title="Imprimer en portrait">🖨️ Portrait</button>
-          <button class="btn-orientation" data-orientation="landscape" onclick="setPrintOrientation('landscape')" style="background:#0f3460;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:11px;opacity:0.45;" title="Imprimer en paysage">🖨️ Paysage</button>
+          <button class="btn-orientation" data-orientation="portrait" onclick="setPrintOrientation('portrait')" style="background:var(--sauge-dark);color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;opacity:1;" title="Imprimer en portrait">🖨️ Portrait</button>
+          <button class="btn-orientation" data-orientation="landscape" onclick="setPrintOrientation('landscape')" style="background:var(--sauge-dark);color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:11px;opacity:0.45;" title="Imprimer en paysage">🖨️ Paysage</button>
         </div>
-        <button class="btn-print" onclick="imprimerBordereauMensuel(12)" style="background:#0f3460;">🖨️ Imprimer</button>
+        <button class="btn-print" onclick="imprimerBordereauMensuel(12)" style="background:var(--sauge-dark);">🖨️ Imprimer</button>
       </div>
     </div>
     <div id="bm12-resume" style="margin-top:8px;font-size:11px;color:var(--border);"></div>
@@ -2163,6 +2178,7 @@ function peuplerFiltreCohorteGestion() {
 
 function filtrerGestionParCohorte(val) {
   COHORTE_FILTRE_GESTION = val || '';
+  PAGE_GESTION = 1;
   afficherListeContrats();
 }
 
@@ -2449,6 +2465,7 @@ function filtrerArchives(terme) {
 }
 function filtrerListeContrats(terme) {
   SEARCH_TERME = (terme || '').toLowerCase().trim();
+  PAGE_GESTION = 1;
   afficherListeContrats();
 }
 
@@ -3248,14 +3265,14 @@ function afficherArchives() {
   archives.forEach(function(item) {
     var c = item.c, i = item.i;
     html += '<tr style="opacity:0.8;">';
-    html += '<td><strong>'+esc(c.numero)+'</strong></td>';
-    html += '<td><strong>'+esc(c.nom)+'</strong><br><small style="color:var(--ink-muted);">'+(esc(c.officine)||'-')+'</small></td>';
-    html += '<td>'+c.formule+' mois</td>';
-    html += '<td>'+fmt(c.montant)+' F</td>';
-    html += '<td>'+(c.dateArchivage||'-')+'</td>';
-    html += '<td style="white-space:nowrap;">' +
-      '<button class="btn btn-purple btn-sm" onclick="consulterArchive('+i+')" style="margin-bottom:2px;" title="Consulter le contrat">👁️ Consulter</button> ' +
-      (peutModifier() ? '<button class="btn btn-blue btn-sm" onclick="desarchiverContrat('+i+')" style="margin-bottom:2px;" title="Restaurer dans la liste principale">↩️ Restaurer</button> ' : '') +
+    html += '<td data-label="N° Contrat"><strong>'+esc(c.numero)+'</strong></td>';
+    html += '<td data-label="Souscripteur"><strong>'+esc(c.nom)+'</strong><br><small style="color:var(--ink-muted);">'+(esc(c.officine)||'-')+'</small></td>';
+    html += '<td data-label="Formule">'+c.formule+' mois</td>';
+    html += '<td data-label="Montant total">'+fmt(c.montant)+' F</td>';
+    html += '<td data-label="Date archivage">'+(c.dateArchivage||'-')+'</td>';
+    html += '<td data-label="Actions" style="white-space:nowrap;">' +
+      '<button class="btn btn-purple btn-sm" onclick="consulterArchive('+i+')" style="margin-bottom:2px;" title="Consulter le contrat">👁️<span class="btn-txt"> Consulter</span></button> ' +
+      (peutModifier() ? '<button class="btn btn-blue btn-sm" onclick="desarchiverContrat('+i+')" style="margin-bottom:2px;" title="Restaurer dans la liste principale">↩️<span class="btn-txt"> Restaurer</span></button> ' : '') +
       (peutModifier() ? '<button class="btn btn-red btn-sm" onclick="supprimerContrat('+i+')" title="Supprimer définitivement">🗑️</button>' : '') +
       '</td>';
     html += '</tr>';
@@ -3285,7 +3302,18 @@ function consulterArchive(idx) {
 var INCLURE_ARCHIVES_RECHERCHE = false;
 function toggleInclureArchives(val) {
   INCLURE_ARCHIVES_RECHERCHE = val;
+  PAGE_GESTION = 1;
   afficherListeContrats();
+}
+
+var PAGE_GESTION = 1;
+var TAILLE_PAGE_GESTION = 25;
+
+function allerPageGestion(p) {
+  PAGE_GESTION = p;
+  afficherListeContrats();
+  var lc = document.getElementById('liste-contrats');
+  if(lc) lc.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function afficherListeContrats() {
@@ -3316,37 +3344,57 @@ function afficherListeContrats() {
     el.innerHTML='<p style="color:var(--ink-muted);font-style:italic;text-align:center;padding:30px;">Aucun contrat trouvé pour « '+SEARCH_TERME+' »</p>';
     return;
   }
-  var html = '<table class="table-contrats"><thead><tr><th>N° Contrat</th><th>Souscripteur</th><th>Cohorte</th><th>Formule</th><th>Mensualité</th><th>Progression</th><th>Reste</th><th>Actions</th></tr></thead><tbody>';
-  indicesAffiches.forEach(function(i) {
+  // Pagination : borne la page courante et découpe la liste à afficher
+  var nbPages = Math.max(1, Math.ceil(indicesAffiches.length / TAILLE_PAGE_GESTION));
+  if(PAGE_GESTION > nbPages) PAGE_GESTION = nbPages;
+  if(PAGE_GESTION < 1) PAGE_GESTION = 1;
+  var debut = (PAGE_GESTION - 1) * TAILLE_PAGE_GESTION;
+  var indicesPage = indicesAffiches.slice(debut, debut + TAILLE_PAGE_GESTION);
+
+  var html = '<p style="font-size:11.5px;color:var(--ink-muted);margin-bottom:8px;">'+indicesAffiches.length+' contrat(s) — page '+PAGE_GESTION+'/'+nbPages+'</p>';
+  html += '<table class="table-contrats"><thead><tr><th>N° Contrat</th><th>Souscripteur</th><th>Cohorte</th><th>Formule</th><th>Mensualité</th><th>Progression</th><th>Reste</th><th>Actions</th></tr></thead><tbody>';
+  indicesPage.forEach(function(i) {
     var c = CONTRATS[i];
     var stats = getStats(c);
     var pct = c.montant>0 ? Math.round((stats.paye/c.montant)*100) : 0;
     var couleur = pct>=100?'var(--success)':(pct>=50?'var(--gold)':'var(--danger)');
     var coh = getCohorteById(c.cohorteId);
     html += '<tr'+(c.archive?' style="opacity:0.7;"':'')+'>';
-    html += '<td><strong>'+esc(c.numero)+'</strong>'+(c.archive?' <span class="cohort-pill" style="background:var(--ink-muted);">🗄️ Archivé</span>':'')+'</td>';
-    html += '<td><strong>'+esc(c.nom)+'</strong><br><small style="color:var(--ink-muted);">'+(esc(c.officine)||'-')+'</small></td>';
-    html += '<td><small style="background:var(--sauge-light);color:var(--sauge-dark);padding:2px 7px;border-radius:10px;white-space:nowrap;">'+(coh?esc(coh.nom):'—')+'</small></td>';
-    html += '<td>'+c.formule+' mois</td>';
-    html += '<td>'+fmt(c.mensualite)+' F</td>';
-    html += '<td style="min-width:120px;"><div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%;background:'+couleur+';"></div></div><small>'+stats.nbPaye+'/'+c.formule+' — '+pct+'%</small></td>';
-    html += '<td><strong style="color:var(--danger);">'+fmt(c.montant-stats.paye)+' F</strong></td>';
-    html += '<td style="white-space:nowrap;">' +
-      '<button class="btn btn-purple btn-sm" onclick="ouvrirPaiements('+i+')" style="margin-bottom:2px;">💰 Paiements</button> ' +
-      '<button class="btn btn-gray btn-sm" onclick="preselectionnerContrat('+i+',\'fiche\')" style="margin-bottom:2px;" title="Imprimer la fiche du contrat">🖨️ Fiche</button> ' +
+    html += '<td data-label="N° Contrat"><strong>'+esc(c.numero)+'</strong>'+(c.archive?' <span class="cohort-pill" style="background:var(--ink-muted);">🗄️ Archivé</span>':'')+'</td>';
+    html += '<td data-label="Souscripteur"><strong>'+esc(c.nom)+'</strong><br><small style="color:var(--ink-muted);">'+(esc(c.officine)||'-')+'</small></td>';
+    html += '<td data-label="Cohorte"><small style="background:var(--sauge-light);color:var(--sauge-dark);padding:2px 7px;border-radius:10px;white-space:nowrap;">'+(coh?esc(coh.nom):'—')+'</small></td>';
+    html += '<td data-label="Formule">'+c.formule+' mois</td>';
+    html += '<td data-label="Mensualité">'+fmt(c.mensualite)+' F</td>';
+    html += '<td data-label="Progression" style="min-width:120px;"><div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%;background:'+couleur+';"></div></div><small>'+stats.nbPaye+'/'+c.formule+' — '+pct+'%</small></td>';
+    html += '<td data-label="Reste"><strong style="color:var(--danger);">'+fmt(c.montant-stats.paye)+' F</strong></td>';
+    html += '<td data-label="Actions" style="white-space:nowrap;">' +
+      '<button class="btn btn-purple btn-sm" onclick="ouvrirPaiements('+i+')" style="margin-bottom:2px;" title="Paiements">💰<span class="btn-txt"> Paiements</span></button> ' +
+      '<button class="btn btn-gray btn-sm" onclick="preselectionnerContrat('+i+',\'fiche\')" style="margin-bottom:2px;" title="Imprimer la fiche du contrat">🖨️<span class="btn-txt"> Fiche</span></button> ' +
       '<button class="btn btn-gray btn-sm" onclick="ouvrirHistorique('+i+')" style="margin-bottom:2px;" title="Voir l\'historique des modifications">🕒</button> ' +
       (c.archive
-        ? (peutModifier() ? '<button class="btn btn-blue btn-sm" onclick="desarchiverContrat('+i+')" style="margin-bottom:2px;" title="Restaurer dans la liste principale">↩️ Restaurer</button> ' : '')
-        : ((peutModifier() ? '<button class="btn btn-blue btn-sm" onclick="modifierContrat('+i+')" style="margin-bottom:2px;">✏️ Modifier</button> ' : '') +
-           (peutModifier() && pct>=100 ? '<button class="btn btn-gray btn-sm" onclick="archiverContrat('+i+')" style="margin-bottom:2px;" title="Archiver ce contrat soldé">🗄️ Archiver</button> ' : ''))
+        ? (peutModifier() ? '<button class="btn btn-blue btn-sm" onclick="desarchiverContrat('+i+')" style="margin-bottom:2px;" title="Restaurer dans la liste principale">↩️<span class="btn-txt"> Restaurer</span></button> ' : '')
+        : ((peutModifier() ? '<button class="btn btn-blue btn-sm" onclick="modifierContrat('+i+')" style="margin-bottom:2px;" title="Modifier">✏️<span class="btn-txt"> Modifier</span></button> ' : '') +
+           (peutModifier() && pct>=100 ? '<button class="btn btn-gray btn-sm" onclick="archiverContrat('+i+')" style="margin-bottom:2px;" title="Archiver ce contrat soldé">🗄️<span class="btn-txt"> Archiver</span></button> ' : ''))
       ) +
-      (peutModifier() ? '<button class="btn btn-red btn-sm" onclick="supprimerContrat('+i+')">🗑️</button>' : '') +
+      (peutModifier() ? '<button class="btn btn-red btn-sm" onclick="supprimerContrat('+i+')" title="Supprimer">🗑️</button>' : '') +
       '</td>';
     html += '</tr>';
   });
   html += '</tbody></table>';
-  if(SEARCH_TERME) {
-    html = '<p style="font-size:12px;color:var(--ink-muted);margin-bottom:8px;">'+indicesAffiches.length+' résultat(s) pour « '+SEARCH_TERME+' »</p>' + html;
+  // ── Pagination ──
+  if(nbPages > 1) {
+    html += '<div style="display:flex;justify-content:center;align-items:center;gap:6px;margin-top:14px;flex-wrap:wrap;">';
+    html += '<button class="btn btn-gray btn-sm" '+(PAGE_GESTION<=1?'disabled style="opacity:0.4;cursor:not-allowed;"':'')+' onclick="allerPageGestion('+(PAGE_GESTION-1)+')">← Précédent</button>';
+    var debutBtn = Math.max(1, PAGE_GESTION-2), finBtn = Math.min(nbPages, debutBtn+4);
+    debutBtn = Math.max(1, finBtn-4);
+    for(var p = debutBtn; p <= finBtn; p++) {
+      html += '<button class="btn btn-sm" style="'+(p===PAGE_GESTION?'background:var(--sauge-dark);color:white;':'background:white;color:var(--charcoal);border:1px solid var(--border);')+'min-width:32px;" onclick="allerPageGestion('+p+')">'+p+'</button>';
+    }
+    html += '<button class="btn btn-gray btn-sm" '+(PAGE_GESTION>=nbPages?'disabled style="opacity:0.4;cursor:not-allowed;"':'')+' onclick="allerPageGestion('+(PAGE_GESTION+1)+')">Suivant →</button>';
+    html += '<select onchange="TAILLE_PAGE_GESTION=parseInt(this.value);allerPageGestion(1);" style="padding:6px 8px;border-radius:6px;border:1px solid var(--border);font-size:12px;margin-left:8px;">'+
+      [25,50,100,250].map(function(n){ return '<option value="'+n+'" '+(n===TAILLE_PAGE_GESTION?'selected':'')+'>'+n+' / page</option>'; }).join('')+
+      '</select>';
+    html += '</div>';
   }
   el.innerHTML = html;
 }
@@ -3388,7 +3436,7 @@ function editerMontant(idx, echIdx) {
   var div = document.getElementById('montant-'+idx+'-'+echIdx);
   
   // Créer input d'édition
-  div.innerHTML = '<input type="number" id="input-montant-'+idx+'-'+echIdx+'" value="'+e.montantDu+'" style="width:100px;padding:4px;border:1px solid #6366f1;border-radius:4px;"/>' +
+  div.innerHTML = '<input type="number" id="input-montant-'+idx+'-'+echIdx+'" value="'+e.montantDu+'" style="width:100px;padding:4px;border:1px solid var(--sauge-dark);border-radius:4px;"/>' +
     '<button onclick="validerMontant('+idx+','+echIdx+')" style="background:var(--success);color:white;border:none;padding:4px 12px;border-radius:4px;cursor:pointer;margin-left:4px;" title="Valider">✓</button>' +
     '<button onclick="annulerEditionMontant('+idx+','+echIdx+')" style="background:var(--danger);color:white;border:none;padding:4px 12px;border-radius:4px;cursor:pointer;margin-left:4px;" title="Annuler">✕</button>';
   
@@ -3417,7 +3465,7 @@ function validerMontant(idx, echIdx) {
   // Revenir à l'affichage formaté
   var div = document.getElementById('montant-'+idx+'-'+echIdx);
   div.innerHTML = '<span style="font-weight:500;">'+fmt(nouveauMontant)+' F</span>' +
-    '<button onclick="editerMontant('+idx+','+echIdx+')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;color:#6366f1;" title="Éditer">✏️</button>';
+    '<button onclick="editerMontant('+idx+','+echIdx+')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;color:var(--sauge-dark);" title="Éditer">✏️</button>';
 }
 
 function annulerEditionMontant(idx, echIdx) {
@@ -3426,7 +3474,7 @@ function annulerEditionMontant(idx, echIdx) {
   
   // Revenir à l'affichage formaté sans modification
   div.innerHTML = '<span style="font-weight:500;">'+fmt(e.montantDu)+' F</span>' +
-    '<button onclick="editerMontant('+idx+','+echIdx+')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;color:#6366f1;" title="Éditer">✏️</button>';
+    '<button onclick="editerMontant('+idx+','+echIdx+')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;color:var(--sauge-dark);" title="Éditer">✏️</button>';
 }
 
 function afficherTableauPaiements(idx) {
@@ -3459,7 +3507,7 @@ function afficherTableauPaiements(idx) {
     html += '<td><strong>M'+e.num+'</strong></td>';
     html += '<td>'+e.dateEch+'</td>';
     if(peutModifier()) {
-      html += '<td><div id="montant-'+idx+'-'+j+'" style="display:flex;align-items:center;gap:8px;"><span style="font-weight:500;">'+fmt(e.montantDu)+' F</span><button onclick="editerMontant('+idx+','+j+')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;color:#6366f1;" title="Éditer">✏️</button></div></td>';
+      html += '<td><div id="montant-'+idx+'-'+j+'" style="display:flex;align-items:center;gap:8px;"><span style="font-weight:500;">'+fmt(e.montantDu)+' F</span><button onclick="editerMontant('+idx+','+j+')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;color:var(--sauge-dark);" title="Éditer">✏️</button></div></td>';
       html += '<td><input type="date" value="'+(e.datePaiement||'')+'" onchange="CONTRATS['+idx+'].echeances['+j+'].datePaiement=this.value"/></td>';
       html += '<td><input type="text" value="'+(e.numeroCheque||'')+'" placeholder="N° chèque" onchange="CONTRATS['+idx+'].echeances['+j+'].numeroCheque=this.value"/></td>';
       html += '<td><input type="text" value="'+(e.banque||'')+'" placeholder="Banque" onchange="CONTRATS['+idx+'].echeances['+j+'].banque=this.value"/></td>';
