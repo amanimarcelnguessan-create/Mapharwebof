@@ -387,8 +387,8 @@ h2{letter-spacing:-0.2px;}
 /* Stat-card cliquable */
 .stat-card-link{cursor:pointer;transition:all 0.2s;}
 .stat-card-link:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.15);}
-.detail-link{cursor:pointer;}
-.detail-link:hover{background:var(--sauge-light);}
+.detail-link{cursor:pointer;background:var(--sauge-light);border-radius:10px;margin-bottom:7px;transition:box-shadow .15s,transform .15s;}
+.detail-link:hover{box-shadow:0 3px 12px rgba(79,107,84,0.18);transform:translateY(-1px);}
 
 /* ===== BORDEREAU INDIVIDUEL — AFFICHAGE ÉCRAN ===== */
 #doc-bordereau .brd-table {
@@ -4143,7 +4143,7 @@ function afficherDetailDashboard(filtre) {
       if(e.statut==='retard') retardDetail += '<span style="font-size:10px;color:var(--danger);"> • M'+e.num+' ('+dateFR(e.dateEch)+')</span>';
     });
 
-    dhtml += '<div class="detail-link" style="padding:8px 14px;border-bottom:1px solid var(--bg);" onclick="ouvrirPaiements('+i+')">' +
+    dhtml += '<div class="detail-link" style="padding:8px 14px 8px 12px;border-left:4px solid '+col+';" onclick="ouvrirPaiements('+i+')">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px;">' +
       '<div style="min-width:0;flex:1;">' +
       '<strong style="font-size:12.5px;">'+esc(c.numero)+' — '+esc(c.nom)+'</strong> ' +
