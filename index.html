@@ -661,6 +661,38 @@ h2{letter-spacing:-0.2px;}
   #doc-tirage table th:nth-child(12),#doc-tirage table td:nth-child(12){width:5%!important;text-align:center!important;}
   #doc-tirage .sig-box{height:14px!important;}
   #doc-tirage .sig-grid{margin-top:6px!important;}
+
+  /* ── Paliers de densité selon le nombre de dossiers ──────────────────
+     Calculés à partir du nombre de lignes (donnée fiable et connue à
+     l'avance), pas d'une mesure de taille à l'écran : évite complètement
+     la classe de bug du double rétrécissement. Objectif : qu'un tirage
+     de 4 dossiers remplisse raisonnablement la page au lieu de rester
+     minuscule dans un coin, tout en gardant le palier compact (6.5pt)
+     pour les grandes cohortes qui doivent paginer proprement.
+     ────────────────────────────────────────────────────────────────── */
+  #doc-tirage[data-densite="spacieux"] table,
+  #doc-tirage[data-densite="spacieux"] table th,
+  #doc-tirage[data-densite="spacieux"] table td{font-size:12pt!important;}
+  #doc-tirage[data-densite="spacieux"] table th,
+  #doc-tirage[data-densite="spacieux"] table td{padding:10px 8px!important;line-height:1.4!important;}
+  #doc-tirage[data-densite="spacieux"] table th:nth-child(6),
+  #doc-tirage[data-densite="spacieux"] table td:nth-child(6){font-size:11pt!important;}
+
+  #doc-tirage[data-densite="confortable"] table,
+  #doc-tirage[data-densite="confortable"] table th,
+  #doc-tirage[data-densite="confortable"] table td{font-size:10pt!important;}
+  #doc-tirage[data-densite="confortable"] table th,
+  #doc-tirage[data-densite="confortable"] table td{padding:7px 6px!important;line-height:1.3!important;}
+  #doc-tirage[data-densite="confortable"] table th:nth-child(6),
+  #doc-tirage[data-densite="confortable"] table td:nth-child(6){font-size:9pt!important;}
+
+  #doc-tirage[data-densite="standard"] table,
+  #doc-tirage[data-densite="standard"] table th,
+  #doc-tirage[data-densite="standard"] table td{font-size:8.5pt!important;}
+  #doc-tirage[data-densite="standard"] table th,
+  #doc-tirage[data-densite="standard"] table td{padding:5px 5px!important;line-height:1.25!important;}
+  #doc-tirage[data-densite="standard"] table th:nth-child(6),
+  #doc-tirage[data-densite="standard"] table td:nth-child(6){font-size:7.5pt!important;}
 }
 
 /* ===== ORIENTATION PAR DÉFAUT : définie dynamiquement via print-orientation-style ===== */
@@ -1374,6 +1406,12 @@ h2{letter-spacing:-0.2px;}
   <button class="nav-btn" onclick="exporterExcel()">
     <span class="icon">📊</span> Exporter Excel
   </button>
+  <div style="display:flex;align-items:center;">
+    <button id="nav-sheets-btn" class="nav-btn" style="flex:1;" onclick="exporterGoogleSheets()">
+      <span class="icon">🗂️</span> Exporter → Google Sheets
+    </button>
+    <button onclick="ouvrirConfigSheets()" title="Configurer la connexion Google Sheets" style="background:none;border:none;color:var(--ink-muted);cursor:pointer;font-size:14px;padding:8px 10px;">⚙️</button>
+  </div>
   <button id="nav-importer-btn" class="nav-btn" onclick="importerFichier()">
     <span class="icon">📥</span> Importer
   </button>
@@ -2726,6 +2764,215 @@ function exporter() {
   a.click();
 }
 
+/* ── Construction des données d'export — partagée entre Excel et Google Sheets ──
+   Une seule source de vérité pour les deux exports : toute évolution des colonnes
+   ou des calculs se répercute automatiquement sur Excel ET Google Sheets. ── */
+function construireDonneesMapharExport() {
+  var dateExport = new Date().toLocaleDateString('fr-FR');
+
+  /* Contrats actifs */
+  var headersContrats = ['N° Contrat','Cohorte','Souscripteur','Officine','Adresse','Téléphone','Email','Véhicule',
+     'Formule','Montant véhicule','N° Chèque garantie','Banque garantie','Caution (F)',
+     'N° Chèque frais','Banque frais','Frais dossier (F)','Mensualité (F)',
+     'Date début','Échéances soldées','Montant encaissé (F)','Reste dû (F)','Progression %',
+     'Caution restituée','Statut'];
+  var rowsContrats = [];
+  var statutsContrats = [];
+  var totC = {montant:0,caution:0,frais:0,paye:0,reste:0};
+  CONTRATS.forEach(function(c) {
+    if (c.archive) return;
+    var s = getStats(c);
+    var coh = getCohorteById(c.cohorteId);
+    var montant = c.montant || 0;
+    var reste = montant - s.paye;
+    var pct = montant > 0 ? Math.round((s.paye / montant) * 100) : 0;
+    var statut = reste <= 0 ? 'Soldé' : (s.nbRetard > 0 ? 'En retard' : 'En cours');
+    statutsContrats.push(statut);
+    totC.montant += montant; totC.caution += (c.cautionMontant||c.caution||0);
+    totC.frais += (c.fraisMontant||c.frais||0); totC.paye += s.paye; totC.reste += reste;
+    rowsContrats.push([
+      c.numero||'', coh?coh.nom:'—', c.nom||'', c.officine||'', c.adresse||'', c.tel||'', c.email||'', c.vehicule||'',
+      c.formule ? c.formule+' mois' : '', montant,
+      c.cautionNumeroCheque||'', c.cautionBanque||'', c.cautionMontant||c.caution||0,
+      c.fraisNumeroCheque||'', c.fraisBanque||'', c.fraisMontant||c.frais||0, Math.round(c.mensualite||0),
+      c.dateDebut||'', s.nbPaye+'/'+c.formule, Math.round(s.paye), Math.round(reste), pct,
+      c.cautionRestituee ? 'Oui' : 'Non', statut
+    ]);
+  });
+  var nbActifs = rowsContrats.length;
+  rowsContrats.push(['TOTAL','','','','','','','','', totC.montant,'','', totC.caution,'','', totC.frais,'','','', totC.paye, totC.reste,'','','']);
+
+  /* Échéanciers détaillés */
+  var headersEch = ['N° Contrat','Cohorte','Souscripteur','Mois','Date échéance','Montant dû (F)','Date paiement','N° Chèque','Banque','Montant payé (F)','Statut'];
+  var rowsEch = [];
+  var statutsEch = [];
+  CONTRATS.forEach(function(c) {
+    if (c.archive) return;
+    if (!c.echeances) return;
+    var coh = getCohorteById(c.cohorteId);
+    c.echeances.forEach(function(e) {
+      var statutLbl = e.statut === 'paye' ? 'Payé' : (e.statut === 'retard' ? 'En retard' : 'En attente');
+      statutsEch.push(statutLbl === 'Payé' ? 'Soldé' : (statutLbl === 'En retard' ? 'En retard' : 'En cours'));
+      rowsEch.push([
+        c.numero||'', coh?coh.nom:'—', c.nom||'', 'M'+e.num, e.dateEch||'',
+        Math.round(e.montantDu||0), e.datePaiement||'', e.numeroCheque||'', e.banque||'',
+        Math.round(e.montantPaye||0), statutLbl
+      ]);
+    });
+  });
+
+  /* Cohortes */
+  var headersCoh = ['Cohorte','Statut','Date lancement','Date livraison','Dossiers','12 mois','24 mois','Montant véhicules (F)','Garanties (F)','Frais dossier (F)','Encaissé (F)','Reste dû (F)','Note'];
+  var rowsCoh = [];
+  COHORTES.slice().sort(function(a,b){return (a.dateLancement||'').localeCompare(b.dateLancement||'');}).forEach(function(co) {
+    var s = getCohorteStats(co.id);
+    rowsCoh.push([co.nom||'', co.statut||'', co.dateLancement||'', co.dateLivraison||'',
+      s.nb, s.nb12, s.nb24, s.totalMontant, s.totalCaution, s.totalFrais, s.totalEncaisse, s.totalReste, co.note||'']);
+  });
+
+  /* Archives */
+  var headersArch = ['N° Contrat','Cohorte','Souscripteur','Officine','Téléphone','Véhicule','Formule','Montant (F)','Caution (F)','Montant encaissé (F)','Date début','Date archivage'];
+  var rowsArchives = [];
+  CONTRATS.forEach(function(c) {
+    if (!c.archive) return;
+    var s = getStats(c);
+    var coh = getCohorteById(c.cohorteId);
+    rowsArchives.push([
+      c.numero||'', coh?coh.nom:'—', c.nom||'', c.officine||'', c.tel||'', c.vehicule||'',
+      c.formule ? c.formule+' mois' : '', c.montant||0,
+      c.cautionMontant||c.caution||0, Math.round(s.paye),
+      c.dateDebut||'', c.dateArchivage||'-'
+    ]);
+  });
+  var nbArchives = rowsArchives.length;
+
+  /* Récapitulatif financier */
+  var nbSoldes = 0, nbEnCours = 0, nbRetard = 0;
+  statutsContrats.forEach(function(st){
+    if (st === 'Soldé') nbSoldes++; else if (st === 'En retard') nbRetard++; else nbEnCours++;
+  });
+  var rowsRecap = [
+    ['Indicateur','Montant (F)'],
+    ['Montant total portefeuille actif', totC.montant],
+    ['Total garanties reçues', totC.caution],
+    ['Total frais de dossier', totC.frais],
+    ['Total encaissé (mensualités)', totC.paye],
+    ['Reste à solder', totC.reste],
+    ['',''],
+    ['Statut contrats actifs','Nombre'],
+    ['Contrats soldés (non archivés)', nbSoldes],
+    ['Contrats en cours', nbEnCours],
+    ['Contrats en retard', nbRetard],
+    ['TOTAL contrats actifs', nbActifs],
+    ['',''],
+    ['Contrats archivés (soldés)', nbArchives],
+    ['TOTAL général (actifs + archivés)', nbActifs + nbArchives],
+    ['',''],
+    ['Cohortes','Nombre / Montant'],
+    ['Nombre de cohortes', COHORTES.length]
+  ];
+  COHORTES.slice().sort(function(a,b){return (a.dateLancement||'').localeCompare(b.dateLancement||'');}).forEach(function(co){
+    var s = getCohorteStats(co.id);
+    rowsRecap.push([co.nom + ' ('+co.statut+')', s.totalMontant]);
+  });
+
+  return {
+    dateExport: dateExport,
+    contrats:   {headers: headersContrats, rows: rowsContrats, statuts: statutsContrats, nbActifs: nbActifs},
+    echeances:  {headers: headersEch, rows: rowsEch, statuts: statutsEch},
+    cohortes:   {headers: headersCoh, rows: rowsCoh},
+    archives:   {headers: headersArch, rows: rowsArchives, nbArchives: nbArchives},
+    recap:      {titre: 'RÉCAPITULATIF FINANCIER MAPHAR MOBILITY — '+dateExport, rows: rowsRecap}
+  };
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   EXPORT GOOGLE SHEETS — via un Web App Google Apps Script central
+   ══════════════════════════════════════════════════════════════════
+   Principe : un seul Google Sheet central, mis à jour à la demande (pas
+   de connexion Google requise à chaque fois). L'URL du Web App Apps
+   Script est configurée une fois et stockée localement. Voir le fichier
+   maphar-sheets-bridge.gs fourni séparément pour le script à déployer
+   côté Google.
+   ══════════════════════════════════════════════════════════════════ */
+
+function getSheetsWebAppUrl() {
+  return localStorage.getItem('maphar_sheets_webapp_url') || '';
+}
+
+function ouvrirConfigSheets() {
+  var url = getSheetsWebAppUrl();
+  document.getElementById('sheets-webapp-url').value = url;
+  document.getElementById('modal-sheets-config').style.display = 'flex';
+}
+
+function fermerConfigSheets() {
+  document.getElementById('modal-sheets-config').style.display = 'none';
+}
+
+function enregistrerConfigSheets() {
+  var url = document.getElementById('sheets-webapp-url').value.trim();
+  if (url && !/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(url)) {
+    showToast('⚠️ Cette adresse ne ressemble pas à une URL de déploiement Apps Script (…/exec).', 'error');
+    return;
+  }
+  localStorage.setItem('maphar_sheets_webapp_url', url);
+  fermerConfigSheets();
+  showToast(url ? '✅ Connexion Google Sheets enregistrée.' : '🗑️ Connexion Google Sheets retirée.', 'success');
+}
+
+async function exporterGoogleSheets() {
+  if (!CONTRATS.length) { showToast('❌ Aucun contrat à exporter.', 'error'); return; }
+  var url = getSheetsWebAppUrl();
+  if (!url) { ouvrirConfigSheets(); return; }
+
+  var btn = document.getElementById('nav-sheets-btn');
+  if (btn) btn.disabled = true;
+  showToast('⏳ Envoi vers Google Sheets…', 'info');
+
+  try {
+    var d = construireDonneesMapharExport();
+    var payload = {
+      app: 'MAPHAR Mobility',
+      dateExport: d.dateExport,
+      sheets: {
+        'Contrats actifs':   {headers: d.contrats.headers,  rows: d.contrats.rows},
+        'Échéanciers':       {headers: d.echeances.headers, rows: d.echeances.rows},
+        'Cohortes':          {headers: d.cohortes.headers,  rows: d.cohortes.rows},
+        'Archives':          {headers: d.archives.headers,  rows: d.archives.rows},
+        'Récapitulatif':     {headers: ['Indicateur','Valeur'], rows: d.recap.rows}
+      }
+    };
+    var resp = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'}, // évite le preflight CORS bloqué par Apps Script
+      body: JSON.stringify(payload)
+    });
+    var data = await resp.json();
+    if (data && data.success) {
+      showToast('✅ Google Sheets mis à jour avec succès.', 'success');
+      if (data.url) {
+        var ouvrir = document.getElementById('nav-sheets-btn');
+        if (ouvrir) {
+          ouvrir.dataset.sheetUrl = data.url;
+        }
+        window._dernierSheetUrl = data.url;
+      }
+    } else {
+      showToast('❌ Le script a répondu, mais sans confirmation de succès. Vérifiez le déploiement.', 'error');
+    }
+  } catch (err) {
+    showToast('❌ Échec de connexion. Vérifiez l\'URL configurée et que le déploiement est bien accessible ("Anyone").', 'error');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function ouvrirDernierSheet() {
+  if (window._dernierSheetUrl) { window.open(window._dernierSheetUrl, '_blank'); }
+  else { showToast('Exportez d\'abord une fois pour obtenir le lien du Sheet.', 'info'); }
+}
+
 function exporterExcel() {
   if (!CONTRATS.length) { showToast('❌ Aucun contrat à exporter.', 'error'); return; }
   /* Mode offline : si XLSX pas encore chargé, on le charge maintenant */
@@ -3896,20 +4143,21 @@ function afficherDetailDashboard(filtre) {
       if(e.statut==='retard') retardDetail += '<span style="font-size:10px;color:var(--danger);"> • M'+e.num+' ('+dateFR(e.dateEch)+')</span>';
     });
 
-    dhtml += '<div class="detail-link" style="padding:12px 14px;border-bottom:1px solid var(--bg);" onclick="ouvrirPaiements('+i+')">' +
-      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">' +
-      '<div><strong>'+esc(c.numero)+' — '+esc(c.nom)+'</strong><br>' +
-      '<small style="color:var(--ink-muted);">'+(esc(c.officine)||'-')+' | '+c.formule+' mois | Mensualité : '+fmt(c.mensualite)+' F</small></div>' +
-      '<div style="display:flex;gap:6px;align-items:center;">'+badge+
-      '<button class="btn btn-purple btn-sm" onclick="event.stopPropagation();ouvrirPaiements('+i+')" title="Gérer les paiements">💰 Paiements</button>'+
-      '<button class="btn btn-blue btn-sm" onclick="event.stopPropagation();preselectionnerContrat('+i+',\'caution\')" title="Reçu de caution">📝</button>'+
+    dhtml += '<div class="detail-link" style="padding:8px 14px;border-bottom:1px solid var(--bg);" onclick="ouvrirPaiements('+i+')">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px;">' +
+      '<div style="min-width:0;flex:1;">' +
+      '<strong style="font-size:12.5px;">'+esc(c.numero)+' — '+esc(c.nom)+'</strong> ' +
+      '<span style="color:var(--ink-muted);font-size:10.5px;">'+(esc(c.officine)||'-')+' · '+c.formule+' mois · '+fmt(c.mensualite)+' F/mois</span>' +
+      '</div>' +
+      '<div style="display:flex;gap:5px;align-items:center;flex-shrink:0;">'+badge+
+      '<button class="btn btn-purple btn-sm" onclick="event.stopPropagation();ouvrirPaiements('+i+')" title="Gérer les paiements" style="padding:4px 8px;font-size:11px;">💰</button>'+
+      '<button class="btn btn-blue btn-sm" onclick="event.stopPropagation();preselectionnerContrat('+i+',\'caution\')" title="Reçu de caution" style="padding:4px 8px;font-size:11px;">📝</button>'+
       '</div></div>' +
-      '<div class="progress-bar" style="margin-bottom:4px;"><div class="progress-fill" style="width:'+pct+'%;background:'+col+';"></div></div>' +
-      '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-muted);">' +
-      '<span>'+s.nbPaye+'/'+c.formule+' payé — <strong>'+pct+'%</strong></span>' +
+      '<div class="progress-bar" style="margin-bottom:3px;height:5px;"><div class="progress-fill" style="width:'+pct+'%;background:'+col+';"></div></div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--ink-muted);">' +
+      '<span>'+s.nbPaye+'/'+c.formule+' payé — <strong>'+pct+'%</strong>'+(retardDetail ? '<span style="color:var(--danger);">'+retardDetail+'</span>' : '')+'</span>' +
       '<span>Encaissé : <strong>'+fmt(s.paye)+' F</strong> | Reste : <strong style="color:var(--danger);">'+fmt(c.montant-s.paye)+' F</strong></span>' +
       '</div>' +
-      (retardDetail ? '<div style="margin-top:4px;">'+retardDetail+'</div>' : '') +
       '</div>';
   });
 
@@ -4236,6 +4484,11 @@ function afficherEtatTirage() {
 
   var totMontant=0, totMensualite=0, totCaution=0, totFrais=0;
   var lignes = '';
+  // Palier de densité d'impression selon le nombre de dossiers (voir CSS #doc-tirage[data-densite]) :
+  // peu de dossiers → texte et lignes plus grands pour bien occuper la page ;
+  // beaucoup de dossiers → densité compacte habituelle, avec pagination naturelle au-delà.
+  var densite = dossiers.length <= 6 ? 'spacieux' : (dossiers.length <= 14 ? 'confortable' : (dossiers.length <= 25 ? 'standard' : 'compact'));
+  el.setAttribute('data-densite', densite);
   dossiers.forEach(function(c, i) {
     var caution = c.cautionMontant || c.caution || 0;
     var frais = c.fraisMontant || c.frais || 0;
@@ -6927,6 +7180,30 @@ document.addEventListener('click', function(e) {
       <button onclick="document.getElementById('modal-historique').style.display='none';" style="background:rgba(255,255,255,0.2);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;">✕</button>
     </div>
     <div id="hist-liste" style="padding:16px 22px;overflow-y:auto;flex:1;"></div>
+  </div>
+</div>
+
+<div id="modal-sheets-config" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99998;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:16px;padding:0;max-width:480px;width:92%;box-shadow:0 24px 64px rgba(0,0,0,0.4);overflow:hidden;">
+    <div style="background:linear-gradient(135deg,var(--sauge-dark),var(--sauge));padding:18px 22px;color:white;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:20px;">🗂️</span>
+      <div>
+        <div style="font-size:15px;font-weight:700;">Connexion Google Sheets</div>
+        <div style="font-size:11px;opacity:0.85;">Export à la demande vers un Sheet central</div>
+      </div>
+    </div>
+    <div style="padding:20px 22px;">
+      <p style="font-size:12.5px;color:var(--ink);margin:0 0 12px;line-height:1.6;">
+        Colle ici l'URL du Web App Apps Script (voir <code>maphar-sheets-bridge.gs</code> fourni avec l'application, et la fiche d'installation). Elle ressemble à :<br>
+        <code style="font-size:10.5px;color:var(--ink-muted);word-break:break-all;">https://script.google.com/macros/s/AKfycb.../exec</code>
+      </p>
+      <input id="sheets-webapp-url" type="text" placeholder="https://script.google.com/macros/s/…/exec"
+        style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-size:12.5px;font-family:monospace;box-sizing:border-box;color:var(--charcoal);">
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <button onclick="enregistrerConfigSheets()" style="flex:1;background:var(--sauge-dark);color:white;border:none;padding:9px;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:600;">Enregistrer</button>
+        <button onclick="fermerConfigSheets()" style="background:var(--bg);color:var(--ink);border:1px solid var(--border);padding:9px 16px;border-radius:8px;cursor:pointer;font-size:12.5px;">Annuler</button>
+      </div>
+    </div>
   </div>
 </div>
 
