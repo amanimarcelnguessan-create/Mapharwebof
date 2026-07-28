@@ -159,6 +159,27 @@ h2{letter-spacing:-0.2px;}
 .stat-orange{border-left-color:var(--gold);} .stat-orange .val{color:var(--gold-dark);}
 .stat-red{border-left-color:var(--danger);} .stat-red .val{color:var(--danger);}
 /* Gestion contrats */
+/* ── .tbl : tableaux de détail (Frais de dossier, Cautions payées/restituées) ──
+   Cette classe était utilisée dans le HTML généré mais n'avait jamais été
+   définie : les tableaux s'affichaient donc avec le style brut du navigateur
+   (pas d'espacement, pas de gestion de l'alignement vertical), d'où le rendu
+   désordonné quand une cellule tient sur 2 lignes (nom + officine) à côté de
+   cellules à une seule ligne (montant, statut). ────────────────────────── */
+.tbl{width:100%;border-collapse:collapse;background:white;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border);}
+.tbl th{background:var(--sauge-dark);color:white;padding:10px 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:0.2px;}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--bg);font-size:12px;vertical-align:top;}
+.tbl tr:hover td{background:var(--sauge-light);}
+.tbl tfoot td{vertical-align:middle;}
+@media (max-width:780px){
+  .tbl thead{display:none;}
+  .tbl, .tbl tbody, .tbl tr, .tbl td{display:block;width:100%;}
+  .tbl{box-shadow:none;border:none;background:transparent;}
+  .tbl tr{background:white;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;box-shadow:var(--shadow);overflow:hidden;}
+  .tbl td{text-align:left;padding:6px 12px;border-bottom:1px solid var(--bg);}
+  .tbl td:last-child{border-bottom:none;}
+  .tbl tfoot tr{background:var(--gold-light);}
+}
+
 .table-contrats{width:100%;border-collapse:collapse;background:white;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border);}
 .table-contrats th{background:var(--sauge-dark);color:white;padding:11px 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:0.2px;}
 
@@ -1855,7 +1876,7 @@ h2{letter-spacing:-0.2px;}
     </p>
     <div id="liste-cautions-payees"></div>
     <div style="margin-top:20px;text-align:center;">
-      <button class="btn b-blue" onclick="showPage('dashboard')">← Retour</button>
+      <button class="btn btn-blue" onclick="showPage('dashboard')">← Retour</button>
     </div>
   </div>
 </div>
@@ -1869,7 +1890,7 @@ h2{letter-spacing:-0.2px;}
     </p>
     <div id="liste-cautions-restituees"></div>
     <div style="margin-top:20px;text-align:center;">
-      <button class="btn b-blue" onclick="showPage('dashboard')">← Retour</button>
+      <button class="btn btn-blue" onclick="showPage('dashboard')">← Retour</button>
     </div>
   </div>
 </div>
@@ -1884,7 +1905,7 @@ h2{letter-spacing:-0.2px;}
     </p>
     <div id="liste-frais-dossier"></div>
     <div style="margin-top:20px;text-align:center;">
-      <button class="btn b-blue" onclick="showPage('dashboard')">← Retour au tableau de bord</button>
+      <button class="btn btn-blue" onclick="showPage('dashboard')">← Retour au tableau de bord</button>
     </div>
   </div>
 </div>
@@ -5818,7 +5839,7 @@ function afficherCautionsRestituees() {
 
   // Résumé total
   var resume = (nbRestituees12 > 0 || nbRestituees24 > 0) ?
-    '<div style="background:linear-gradient(135deg,var(--success),var(--success));color:white;padding:14px 20px;border-radius:10px;margin-top:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center;">' +
+    '<div style="background:var(--success);color:white;padding:14px 20px;border-radius:10px;margin-top:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center;">' +
     '<div style="background:rgba(255,255,255,0.1);padding:10px;border-radius:8px;"><p style="font-size:11px;opacity:0.9;margin:0 0 4px;">24 mois restituées</p><p style="font-size:18px;font-weight:700;font-family:var(--font-display);margin:0;">' + fmt(total24) + ' F</p></div>' +
     '<div style="background:rgba(255,255,255,0.1);padding:10px;border-radius:8px;"><p style="font-size:11px;opacity:0.9;margin:0 0 4px;">12 mois restituées</p><p style="font-size:18px;font-weight:700;font-family:var(--font-display);margin:0;">' + fmt(total12) + ' F</p></div>' +
     '<div style="background:rgba(255,255,255,0.22);padding:10px;border-radius:8px;"><p style="font-size:11px;opacity:0.9;margin:0 0 4px;">TOTAL RESTITUÉ</p><p style="font-size:20px;font-weight:800;font-family:var(--font-display);margin:0;">' + fmt(total12 + total24) + ' F</p></div>' +
