@@ -1138,27 +1138,53 @@ h2{letter-spacing:-0.2px;}
   var FB_PROJECT = "maphar-mobility";
   var FB_COLLECTION = "maphar_data";
 
-  function loadScript(url, cb) {
+  function setIndicateur(texte, couleur, raison) {
+    var el = document.getElementById("sync-indicator");
+    if (!el) return;
+    el.style.color = couleur;
+    el.title = raison ? raison + ' — cliquer pour réessayer' : 'Cliquer pour réessayer la connexion';
+    el.innerHTML = texte + ' <span style="text-decoration:underline;cursor:pointer;opacity:0.85;">↻</span>';
+  }
+
+  function loadScript(url, cb, onFail) {
     var s = document.createElement("script");
-    s.src = url; s.onload = cb;
-    s.onerror = function() { console.warn("Firebase SDK non charge depuis CDN"); cb(); };
+    var termine = false;
+    s.src = url;
+    s.onload = function() { if(!termine){ termine = true; cb(); } };
+    s.onerror = function() {
+      console.warn("Firebase SDK non chargé depuis CDN :", url);
+      if(!termine){ termine = true; onFail(); }
+    };
     document.head.appendChild(s);
+    // Filet de sécurité : si le script ne répond ni en succès ni en échec après 7s
+    // (bloqué silencieusement par un pare-feu/antivirus par ex.), on ne reste pas
+    // bloqué indéfiniment sur un état ambigu.
+    setTimeout(function() {
+      if(!termine){ termine = true; console.warn("Firebase : délai dépassé pour", url); onFail(); }
+    }, 7000);
   }
 
   function initFirebase() {
     if(typeof firebase === "undefined") {
-      console.warn("Firebase indisponible - mode localStorage");
+      setIndicateur('💾 Mode Local', '#ffffff', "Le script Firebase n'a pas pu se charger (bloqué par un bloqueur de pub / antivirus / pare-feu, ou serveur Google injoignable)");
       return;
     }
-    if(firebase.apps && firebase.apps.length) return;
-    firebase.initializeApp({
-      apiKey: FB_API,
-      authDomain: FB_PROJECT + ".firebaseapp.com",
-      projectId: FB_PROJECT,
-      storageBucket: FB_PROJECT + ".firebasestorage.app",
-      messagingSenderId: "342401395380",
-      appId: "1:342401395380:web:d4b499dfcce85e2c72c5e1"
-    });
+    try {
+      if(!(firebase.apps && firebase.apps.length)) {
+        firebase.initializeApp({
+          apiKey: FB_API,
+          authDomain: FB_PROJECT + ".firebaseapp.com",
+          projectId: FB_PROJECT,
+          storageBucket: FB_PROJECT + ".firebasestorage.app",
+          messagingSenderId: "342401395380",
+          appId: "1:342401395380:web:d4b499dfcce85e2c72c5e1"
+        });
+      }
+    } catch(e) {
+      console.warn("Firebase initializeApp erreur:", e);
+      setIndicateur('💾 Mode Local', '#ffffff', 'Configuration Firebase invalide : ' + e.message);
+      return;
+    }
     var db = firebase.firestore();
 
     // Adapter window.storage -> Firestore (compatible avec tout le code V12)
@@ -1169,6 +1195,7 @@ h2{letter-spacing:-0.2px;}
           .then(function() { return {key:key, value:value}; })
           .catch(function(e) {
             console.warn("Firebase set erreur:", e);
+            setIndicateur('💾 Mode Local', '#ffffff', 'Écriture cloud refusée : ' + e.message);
             try { localStorage.setItem(key, value); } catch(le) {}
             return {key:key, value:value};
           });
@@ -1182,6 +1209,7 @@ h2{letter-spacing:-0.2px;}
           })
           .catch(function(e) {
             console.warn("Firebase get erreur:", e);
+            setIndicateur('💾 Mode Local', '#ffffff', 'Lecture cloud refusée : ' + e.message);
             var local = localStorage.getItem(key);
             return local ? {key:key, value:local} : null;
           });
@@ -1211,12 +1239,14 @@ h2{letter-spacing:-0.2px;}
                 try { if(typeof afficherCohortes==="function") afficherCohortes(); } catch(e) {}
                 try { if(typeof afficherDashboard==="function") afficherDashboard(); } catch(e) {}
                 try { if(typeof afficherListeContrats==="function") afficherListeContrats(); } catch(e) {}
-                var el = document.getElementById("sync-indicator");
-                if(el) { el.textContent = "Sync temps reel"; el.style.color = "var(--success)"; }
+                setIndicateur('☁️ Sync temps réel', 'var(--success-light)', null);
               }
             }
           } catch(e) { console.warn("Snapshot erreur:", e); }
-        }, function(e) { console.warn("Listener erreur:", e); });
+        }, function(e) {
+          console.warn("Listener erreur:", e);
+          setIndicateur('💾 Mode Local', '#ffffff', 'Connexion temps réel perdue : ' + e.message);
+        });
     }
     // Expose une vraie fonction de désabonnement au reste de l'app (ex: bouton Déconnexion)
     window.unsubscribeContrats = function() { if(unsub) { unsub(); unsub = null; } };
@@ -1225,21 +1255,50 @@ h2{letter-spacing:-0.2px;}
       setTimeout(startListener, 3000);
     });
 
-    var el = document.getElementById("sync-indicator");
-    if(el) { el.textContent = "Firebase OK"; el.style.color = "var(--success)"; }
-    console.log("Firebase initialise avec succes");
+    // "Firebase OK" n'est affiché qu'après une VRAIE lecture réussie sur le serveur —
+    // initializeApp() seul ne garantit pas que le réseau/les règles de sécurité
+    // laissent réellement passer les données (l'ancienne version affichait "Firebase OK"
+    // même si la lecture échouait ensuite en silence).
+    db.collection(FB_COLLECTION).limit(1).get().then(function() {
+      setIndicateur('☁️ Firebase OK', 'var(--success-light)', null);
+      console.log("Firebase initialisé et vérifié avec succès");
+    }).catch(function(e) {
+      console.warn("Firebase test de connexion échoué:", e);
+      var raison = (e && e.code === 'permission-denied')
+        ? 'Accès refusé par les règles de sécurité Firestore'
+        : 'Serveur Firebase injoignable : ' + (e && e.message || e);
+      setIndicateur('💾 Mode Local', '#ffffff', raison);
+    });
   }
 
-  // Charger SDK puis initialiser
-  loadScript(
-    "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js",
-    function() {
-      loadScript(
-        "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js",
-        function() { initFirebase(); }
-      );
+  window._reessayerFirebase = function() {
+    setIndicateur('🔄 Connexion…', '#ffffff', null);
+    tenterConnexionFirebase();
+  };
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.closest && e.target.closest('#sync-indicator')) {
+      window._reessayerFirebase();
     }
-  );
+  });
+
+  // Charger SDK puis initialiser
+  var indicateurEchec = function() {
+    setIndicateur('💾 Mode Local', '#ffffff', "Le script Firebase n'a pas pu se charger (bloqué par un bloqueur de pub / antivirus / pare-feu, ou serveur Google injoignable)");
+  };
+  function tenterConnexionFirebase() {
+    loadScript(
+      "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js",
+      function() {
+        loadScript(
+          "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js",
+          function() { initFirebase(); },
+          indicateurEchec
+        );
+      },
+      indicateurEchec
+    );
+  }
+  tenterConnexionFirebase();
 })();
 </script>
 
@@ -7320,7 +7379,7 @@ document.addEventListener('click', function(e) {
   <button id="ia-toggle" onclick="iaBascule()" title="Assistant IA"><img src="" id="ia-toggle-logo" style="width:36px;height:36px;object-fit:contain;border-radius:50%;" /></button>
 </div>
 
-<div id="sync-indicator" style="position:fixed;bottom:12px;right:12px;background:var(--sauge-dark);color:#ffffff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;z-index:9999;pointer-events:none;">💾 Mode Local</div>
+<div id="sync-indicator" title="Cliquer pour réessayer la connexion" style="position:fixed;bottom:12px;right:12px;background:var(--sauge-dark);color:#ffffff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;z-index:9999;cursor:pointer;">💾 Mode Local <span style="text-decoration:underline;opacity:0.85;">↻</span></div>
 
 <!-- Bannière hors ligne -->
 <div id="offline-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:var(--danger);color:white;padding:10px 20px;justify-content:center;align-items:center;gap:12px;font-weight:bold;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
