@@ -2779,6 +2779,7 @@ function chargerDonnees() {
         }
       } catch(e) { console.error('Erreur chargement données:', e); }
       migrerCohortes();
+      migrerEcheanciersDepuisPremierPaiement();
       resolve();
     }
 
@@ -3315,6 +3316,7 @@ function importerDonnees(e) {
       COMPTEURS = data.compteurs || {contrat:1,caution:1,bordereau:1,recu:1,solde:1,pv:1,cohorte:1};
       if(!COMPTEURS.cohorte) COMPTEURS.cohorte = 1;
       migrerCohortes();
+      migrerEcheanciersDepuisPremierPaiement();
       sauvegarder(false);
       rafraichirSelecteurs();
       afficherDashboard();
@@ -3458,6 +3460,54 @@ function ajouterMoisSansDebordement(dateDebutISO, n) {
   var dernierJourDuMois = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
   d.setDate(Math.min(jourOrigine, dernierJourDuMois));
   return d;
+}
+
+// Recalcule les dates d'échéances d'un contrat à partir de la date de paiement réelle
+// de la 1ère mensualité (M1), au lieu de la date de souscription (dateDebut, inchangée).
+// Utile quand le projet a pris du retard mais que les chèques avaient déjà été reçus et
+// saisis selon leur date réelle : évite de signaler de faux "retards" sur des mensualités
+// en réalité payées à temps par rapport au démarrage effectif.
+function recalculerEcheancierDepuisPremierPaiement(idx, opts) {
+  opts = opts || {};
+  var c = CONTRATS[idx];
+  if(!c || !c.echeances || !c.echeances.length) return false;
+  var ancre = c.echeances[0].datePaiement;
+  if(!ancre) {
+    if(!opts.silencieux) alert('⚠️ La date de paiement de la 1ère mensualité (M1) doit être renseignée avant de recalculer l\'échéancier.');
+    return false;
+  }
+  // Rien à faire si déjà aligné (évite des recalculs/sauvegardes inutiles)
+  if(!opts.forcer && c.echeances[0].dateEch === ancre) return false;
+
+  var aujourdHui = new Date();
+  c.echeances.forEach(function(e, i) {
+    e.dateEch = ajouterMoisSansDebordement(ancre, i).toISOString().split('T')[0];
+    // Un "retard" qui ne provenait que de l'ancien décalage de dates redevient "attente"
+    // si la nouvelle échéance n'est pas encore passée. Les mensualités déjà payées et les
+    // vrais retards (nouvelle date déjà passée) ne sont pas touchés.
+    if(e.statut === 'retard' && new Date(e.dateEch) >= aujourdHui) {
+      e.statut = 'attente';
+    }
+  });
+  logHistorique(c, 'Échéancier recalculé à partir du paiement de M1 (' + dateFR(ancre) + ')');
+  if(!opts.silencieux) {
+    sauvegarder(false);
+    showToast('✅ Échéancier recalculé à partir du 1er paiement (' + dateFR(ancre) + ')', 'success');
+  }
+  return true;
+}
+
+// Applique le recalcul ci-dessus, une fois, à tous les contrats dont M1 est déjà payée —
+// utilisé au chargement des données pour corriger automatiquement les faux retards des
+// contrats déjà en cours (chèques reçus et saisis avant le décalage du projet).
+function migrerEcheanciersDepuisPremierPaiement() {
+  var changed = false;
+  CONTRATS.forEach(function(c, idx) {
+    if(c.echeances && c.echeances[0] && c.echeances[0].statut === 'paye' && c.echeances[0].datePaiement) {
+      if(recalculerEcheancierDepuisPremierPaiement(idx, {silencieux:true})) changed = true;
+    }
+  });
+  if(changed) sauvegarder(false);
 }
 
 function enregistrerContrat() {
@@ -3829,6 +3879,13 @@ function annulerEditionMontant(idx, echIdx) {
     '<button onclick="editerMontant('+idx+','+echIdx+')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;color:var(--sauge-dark);" title="Éditer">✏️</button>';
 }
 
+function confirmerRecalculEcheancier(idx) {
+  var ok = confirm("Recalculer toutes les dates d'échéance de ce contrat à partir de la date de paiement de M1 ?\n\nLa date de souscription et les mensualités déjà payées ne sont pas modifiées.");
+  if(!ok) return;
+  recalculerEcheancierDepuisPremierPaiement(idx, {forcer:true});
+  afficherTableauPaiements(idx);
+}
+
 function afficherTableauPaiements(idx) {
   var c = CONTRATS[idx];
   var stats = getStats(c);
@@ -3841,6 +3898,13 @@ function afficherTableauPaiements(idx) {
     '<div class="stat-card stat-green" style="padding:10px;"><div class="val" style="font-size:16px;">'+fmt(stats.paye)+'</div><div class="lbl">Montant encaissé (F)</div></div>' +
     '<div class="stat-card stat-red" style="padding:10px;"><div class="val" style="font-size:16px;">'+fmt(reste)+'</div><div class="lbl">Reste à solder (F)</div></div>' +
     '</div>';
+
+  if(peutModifier()) {
+    html += '<div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+      '<button class="btn btn-sm" style="background:var(--sauge-dark);color:#fff;" onclick="confirmerRecalculEcheancier('+idx+')">🔄 Recalculer l\'échéancier depuis le 1er paiement</button>' +
+      '<span style="font-size:11px;color:var(--ink-muted);">Aligne M1..M'+c.formule+' sur la date réelle du 1er chèque encaissé (nécessite que M1 soit payée).</span>' +
+      '</div>';
+  }
 
   html += '<table class="table-paiements"><thead><tr>' +
     '<th>Mois</th><th>Échéance</th><th>Montant dû'+(peutModifier()?' ✏️':'')+'</th><th>Date paiement</th><th>N° Chèque</th><th>Banque</th><th>Montant payé</th><th>Statut</th><th class="col-actions">Actions</th>' +
@@ -3860,10 +3924,10 @@ function afficherTableauPaiements(idx) {
     html += '<td>'+e.dateEch+'</td>';
     if(peutModifier()) {
       html += '<td><div id="montant-'+idx+'-'+j+'" style="display:flex;align-items:center;gap:8px;"><span style="font-weight:500;">'+fmt(e.montantDu)+' F</span><button onclick="editerMontant('+idx+','+j+')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;color:var(--sauge-dark);" title="Éditer">✏️</button></div></td>';
-      html += '<td><input type="date" value="'+(e.datePaiement||'')+'" onchange="CONTRATS['+idx+'].echeances['+j+'].datePaiement=this.value"/></td>';
+      html += '<td><input type="date" value="'+(e.datePaiement||'')+'" onchange="CONTRATS['+idx+'].echeances['+j+'].datePaiement=this.value;'+(j===0?'if(CONTRATS['+idx+'].echeances[0].statut===\'paye\'){recalculerEcheancierDepuisPremierPaiement('+idx+',{forcer:true});afficherTableauPaiements('+idx+');}':'')+'"/></td>';
       html += '<td><input type="text" value="'+(e.numeroCheque||'')+'" placeholder="N° chèque" onchange="CONTRATS['+idx+'].echeances['+j+'].numeroCheque=this.value"/></td>';
       html += '<td><input type="text" value="'+(e.banque||'')+'" placeholder="Banque" onchange="CONTRATS['+idx+'].echeances['+j+'].banque=this.value"/></td>';
-      html += '<td><input type="number" value="'+(e.montantPaye||0)+'" onchange="(function(el,i,j){var v=parseFloat(el.value)||0;CONTRATS[i].echeances[j].montantPaye=v;if(v>0){CONTRATS[i].echeances[j].statut=\'paye\';if(!CONTRATS[i].echeances[j].datePaiement)CONTRATS[i].echeances[j].datePaiement=new Date().toISOString().split(\'T\')[0];}else{CONTRATS[i].echeances[j].statut=\'attente\';}sauvegarder();afficherTableauPaiements(i);})(this,'+idx+','+j+')" style="width:90px;"/></td>';
+      html += '<td><input type="number" value="'+(e.montantPaye||0)+'" onchange="(function(el,i,j){var v=parseFloat(el.value)||0;CONTRATS[i].echeances[j].montantPaye=v;if(v>0){CONTRATS[i].echeances[j].statut=\'paye\';if(!CONTRATS[i].echeances[j].datePaiement)CONTRATS[i].echeances[j].datePaiement=new Date().toISOString().split(\'T\')[0];if(j===0){recalculerEcheancierDepuisPremierPaiement(i,{forcer:true,silencieux:true});}}else{CONTRATS[i].echeances[j].statut=\'attente\';}sauvegarder();afficherTableauPaiements(i);})(this,'+idx+','+j+')" style="width:90px;"/></td>';
       html += '<td><select onchange="CONTRATS['+idx+'].echeances['+j+'].statut=this.value;afficherTableauPaiements('+idx+')">';
       ['attente','paye','retard'].forEach(function(s){
         html += '<option value="'+s+'"'+(e.statut===s?' selected':'')+'>'+{attente:'⏳ Attente',paye:'✅ Payé',retard:'⚠️ Retard'}[s]+'</option>';
