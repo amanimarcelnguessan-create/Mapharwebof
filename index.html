@@ -1436,6 +1436,9 @@ h2{letter-spacing:-0.2px;}
   <button class="nav-btn" onclick="showPage('doc-releve')">
     <span class="icon">📊</span> Relevé de compte
   </button>
+  <button class="nav-btn" onclick="showPage('doc-amortissement')">
+    <span class="icon">🗓️</span> Tableau d'amortissement
+  </button>
   <button class="nav-btn" onclick="showPage('doc-impaye')">
     <span class="icon">⚠️</span> PV Impayé
   </button>
@@ -1963,6 +1966,20 @@ h2{letter-spacing:-0.2px;}
   </div>
   <div class="doc-wrapper"><div id="doc-releve" class="doc-a4"></div></div>
 </div>
+
+<!-- ====== TABLEAU D'AMORTISSEMENT (PRÉVISIONNEL, POUR LE SOUSCRIPTEUR) ====== -->
+<div id="page-doc-amortissement" class="page">
+  <button onclick="showPage('gestion')" style="background:var(--sauge-dark);color:white;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;min-height:40px;" class="no-print">&#8592; Retour</button>
+  <div class="selecteur-contrat no-print">
+    <h3>🗓️ Tableau d'amortissement — Sélectionnez un contrat</h3>
+    <select id="sel-amortissement" onchange="afficherAmortissement()">
+      <option value="">-- Choisir un contrat --</option>
+    </select>
+    <div style="display:inline-flex;gap:5px;align-items:center;flex-wrap:wrap;"><button class="btn-orientation" data-orientation="portrait" onclick="setPrintOrientation('portrait')" style="background:rgba(0,0,0,0.28);color:white;border:1px solid rgba(255,255,255,0.35);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;opacity:1;">📄 Portrait</button><button class="btn-orientation" data-orientation="landscape" onclick="setPrintOrientation('landscape')" style="background:rgba(0,0,0,0.28);color:white;border:1px solid rgba(255,255,255,0.35);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;opacity:0.45;">🔄 Paysage</button><button class="btn-print" onclick="imprimerDoc('doc-amortissement')">🖨️ Imprimer</button></div>
+  </div>
+  <div class="doc-wrapper"><div id="doc-amortissement" class="doc-a4"></div></div>
+</div>
+
 
 <!-- ====== PV IMPAYÉ ====== -->
 <div id="page-doc-impaye" class="page">
@@ -2708,6 +2725,7 @@ function showPage(id) {
   if(id==='doc-recu')                { resetDocPage('sel-recu-contrat','doc-recu'); majSelecteurs(); }
   if(id==='doc-solde')               { resetDocPage('sel-solde','doc-solde'); majSelecteurs(); }
   if(id==='doc-releve')              { resetDocPage('sel-releve','doc-releve'); majSelecteurs(); }
+  if(id==='doc-amortissement')       { resetDocPage('sel-amortissement','doc-amortissement'); majSelecteurs(); }
   if(id==='doc-impaye')              { resetDocPage('sel-impaye','doc-impaye'); majSelecteurs(); }
   if(id==='doc-suivi')               { resetDocPage('sel-suivi','doc-suivi'); majSelecteurs(); }
   if(id==='doc-tableau')             { resetDocPage('sel-tableau','doc-tableau'); majSelecteurs(); }
@@ -4141,7 +4159,7 @@ function majSelecteurs() {
   // Remplir les sélecteurs de contrats dans les pages de documents
   var selects = [
     'sel-caution', 'sel-fiche', 'sel-bordereau', 'sel-recu-contrat', 
-    'sel-solde', 'sel-releve', 'sel-impaye', 'sel-suivi', 'sel-tableau'
+    'sel-solde', 'sel-releve', 'sel-amortissement', 'sel-impaye', 'sel-suivi', 'sel-tableau'
   ];
   
   selects.forEach(function(id) {
@@ -5418,6 +5436,80 @@ function afficherReleve() {
     '<div class="badge-jaune"><p><strong>Reste à solder : <span style="color:var(--danger);">'+fmt(c.montant-totalPaye)+' FCFA</span></strong></p></div>';
   el.innerHTML = html;
   majFooterImpression('Relevé de Compte — ' + esc(c.numero));
+}
+
+// ============================================================
+// DOCUMENT : TABLEAU D'AMORTISSEMENT PRÉVISIONNEL (à remettre au souscripteur)
+// ============================================================
+function afficherAmortissement() {
+  var idx = document.getElementById('sel-amortissement').value;
+  var el = document.getElementById('doc-amortissement');
+  if(idx===''){el.innerHTML='<p style="color:var(--ink-muted);font-style:italic;padding:40px;text-align:center;">Sélectionnez un contrat pour générer le document</p>';return;}
+  var c = CONTRATS[idx];
+  var ech = c.echeances || [];
+  var m1 = ech[0];
+
+  if(!m1 || !m1.datePaiement) {
+    el.innerHTML = '<p style="color:var(--danger);font-style:italic;padding:40px;text-align:center;">⚠️ La date de paiement de la 1ère mensualité (M1) doit d\'abord être renseignée dans le suivi des paiements de ce contrat avant de générer le tableau d\'amortissement.</p>';
+    return;
+  }
+
+  var s = getStats(c);
+  var is12 = parseInt(c.formule)===12;
+  var caution = c.cautionMontant || c.caution || 0;
+  var frais = c.fraisMontant || c.frais || 0;
+  var dateFin = ech.length ? ech[ech.length-1].dateEch : '';
+
+  var html = '<div style="background:var(--sauge-light);padding:6px 12px;border-radius:6px;margin-bottom:10px;font-size:10px;color:var(--sauge-dark);" class="no-print">✏️ Document consultatif — destiné à être remis au souscripteur</div>' +
+    '<div style="display:flex;align-items:center;margin-bottom:10px;border-bottom:3px double var(--sauge-dark);padding-bottom:8px;">' +
+    '<img src="'+MAPHAR_LOGO+'" style="width:70px;height:70px;object-fit:contain;margin-right:14px;flex-shrink:0;" />' +
+    '<div style="flex:1;text-align:center;"><h2 style="margin:0 0 2px;font-size:12pt;">TABLEAU D\'AMORTISSEMENT PRÉVISIONNEL</h2>' +
+    '<p style="font-size:9pt;margin:0;">MAPHAR — Mutuelle Pour l\'Assurance des Pharmaciens</p></div>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">' +
+    '<div class="bloc" style="margin:0;">' +
+    '<p><strong>Souscripteur :</strong> '+esc(c.nom)+'</p>' +
+    '<p><strong>Officine / Fonction :</strong> '+(esc(c.officine)||'-')+'</p>' +
+    '<p><strong>Véhicule :</strong> '+(esc(c.vehicule)||'-')+'</p>' +
+    '<p><strong>N° Contrat :</strong> '+esc(c.numero)+'</p>' +
+    '</div>' +
+    '<div class="bloc" style="margin:0;">' +
+    '<p><strong>Date édition :</strong> '+auj()+'</p>' +
+    '<p><strong>Formule :</strong> '+c.formule+' mois</p>' +
+    '<p><strong>Mensualité :</strong> '+fmt(c.mensualite)+' FCFA</p>' +
+    '<p><strong>Départ du décompte (1er paiement) :</strong> '+dateFR(m1.datePaiement)+'</p>' +
+    '</div>' +
+    '</div>' +
+    '<div class="bloc" style="margin-bottom:10px;">' +
+    '<p class="bloc-titre">💰 RÉCAPITULATIF FINANCIER</p>' +
+    '<table style="width:100%;border-collapse:collapse;font-size:9pt;">' +
+    '<tr><td style="padding:3px 6px;">Montant total du contrat</td><td style="padding:3px 6px;text-align:right;font-weight:700;">'+fmt(c.montant)+' F</td></tr>' +
+    '<tr><td style="padding:3px 6px;">Caution versée'+(is12?' (20%)':' (30%)')+' — restituable en fin de contrat*</td><td style="padding:3px 6px;text-align:right;font-weight:700;">'+fmt(caution)+' F</td></tr>' +
+    (!is12 ? '<tr><td style="padding:3px 6px;">Frais de dossier (5%) — non restituables</td><td style="padding:3px 6px;text-align:right;font-weight:700;">'+fmt(frais)+' F</td></tr>' : '') +
+    '<tr><td style="padding:3px 6px;">Nombre de mensualités</td><td style="padding:3px 6px;text-align:right;font-weight:700;">'+c.formule+'</td></tr>' +
+    '<tr><td style="padding:3px 6px;">Date de la 1ère mensualité (M1)</td><td style="padding:3px 6px;text-align:right;font-weight:700;">'+dateFR(m1.datePaiement)+'</td></tr>' +
+    '<tr><td style="padding:3px 6px;">Date de fin prévisionnelle du contrat</td><td style="padding:3px 6px;text-align:right;font-weight:700;">'+dateFR(dateFin)+'</td></tr>' +
+    '<tr><td style="padding:3px 6px;">Mensualités réglées à ce jour</td><td style="padding:3px 6px;text-align:right;font-weight:700;">'+s.nbPaye+' / '+c.formule+'</td></tr>' +
+    '</table>' +
+    '</div>' +
+    '<table style="width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:8px;">' +
+    '<thead><tr style="background:var(--sauge-dark);color:white;">' +
+    '<th style="padding:5px;">Mois</th><th style="padding:5px;">Date d\'échéance prévisionnelle</th>' +
+    '<th style="padding:5px;">Montant</th><th style="padding:5px;">Statut</th>' +
+    '</tr></thead><tbody>';
+  ech.forEach(function(e){
+    var bg = e.statut==='paye'?'background:var(--success-light);':(e.statut==='retard'?'background:var(--danger-light);':'');
+    var stat = e.statut==='paye'?'✅ Réglée':(e.statut==='retard'?'⚠️ En retard':'⏳ À venir');
+    html += '<tr style="'+bg+'"><td style="padding:4px;border:1px solid #ccc;text-align:center;"><strong>M'+e.num+'</strong></td>' +
+      '<td style="padding:4px;border:1px solid #ccc;text-align:center;">'+dateFR(e.dateEch)+'</td>' +
+      '<td style="padding:4px;border:1px solid #ccc;text-align:right;">'+fmt(e.montantDu)+' F</td>' +
+      '<td style="padding:4px;border:1px solid #ccc;text-align:center;">'+stat+'</td></tr>';
+  });
+  html += '</tbody></table>' +
+    '<div class="badge-jaune"><p style="font-size:9pt;margin:0;">* La caution est restituable en fin de contrat, sous réserve du règlement intégral de toutes les mensualités.'+(!is12?' Les frais de dossier (5%) sont définitivement acquis à MAPHAR et ne sont en aucun cas restituables.':'')+'</p>' +
+    '<p style="font-size:8pt;margin:4px 0 0;color:var(--ink-muted);">Ce tableau est fourni à titre indicatif. Les dates d\'échéance ci-dessus sont calculées à partir de la date de paiement effective de la première mensualité et pourront être ajustées en cas de modification ultérieure du calendrier de paiement.</p></div>';
+  el.innerHTML = html;
+  majFooterImpression('Tableau d\'Amortissement — ' + esc(c.numero));
 }
 
 // ============================================================
