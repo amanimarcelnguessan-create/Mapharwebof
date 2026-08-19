@@ -3545,6 +3545,14 @@ function enregistrerContrat() {
     CONTRATS[idx].vehicule = document.getElementById('f-vehicule').value.trim();
     var elFCoh = document.getElementById('f-cohorte');
     if(elFCoh && elFCoh.value) CONTRATS[idx].cohorteId = parseInt(elFCoh.value);
+    // Champs caution/frais : éditables en modification, mais jusqu'ici jamais repris dans l'objet
+    // sauvegardé (seuls nom/officine/adresse/tel/email/vehicule/cohorteId l'étaient). Corrigé ici.
+    var elCC2 = document.getElementById('f-caution-cheque'); if(elCC2) CONTRATS[idx].cautionNumeroCheque = elCC2.value.trim();
+    var elCB2 = document.getElementById('f-caution-banque'); if(elCB2) CONTRATS[idx].cautionBanque = elCB2.value.trim();
+    if(CONTRATS[idx].formule === 24) {
+      var elFC2 = document.getElementById('f-frais-cheque'); if(elFC2) CONTRATS[idx].fraisNumeroCheque = elFC2.value.trim();
+      var elFB2 = document.getElementById('f-frais-banque'); if(elFB2) CONTRATS[idx].fraisBanque = elFB2.value.trim();
+    }
     logHistorique(CONTRATS[idx], 'Informations souscripteur/véhicule modifiées');
     sauvegarder(false);
     rafraichirSelecteurs();
