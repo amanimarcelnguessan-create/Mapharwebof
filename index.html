@@ -2878,7 +2878,7 @@ function construireDonneesMapharExport() {
     if (!c.echeances) return;
     var coh = getCohorteById(c.cohorteId);
     c.echeances.forEach(function(e) {
-      var statutLbl = e.statut === 'paye' ? 'Payé' : (e.statut === 'retard' ? 'En retard' : 'En attente');
+      var statutLbl = e.statut === 'paye' ? 'Payé' : (e.statut === 'depose' ? 'Déposé' : (e.statut === 'retard' ? 'En retard' : 'En attente'));
       statutsEch.push(statutLbl === 'Payé' ? 'Soldé' : (statutLbl === 'En retard' ? 'En retard' : 'En cours'));
       rowsEch.push([
         c.numero||'', coh?coh.nom:'—', c.nom||'', 'M'+e.num, e.dateEch||'',
@@ -3190,7 +3190,7 @@ function exporterExcel() {
     if (!c.echeances) return;
     var coh = getCohorteById(c.cohorteId);
     c.echeances.forEach(function(e) {
-      var statutLbl = e.statut === 'paye' ? 'Payé' : (e.statut === 'retard' ? 'En retard' : 'En attente');
+      var statutLbl = e.statut === 'paye' ? 'Payé' : (e.statut === 'depose' ? 'Déposé' : (e.statut === 'retard' ? 'En retard' : 'En attente'));
       statutsEch.push(statutLbl === 'Payé' ? 'Soldé' : (statutLbl === 'En retard' ? 'En retard' : 'En cours'));
       rowsEch.push([
         c.numero||'', coh?coh.nom:'—', c.nom||'', 'M'+e.num, e.dateEch||'',
@@ -3930,6 +3930,27 @@ function afficherTableauPaiements(idx) {
       '<button class="btn btn-sm" style="background:var(--sauge-dark);color:#fff;" onclick="confirmerRecalculEcheancier('+idx+')">🔄 Recalculer l\'échéancier depuis le 1er paiement</button>' +
       '<span style="font-size:11px;color:var(--ink-muted);">Aligne M1..M'+c.formule+' sur la date réelle du 1er chèque encaissé (nécessite que M1 soit payée).</span>' +
       '</div>';
+
+    // ── Saisie rapide : PROPOSITION de n° chèque / banque à arbitrer, pas d'écriture directe ──
+    html += '<div class="form-card" style="background:var(--bg);margin-bottom:12px;padding:10px 12px;">' +
+      '<div style="font-weight:600;font-size:13px;margin-bottom:8px;">⚡ Aide à la saisie — remise groupée de chèques</div>' +
+      '<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;">' +
+        '<div>' +
+          '<label style="font-size:11px;color:var(--ink-muted);display:block;">Banque pressentie</label>' +
+          '<input type="text" id="qr-banque-'+idx+'" placeholder="Ex. NSIA Banque" style="width:160px;padding:5px;"/>' +
+          '<button class="btn btn-sm" style="margin-left:6px;" onclick="proposerBanque('+idx+')">Proposer</button>' +
+        '</div>' +
+        '<div>' +
+          '<label style="font-size:11px;color:var(--ink-muted);display:block;">N° du 1er chèque du lot</label>' +
+          '<input type="text" id="qr-cheque-'+idx+'" placeholder="Ex. 0004521" style="width:130px;padding:5px;"/>' +
+          '<button class="btn btn-sm" style="margin-left:6px;" onclick="proposerNumerotation('+idx+')">Proposer la suite</button>' +
+        '</div>' +
+        '<div>' +
+          '<button class="btn btn-sm" style="background:var(--success);color:#fff;" onclick="validerPropositions('+idx+')">✅ Valider les champs du tableau</button>' +
+        '</div>' +
+      '</div>' +
+      '<div style="font-size:11px;color:var(--ink-muted);margin-top:6px;">Les propositions ne font que PRÉ-REMPLIR les colonnes N° Chèque / Banque ci-dessous — rien n\'est enregistré tant que vous n\'avez pas vérifié ligne par ligne (et corrigé au besoin) puis cliqué sur « Valider ». Statuts et montants restent à saisir vous-même, comme avant.</div>' +
+    '</div>';
   }
 
   html += '<table class="table-paiements"><thead><tr>' +
@@ -3951,12 +3972,12 @@ function afficherTableauPaiements(idx) {
     if(peutModifier()) {
       html += '<td><div id="montant-'+idx+'-'+j+'" style="display:flex;align-items:center;gap:8px;"><span style="font-weight:500;">'+fmt(e.montantDu)+' F</span><button onclick="editerMontant('+idx+','+j+')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;color:var(--sauge-dark);" title="Éditer">✏️</button></div></td>';
       html += '<td><input type="date" value="'+(e.datePaiement||'')+'" onchange="CONTRATS['+idx+'].echeances['+j+'].datePaiement=this.value;'+(j===0?'if(CONTRATS['+idx+'].echeances[0].statut===\'paye\'){recalculerEcheancierDepuisPremierPaiement('+idx+',{forcer:true});afficherTableauPaiements('+idx+');}':'')+'"/></td>';
-      html += '<td><input type="text" value="'+(e.numeroCheque||'')+'" placeholder="N° chèque" onchange="CONTRATS['+idx+'].echeances['+j+'].numeroCheque=this.value"/></td>';
-      html += '<td><input type="text" value="'+(e.banque||'')+'" placeholder="Banque" onchange="CONTRATS['+idx+'].echeances['+j+'].banque=this.value"/></td>';
-      html += '<td><input type="number" value="'+(e.montantPaye||0)+'" onchange="(function(el,i,j){var v=parseFloat(el.value)||0;CONTRATS[i].echeances[j].montantPaye=v;if(v>0){CONTRATS[i].echeances[j].statut=\'paye\';if(!CONTRATS[i].echeances[j].datePaiement)CONTRATS[i].echeances[j].datePaiement=new Date().toISOString().split(\'T\')[0];if(j===0){recalculerEcheancierDepuisPremierPaiement(i,{forcer:true,silencieux:true});}}else{CONTRATS[i].echeances[j].statut=\'attente\';}sauvegarder();afficherTableauPaiements(i);})(this,'+idx+','+j+')" style="width:90px;"/></td>';
-      html += '<td><select onchange="CONTRATS['+idx+'].echeances['+j+'].statut=this.value;afficherTableauPaiements('+idx+')">';
-      ['attente','paye','retard'].forEach(function(s){
-        html += '<option value="'+s+'"'+(e.statut===s?' selected':'')+'>'+{attente:'⏳ Attente',paye:'✅ Payé',retard:'⚠️ Retard'}[s]+'</option>';
+      html += '<td><input type="text" id="ch-'+idx+'-'+j+'" value="'+(e.numeroCheque||'')+'" placeholder="N° chèque" onchange="CONTRATS['+idx+'].echeances['+j+'].numeroCheque=this.value;sauvegarder()"/></td>';
+      html += '<td><input type="text" id="bk-'+idx+'-'+j+'" value="'+(e.banque||'')+'" placeholder="Banque" onchange="CONTRATS['+idx+'].echeances['+j+'].banque=this.value;sauvegarder()"/></td>';
+      html += '<td><input type="number" value="'+(e.montantPaye||0)+'" onchange="(function(el,i,j){var v=parseFloat(el.value)||0;var ech=CONTRATS[i].echeances[j];var ancien=ech.statut;ech.montantPaye=v;if(v>0){ech.statut=\'paye\';if(!ech.datePaiement)ech.datePaiement=new Date().toISOString().split(\'T\')[0];if(ancien!==\'paye\'){logHistorique(CONTRATS[i],\'Échéance M\'+ech.num+\' encaissée — \'+fmt(v)+\' F (chèque \'+(ech.numeroCheque||\'—\')+\', \'+(ech.banque||\'—\')+\')\');}if(j===0){recalculerEcheancierDepuisPremierPaiement(i,{forcer:true,silencieux:true});}}else{ech.statut=\'attente\';if(ancien===\'paye\'){logHistorique(CONTRATS[i],\'⚠️ Échéance M\'+ech.num+\' repassée en attente (annulation encaissement précédent — chèque \'+(ech.numeroCheque||\'—\')+\')\');}}sauvegarder();afficherTableauPaiements(i);})(this,'+idx+','+j+')" style="width:90px;"/></td>';
+      html += '<td><select onchange="changerStatutEcheance('+idx+','+j+',this.value)">';
+      ['attente','depose','paye','retard'].forEach(function(s){
+        html += '<option value="'+s+'"'+(e.statut===s?' selected':'')+'>'+{attente:'⏳ Attente',depose:'🏦 Déposé',paye:'✅ Payé',retard:'⚠️ Retard'}[s]+'</option>';
       });
       html += '</select></td>';
       html += '<td class="col-actions"><button class="btn btn-pink btn-sm" onclick="genererApercuRecu('+idx+','+j+')">📄</button></td>';
@@ -3967,7 +3988,7 @@ function afficherTableauPaiements(idx) {
       html += '<td><span>'+(e.numeroCheque||'—')+'</span></td>';
       html += '<td><span>'+(e.banque||'—')+'</span></td>';
       html += '<td><span>'+(e.montantPaye?fmt(e.montantPaye)+' F':'—')+'</span></td>';
-      var statutLabel = {attente:'⏳ Attente',paye:'✅ Payé',retard:'⚠️ Retard'};
+      var statutLabel = {attente:'⏳ Attente',depose:'🏦 Déposé',paye:'✅ Payé',retard:'⚠️ Retard'};
       html += '<td><span>'+( statutLabel[e.statut]||e.statut)+'</span></td>';
       html += '<td class="col-actions"><button class="btn btn-pink btn-sm" onclick="genererApercuRecu('+idx+','+j+')" title="Aperçu du reçu">📄</button></td>';
     }
@@ -4009,6 +4030,99 @@ function afficherTableauPaiements(idx) {
 
   html += '</div>';
   document.getElementById('paiements-table').innerHTML = html;
+}
+
+// ============================================================
+// AIDE À LA SAISIE — propositions à ARBITRER par l'utilisateur.
+// Rien n'est jamais écrit dans CONTRATS/sauvegardé ici : on ne fait
+// que pré-remplir les champs visibles du tableau. C'est l'utilisateur
+// qui vérifie/corrige ligne par ligne, puis valide explicitement.
+// ============================================================
+function proposerBanque(idx) {
+  if(!peutModifier()) { showRefus(); return; }
+  var banque = (document.getElementById('qr-banque-'+idx).value||'').trim();
+  if(!banque) { alert('⚠️ Renseignez le nom de la banque à proposer.'); return; }
+  var c = CONTRATS[idx];
+  var n = 0;
+  (c.echeances||[]).forEach(function(e,j){
+    if(e.statut === 'paye') return; // on ne propose rien sur une échéance déjà soldée
+    var champ = document.getElementById('bk-'+idx+'-'+j);
+    if(champ && !champ.value) { champ.value = banque; champ.style.background = 'var(--gold-light)'; n++; }
+  });
+  if(n === 0) { showToast('Aucun champ banque vide à proposer.', 'error'); return; }
+  showToast('💡 '+n+' champ(s) "Banque" pré-rempli(s) — à vérifier avant validation.', 'success');
+}
+
+function proposerNumerotation(idx) {
+  if(!peutModifier()) { showRefus(); return; }
+  var depart = (document.getElementById('qr-cheque-'+idx).value||'').trim();
+  if(!depart) { alert('⚠️ Renseignez le numéro du 1er chèque du lot.'); return; }
+  var c = CONTRATS[idx];
+
+  // Suite numérique uniquement si le numéro de départ est purement numérique
+  // (chéquier classique) : les chèques d'un même souscripteur se suivent
+  // souvent. Sinon on ne propose que la valeur saisie, sur la 1ère échéance
+  // concernée, sans inventer de suite.
+  var estNumerique = /^\d+$/.test(depart);
+  var largeur = depart.length;
+  var compteur = parseInt(depart, 10);
+  var n = 0;
+  (c.echeances||[]).forEach(function(e,j){
+    if(e.statut === 'paye') return; // on ne propose rien sur une échéance déjà soldée
+    var champ = document.getElementById('ch-'+idx+'-'+j);
+    if(!champ || champ.value) return; // ne propose pas sur un champ déjà saisi
+    if(estNumerique) {
+      champ.value = String(compteur).padStart(largeur,'0');
+      compteur++;
+    } else if(n === 0) {
+      champ.value = depart;
+    } else {
+      return;
+    }
+    champ.style.background = 'var(--gold-light)';
+    n++;
+  });
+  if(n === 0) { showToast('Aucun champ N° chèque vide à proposer.', 'error'); return; }
+  showToast('💡 '+n+' n°(s) de chèque proposé(s) par suite — à vérifier avant validation.', 'success');
+}
+
+// Relit tous les champs N° chèque / Banque affichés dans le tableau et les
+// enregistre — que la valeur vienne d'une proposition acceptée telle quelle,
+// d'une correction manuelle, ou d'une saisie directe non encore validée.
+function validerPropositions(idx) {
+  if(!peutModifier()) { showRefus(); return; }
+  var c = CONTRATS[idx];
+  var n = 0;
+  (c.echeances||[]).forEach(function(e,j){
+    var champCh = document.getElementById('ch-'+idx+'-'+j);
+    var champBk = document.getElementById('bk-'+idx+'-'+j);
+    if(champCh && champCh.value !== (e.numeroCheque||'')) { e.numeroCheque = champCh.value; n++; }
+    if(champBk && champBk.value !== (e.banque||'')) { e.banque = champBk.value; n++; }
+  });
+  sauvegarder(false);
+  afficherTableauPaiements(idx);
+  showToast(n>0 ? '✅ Champs validés et enregistrés.' : 'Rien à enregistrer — aucun champ modifié.', 'success');
+}
+
+// Changement de statut : mécanisme historique (choix manuel), on ajoute
+// juste un avertissement souple si on saute l'étape "Déposé" avant "Payé".
+// Chaque changement est tracé dans l'historique du contrat (auteur + date).
+var STATUT_ECH_LABELS = {attente:'⏳ Attente', depose:'🏦 Déposé', paye:'✅ Payé', retard:'⚠️ Retard'};
+function changerStatutEcheance(idx, echIdx, valeur) {
+  var c = CONTRATS[idx];
+  var e = c.echeances[echIdx];
+  var ancien = e.statut;
+  if(valeur === 'paye' && ancien === 'attente') {
+    var ok = confirm('Ce chèque M'+e.num+' n\'a pas été marqué « 🏦 Déposé » à la banque.\n\nConfirmer quand même le passage direct à « ✅ Payé » ?');
+    if(!ok) { afficherTableauPaiements(idx); return; }
+  }
+  if(valeur !== ancien) {
+    var detail = (e.numeroCheque || e.banque) ? ' (chèque '+(e.numeroCheque||'—')+', '+(e.banque||'—')+')' : '';
+    logHistorique(c, 'Échéance M'+e.num+' — statut : '+(STATUT_ECH_LABELS[ancien]||ancien)+' → '+(STATUT_ECH_LABELS[valeur]||valeur)+detail);
+  }
+  e.statut = valeur;
+  sauvegarder(false);
+  afficherTableauPaiements(idx);
 }
 
 // ============================================================
